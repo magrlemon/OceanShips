@@ -13,7 +13,6 @@
 //* FFaction
 USimEcs_FactionComponentWrapper::USimEcs_FactionComponentWrapper()
 {
-
 	PrimaryComponentTick.bCanEverTick = false;
 	IComponentWrapper::STATIC_COMPONENT_TYPE_ID = EComponentClass::ECC_FACTION_COMPONENT;
 }
@@ -21,8 +20,10 @@ USimEcs_FactionComponentWrapper::USimEcs_FactionComponentWrapper()
 
 void USimEcs_FactionComponentWrapper::AddToEntity( u64 uHandleID ,FString& jsonValue ) {
 	auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
-	if (simRegistry)
+	if (simRegistry) {
+		ParseJson( jsonValue );
 		simRegistry->accommodate<FFaction>( uHandleID, Value );
+	}
 };
 
 void USimEcs_FactionComponentWrapper::ParseJson( FString& jsonValue ) {
@@ -46,8 +47,10 @@ USimEcs_HealthComponentWrapper::USimEcs_HealthComponentWrapper( )
 
 void USimEcs_HealthComponentWrapper::AddToEntity( u64 uHandleID ,FString& jsonValue ) {
 	auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
-	if (simRegistry)
+	if (simRegistry) {
+		ParseJson( jsonValue );
 		simRegistry->accommodate<FHealth>( uHandleID, Value );
+	}
 };
 void USimEcs_HealthComponentWrapper::ParseJson( FString& jsonValue ) {
 	if (jsonValue.IsEmpty( ))
@@ -103,8 +106,10 @@ USimEcs_ProjectileComponentWrapper::USimEcs_ProjectileComponentWrapper()
 
 void USimEcs_ProjectileComponentWrapper::AddToEntity( u64 uHandleID ,FString& jsonValue ) {
 	auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
-	if (simRegistry)
+	if (simRegistry) {
+		ParseJson( jsonValue );
 		simRegistry->accommodate<FProjectile>( uHandleID, Value );
+	}
 };
 
 void USimEcs_ProjectileComponentWrapper::ParseJson( FString& jsonValue ) {
@@ -127,8 +132,10 @@ USimEcs_ExplosionComponentWrapper::USimEcs_ExplosionComponentWrapper(  )
 
 void USimEcs_ExplosionComponentWrapper::AddToEntity( u64 uHandleID ,FString& jsonValue ) {
 	auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
-	if (simRegistry)
+	if (simRegistry) {
+		ParseJson( jsonValue );
 		simRegistry->accommodate<FExplosion>( uHandleID, Value );
+	}
 };
 
 void USimEcs_ExplosionComponentWrapper::ParseJson( FString& jsonValue ) {

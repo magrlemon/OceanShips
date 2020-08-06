@@ -212,8 +212,10 @@ public:
 	};
 	virtual void AddToEntity( u64 uHandleID, FString& jsonValue ) {
 		auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
-		if (simRegistry)
+		if (simRegistry) {
+			ParseJson( jsonValue );
 			simRegistry->accommodate<FMovement>( uHandleID );
+		}
 	};
 	void ParseJson( FString& jsonValue );
 };
@@ -234,8 +236,10 @@ public:
 	}
 	virtual void AddToEntity( u64 uHandleID ,FString& jsonValue ) {
 		auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
-		if (simRegistry)
+		if (simRegistry) {
+			ParseJson( jsonValue );
 			simRegistry->accommodate<FDebugSphere>( uHandleID, Value );
+		}
 	};
 	void ParseJson( FString& jsonValue );
 	UPROPERTY( EditAnywhere, Category = "SimEcs" )
@@ -256,8 +260,10 @@ public:
 	};
 	virtual void AddToEntity( u64 uHandleID ,FString& jsonValue ) {
 		auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
-		if (simRegistry)
+		if (simRegistry) {
+			ParseJson( jsonValue );
 			simRegistry->accommodate<FInstancedStaticMesh>( uHandleID, Value );
+		}
 	};
 	void ParseJson( FString& jsonValue );
 	UPROPERTY( EditAnywhere, Category = "SimEcs" )
@@ -280,8 +286,10 @@ public:
 
 	virtual void AddToEntity( u64 uHandleID ,FString& jsonValue ) {
 		auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
-		if (simRegistry)
+		if (simRegistry) {
+			ParseJson( jsonValue );
 			simRegistry->accommodate<FVelocity>( uHandleID, Value );
+		}
 	};
 	void ParseJson( FString& jsonValue );
 	UPROPERTY( EditAnywhere, Category = "SimEcs" )
@@ -305,8 +313,11 @@ public:
 
 	virtual void AddToEntity( u64 uHandleID ,FString& jsonValue ) {
 		auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
-		if (simRegistry)
+		if (simRegistry) {
+			ParseJson( jsonValue );
 			simRegistry->accommodate<FRotationComponent>( uHandleID, Value );
+		}
+			
 	};
 	void ParseJson( FString& jsonValue );
 	UPROPERTY( EditAnywhere, Category = "SimEcs" )
@@ -328,8 +339,10 @@ public:
 	};
 	virtual void AddToEntity( u64 uHandleID ,FString& jsonValue ) {
 		auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
-		if (simRegistry)
+		if (simRegistry) {
+			ParseJson( jsonValue );
 			simRegistry->accommodate<FArchetypeSpawner>( uHandleID, Value );
+		}
 	};
 	void ParseJson( FString& jsonValue );
 	UPROPERTY( EditAnywhere, Category = "SimEcs" )
@@ -352,8 +365,10 @@ public:
 
 	virtual void AddToEntity( u64 uHandleID ,FString& jsonValue ) {
 		auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
-		if (simRegistry)
+		if (simRegistry) {
+			ParseJson( jsonValue );
 			simRegistry->accommodate<FMovementRaycast>( uHandleID, Value );
+		}
 	};
 	void ParseJson( FString& jsonValue );
 	UPROPERTY( EditAnywhere, Category = "SimEcs" )

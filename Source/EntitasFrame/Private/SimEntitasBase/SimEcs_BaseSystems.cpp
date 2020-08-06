@@ -146,10 +146,11 @@ void ArchetypeSpawnerSystem::update(SimEcs_Registry &registry, float dt)
 	}
 
 	//Spawn with basic position
-	auto SpawnerPositionView = registry.view<FArchetypeSpawner, FPrePosition>();
+	auto SpawnerPositionView = registry.view<FArchetypeSpawner, FPrePosition, FRotationComponent>();
 	for (auto e : SpawnerPositionView)
 	{
 		const FVector &SpawnPosition = SpawnerPositionView.get<FPrePosition>(e).pos;
+		const FQuat&  quatRot = SpawnerPositionView.get<FRotationComponent>( e ).rot;
 		FArchetypeSpawner& spawner = SpawnerPositionView.get<FArchetypeSpawner>(e);
 
 		if (spawner.TimeUntilSpawn < 0)
@@ -159,7 +160,7 @@ void ArchetypeSpawnerSystem::update(SimEcs_Registry &registry, float dt)
 				ESceneRelevantConv esrc = spawner.ActorType < 1000 ? ESceneRelevantConv::E_SENERAIO_POINT : ESceneRelevantConv::E_BARRIER_POINT;
 				FVector relativePos; relativePos.Set( SpawnPosition.X*100.0f, SpawnPosition.Y*100.0f, 0 );
 				relativePos = USimOceanSceneManager_Singleton::GetInstance( )->GetCovertScenePosition( relativePos , esrc );
-				SpawnFromArchetype( registry, spawner.entHandleId, spawner.ArchetypeClass , relativePos );
+				SpawnFromArchetype( registry, spawner.entHandleId, spawner.ArchetypeClass , relativePos, quatRot );
 				registry.accommodate<FPosition>( spawner.entHandleId, SpawnPosition);
 			}
 

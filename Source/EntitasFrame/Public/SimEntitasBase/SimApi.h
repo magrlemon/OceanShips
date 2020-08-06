@@ -119,6 +119,7 @@ enum   EEntityEquips {
 enum   EComponentClass {
 	ECC_NONE_COMPONENT = 0,
 	ECC_POSITION_COMPONENT,				//坐标组件
+	ECC_ROTATE_COMPONENT,				//旋转组件
 	ECC_MOVEMENT_COMPONENT,				//运动组件
 	ECC_BOATS_MOVEMENT_COMPONENT,		//船体运动组件
 	ECC_VELOCITY_COMPONENT,				//速度组件

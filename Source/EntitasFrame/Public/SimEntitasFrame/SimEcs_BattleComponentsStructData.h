@@ -59,6 +59,9 @@ struct FScale {
 	UPROPERTY( EditAnywhere, Category = SimEcs )
 		FVector scale;
 };
+
+
+
 class UStaticMesh;
 class UMaterial;
 

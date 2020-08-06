@@ -179,7 +179,7 @@ struct ArchetypeSpawnerSystem :public SystemT {
 	using EntityHandleId = uint64_t;
 	TMap<EntityHandleId, TSharedPtr<ASimEcs_Archetype>> m_MapArchetypes;
 
-	void SpawnFromArchetype(SimEcs_Registry & registry, EntityHandleId handleID,TSubclassOf<ASimEcs_Archetype> &ArchetypeClass, const FVector &SpawnPosition )
+	void SpawnFromArchetype(SimEcs_Registry & registry, EntityHandleId handleID,TSubclassOf<ASimEcs_Archetype> &ArchetypeClass, const FVector &SpawnPosition ,const FQuat  quatRot = FQuat::Identity )
 	{
 		//try to find the spawn archetype in the map, spawn a new one if not found, use it to initialize entity
 		//
@@ -188,7 +188,7 @@ struct ArchetypeSpawnerSystem :public SystemT {
 		TSharedPtr<ASimEcs_Archetype> FoundArchetype = nullptr;
 		if (!Found)
 		{
-			FoundArchetype = MakeShareable( OwnerActor->GetWorld()->SpawnActor<ASimEcs_Archetype>(ArchetypeClass, SpawnPosition ,FRotator::ZeroRotator));
+			FoundArchetype = MakeShareable( OwnerActor->GetWorld()->SpawnActor<ASimEcs_Archetype>(ArchetypeClass, SpawnPosition , quatRot.Rotator()));
 			if (!FoundArchetype.IsValid( ))return;
 			FoundArchetype->SetActorLabel( *GetNameSafe( FoundArchetype.Get() ) );
 			UE_LOG(LogFlying, Warning, TEXT("Spawned archetype: %s"), *GetNameSafe( FoundArchetype.Get( ) ));

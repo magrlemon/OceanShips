@@ -155,9 +155,11 @@
 
 			auto simRegistry = osmSingleton->GetSimRegistry();
 			simRegistry->assign<FPrePosition>( m_eHandleID );
+			simRegistry->assign<FRotationComponent>( m_eHandleID );
 			simRegistry->assign<FLifetime>( m_eHandleID );
 			simRegistry->assign<FArchetypeSpawner>( m_eHandleID );
 			simRegistry->get<FPrePosition>( m_eHandleID).pos = _pos;
+			simRegistry->get<FRotationComponent>( m_eHandleID ).rot = FQuat::MakeFromEuler(FVector(0.0f,0.0f, _heading) );
 			simRegistry->get<FLifetime>( m_eHandleID ).LifeLeft = 0.5f;
 			FArchetypeSpawner &spawn = simRegistry->get<FArchetypeSpawner>( m_eHandleID );
 			spawn.ActorType = _type;
@@ -172,10 +174,11 @@
 
 
 		virtual const EntityHandleId GetEntityHandleId( ) { return m_eHandleID; };
-		SimEcs_Entity(int type,FVector entPos):SimEcs_IEntity()
+		SimEcs_Entity(int type,FVector entPos, float heading ):SimEcs_IEntity()
 		{
 			_type = type;
 			_pos = entPos;
+			_heading = heading;
 		}
 
 		virtual ~SimEcs_Entity()
@@ -199,6 +202,7 @@
 			//TSubclassOf<AActor> m_ActorClass_BP;
 			TypeID _type = ENTITY_DUMMY;
 			FVector _pos = FVector::ZeroVector;
+			float _heading = 0.0f;
 	};
 
 	using EntityTypeId = TypeID;
