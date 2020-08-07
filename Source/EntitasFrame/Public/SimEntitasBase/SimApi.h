@@ -72,11 +72,6 @@ static const FString bp_type_names[] = {
 
 };
 
-static const int32 bp_type_size[] = {
-	0,0, 0, 0, 0, 0,
-	6, 7, 0, 0,	0,		// ”≥…‰EEntityEquips ◊∞±∏
-	0,0,0,0,0,0,0, // ”≥…‰EEntityEquips ∫£∑¿’œ∞≠
-};
 
 
 enum   ESceneRelevantConv {

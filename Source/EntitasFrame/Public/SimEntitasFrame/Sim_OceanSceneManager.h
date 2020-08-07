@@ -105,6 +105,9 @@ public:
 		FTransform m_ScenarioMeshTransform;
 
 		FTransform m_ScenarioBarrierMeshTransform;
+public:
+	using EntityHandleId = uint64_t;
+	TMap<EntityHandleId, TSharedPtr<ASimEcs_Archetype>> m_MapArchetypes;
 private:
 	bool m_bLoadSuccess = false;
 	bool m_bLoadScenario = false;

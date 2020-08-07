@@ -53,14 +53,11 @@ public:
 
 
 /* Tank */
-
-class  ASimContextDataTankEnvironment : public ASimEnvironment
-{
-
+UCLASS( )
+class  ASimContextDataTankEnvironment : public ASimEnvironment{
+	GENERATED_UCLASS_BODY( )
 public:
 	// Sets default values for this component's properties
-	ASimContextDataTankEnvironment( const FObjectInitializer& ObjectInitializer );
-	~ASimContextDataTankEnvironment( ) {}
 	virtual void CreateEntity( TWeakPtr<SimEcs_Engine> pSimEcs_Engine ) override;
 	
 	/* serialize data form scenario xml*/
@@ -81,18 +78,15 @@ protected:
 
 private:
 	FSTankPropertyData  m_STPropData;
-	FName Value;
+	FString  m_JsonValue;
 };
 
 /* Charactor */
-
+UCLASS( )
 class  ASimContextDataCharactorEnvironment : public ASimEnvironment {
-
+	GENERATED_UCLASS_BODY( )
 public:
 	// Sets default values for this component's properties
-	ASimContextDataCharactorEnvironment( const FObjectInitializer& ObjectInitializer );
-
-
 	//GENERATED_COMPONENT_BODY( ContextDataCharactorEnvironment );
 
 	virtual void CreateEntity( TWeakPtr<SimEcs_Engine> pSimEcs_Engine ) override;
@@ -113,18 +107,16 @@ protected:
 
 private:
 	FSCharactorPropertyData m_STPropData;
-	FName Value;
+	FString  m_JsonValue;
 };
 
 /*AirCraft */
 
-
+UCLASS( )
 class  ASimContextDataAirCraftEnvironment : public ASimEnvironment {
-
+	GENERATED_UCLASS_BODY( )
 public:
 	// Sets default values for this component's properties
-	ASimContextDataAirCraftEnvironment( const FObjectInitializer& ObjectInitializer );
-	//virtual ~ContextDataAirCraftEnvironment( );
 
 	//GENERATED_COMPONENT_BODY( ContextDataAirCraftEnvironment );
 
@@ -146,18 +138,16 @@ protected:
 
 private:
 	FSAirCraftPropertyData m_STPropData;
-	FName Value;
+	FString  m_JsonValue;
 };
 
 
 /* Helicopter */
-
+UCLASS( )
 class  ASimContextDataHelicopterEnvironment : public ASimEnvironment {
-	
+	GENERATED_UCLASS_BODY( )
 public:
 	// Sets default values for this component's properties
-	ASimContextDataHelicopterEnvironment( const FObjectInitializer& ObjectInitializer );
-	//virtual ~ContextDataHelicopterEnvironment( );
 
 	//GENERATED_COMPONENT_BODY( ContextDataHelicopterEnvironment );
 
@@ -180,7 +170,7 @@ protected:
 private:
 	
 	FSHelicopterPropertyData m_STPropData;
-	FName Value;
+	FString  m_JsonValue;
 };
 
 
@@ -246,13 +236,10 @@ private:
 
 
 /* */
-
+UCLASS( )
 class  ASimContextDataVehicle4WEnvironment : public ASimEnvironment {
-	
+	GENERATED_UCLASS_BODY( )
 public:
-	// Sets default values for this component's properties
-	ASimContextDataVehicle4WEnvironment( const FObjectInitializer& ObjectInitializer );
-
 
 	/* get dataStructure */
 	auto Get( ) const {
@@ -368,12 +355,10 @@ private:
 //////////////////////////////////////////////////////////////////////////
 //	Ocean Barrier /* GTZ  HLS SJZ */
 //////////////////////////////////////////////////////////////////////////
-
+UCLASS( )
 class  ASimContextDataGTZEnvironment : public ASimEnvironment {
-
+	GENERATED_UCLASS_BODY( )
 public:
-	// Sets default values for this component's properties
-	ASimContextDataGTZEnvironment( const FObjectInitializer& ObjectInitializer );
 
 	/* get dataStructure */
 	auto Get( ) const {
@@ -399,11 +384,10 @@ private:
 };
 
 /* GTZ  HLS SJZ */
+UCLASS( )
 class  ASimContextDataSJZEnvironment : public ASimEnvironment {
-
+	GENERATED_UCLASS_BODY( )
 public:
-	// Sets default values for this component's properties
-	ASimContextDataSJZEnvironment( const FObjectInitializer& ObjectInitializer );
 
 	/* get dataStructure */
 	auto Get( ) const {
@@ -430,12 +414,10 @@ private:
 
 
 /* GTZ  HLS SJZ */
-
+UCLASS( )
 class  ASimContextDataHLSEnvironment : public ASimEnvironment {
-
+	GENERATED_UCLASS_BODY( )
 public:
-	// Sets default values for this component's properties
-	ASimContextDataHLSEnvironment( const FObjectInitializer& ObjectInitializer );
 
 	/* get dataStructure */
 	auto Get( ) const {
@@ -461,12 +443,10 @@ private:
 };
 
 
-
+UCLASS( )
 class  ASimContextDataGCWEnvironment : public ASimEnvironment {
-
+	GENERATED_UCLASS_BODY( )
 public:
-	// Sets default values for this component's properties
-	ASimContextDataGCWEnvironment( const FObjectInitializer& ObjectInitializer );
 
 	/* get dataStructure */
 	auto Get( ) const {
@@ -492,11 +472,10 @@ private:
 };
 
 /* TSW_SF Éß¸¹ÌúË¿Íø */
+UCLASS( )
 class  ASimContextDataTSWSFEnvironment : public ASimEnvironment {
-
+	GENERATED_UCLASS_BODY( )
 public:
-	// Sets default values for this component's properties
-	ASimContextDataTSWSFEnvironment( const FObjectInitializer& ObjectInitializer );
 
 	/* get dataStructure */
 	auto Get( ) const {
@@ -523,11 +502,10 @@ private:
  
 
 /* TSW_YL */
+UCLASS( )
 class  ASimContextDataTSWYLEnvironment : public ASimEnvironment {
-
+	GENERATED_UCLASS_BODY( )
 public:
-	// Sets default values for this component's properties
-	ASimContextDataTSWYLEnvironment( const FObjectInitializer& ObjectInitializer );
 
 	/* get dataStructure */
 	auto Get( ) const {
@@ -555,11 +533,10 @@ private:
 
 
 /* //×é¸ôÇ½		 1007 */
+UCLASS( )
 class  ASimContextDataZGQEnvironment : public ASimEnvironment {
-
+	GENERATED_UCLASS_BODY( )
 public:
-	// Sets default values for this component's properties
-	ASimContextDataZGQEnvironment( const FObjectInitializer& ObjectInitializer );
 
 	/* get dataStructure */
 	auto Get( ) const {
@@ -587,11 +564,10 @@ private:
 
 
 //»ìºÏÀ×³¡		 1008
+UCLASS( )
 class  ASimContextDataHHLCEnvironment : public ASimEnvironment {
-
+	GENERATED_UCLASS_BODY( )
 public:
-	// Sets default values for this component's properties
-	ASimContextDataHHLCEnvironment( const FObjectInitializer& ObjectInitializer );
 
 	/* get dataStructure */
 	auto Get( ) const {
@@ -620,11 +596,10 @@ private:
 
 
 //²£Á§µ¶É½		 1009
+UCLASS( )
 class  ASimContextDataBLDSEnvironment : public ASimEnvironment {
-
+	GENERATED_UCLASS_BODY( )
 public:
-	// Sets default values for this component's properties
-	ASimContextDataBLDSEnvironment( const FObjectInitializer& ObjectInitializer );
 
 	/* get dataStructure */
 	auto Get( ) const {
@@ -651,11 +626,10 @@ private:
 
 
 //Ë®¼£¹ìÌõíÎ	 1010
+UCLASS( )
 class  ASimContextDataGTZSUIJIEnvironment : public ASimEnvironment {
-
+	GENERATED_UCLASS_BODY( )
 public:
-	// Sets default values for this component's properties
-	ASimContextDataGTZSUIJIEnvironment( const FObjectInitializer& ObjectInitializer );
 
 	/* get dataStructure */
 	auto Get( ) const {
@@ -683,11 +657,10 @@ private:
 
 
 //×è¾øº¾		 1011
+UCLASS( )
 class  ASimContextDataZJHEnvironment : public ASimEnvironment {
-
+	GENERATED_UCLASS_BODY( )
 public:
-	// Sets default values for this component's properties
-	ASimContextDataZJHEnvironment( const FObjectInitializer& ObjectInitializer );
 
 	/* get dataStructure */
 	auto Get( ) const {

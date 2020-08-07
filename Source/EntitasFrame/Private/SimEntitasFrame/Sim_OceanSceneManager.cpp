@@ -12,7 +12,6 @@
 USimOceanSceneManager_Singleton::USimOceanSceneManager_Singleton( const FObjectInitializer& ObjectInitializer )
 	: Super( ObjectInitializer )
 {
-
 	//m_gpsDataTransfer.InitData( );
 }
 
@@ -42,23 +41,11 @@ void USimOceanSceneManager_Singleton::GenOceanDefanceBarrier( ) {
 
 void USimOceanSceneManager_Singleton::MakeRoot(  ) {
 
-	// get world convert point
-	//FString strTag;
-	//if (!m_ScenarioSceneTap.IsValid( )) {
-	//	strTag = "ScenarioTag";
-	//	m_ScenarioSceneTap = GetSimActorWithTag( strTag );
-	//}
-	//if (!m_ScenarioBarrierTap.IsValid( )) {
-	//	strTag = "BarrierTag";
-	//	m_ScenarioBarrierTap = GetSimActorWithTag( strTag );
-	//}
-
 	m_ScenarioMeshTransform.SetRotation( FQuat::MakeFromEuler( FVector( 0.0f ,0.0f,90.0f ) ) );
 	m_ScenarioMeshTransform.SetLocation( m_vecScenarioMesh );
 
-	m_ScenarioBarrierMeshTransform.SetRotation( FQuat::MakeFromEuler( FVector( 0.0f, 0.0f, 90.0f ) ) );
-	m_ScenarioBarrierMeshTransform.SetLocation( m_vecScenarioMesh );
-
+	m_ScenarioBarrierMeshTransform.SetRotation( FQuat::MakeFromEuler( FVector( 0.0f, 0.0f, 0.0f ) ) );
+	m_ScenarioBarrierMeshTransform.SetLocation( m_vecScenarioBarrierMesh );
 }
 
 
@@ -99,7 +86,7 @@ void USimOceanSceneManager_Singleton::InitialzieOceanDefScenarioData( ) {
 		return;
 	auto rsl = GetComponentSysLinkPtr( );
 	if (rsl) {
-		rsl->GenSimSceneObjects( );
+		rsl->GenSimOceanDefSceneObjects( );
 		m_bLoadBarrier = true;
 		UE_LOG( LogTemp, Warning, TEXT( "m_bLoadScenario = true;" ) );
 	}
@@ -162,7 +149,7 @@ FVector USimOceanSceneManager_Singleton::GetCovertScenePosition( FVector ImagePo
 	switch (erc) {
 	case E_BARRIER_POINT:
 	{
-		return m_ScenarioMeshTransform.TransformPosition( ImagePosition );
+		return m_ScenarioBarrierMeshTransform.TransformPosition( ImagePosition );
 	}
 	case E_SENERAIO_POINT:
 	{

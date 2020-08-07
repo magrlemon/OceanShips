@@ -88,7 +88,7 @@ public:
 
 	SystemT* GetArchetypeSpawnerSystem( )
 	{
-		return systems[0];   // 0 ==> ArchetypeSpawnerSystem
+		return /*Cast<SystemT>*/(systems[0]);   // 0 ==> ArchetypeSpawnerSystem
 	}
 
 	void RegisterSystem(SystemT* newSystem)

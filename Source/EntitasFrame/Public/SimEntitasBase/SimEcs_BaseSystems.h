@@ -10,7 +10,7 @@
 
 
 DECLARE_CYCLE_STAT(TEXT("SimEcs: DebugDraw"), STAT_DebugDraw, STATGROUP_ECS);
-
+using EntityHandleId = uint64_t;
 struct DebugDrawSystem :public SystemT {
 
 	const float UpdateRate = 0.1;
@@ -175,16 +175,14 @@ struct CopyTransformToActorSystem :public SystemT {
 DECLARE_CYCLE_STAT(TEXT("SimEcs: Spanwer System"), STAT_ECSSpawn, STATGROUP_ECS);
 struct ArchetypeSpawnerSystem :public SystemT {
 
-	//TMap<TSubclassOf<ASimEcs_Archetype>, ASimEcs_Archetype*> m_MapArchetypes;
-	using EntityHandleId = uint64_t;
-	TMap<EntityHandleId, TSharedPtr<ASimEcs_Archetype>> m_MapArchetypes;
+
 
 	void SpawnFromArchetype(SimEcs_Registry & registry, EntityHandleId handleID,TSubclassOf<ASimEcs_Archetype> &ArchetypeClass, const FVector &SpawnPosition ,const FQuat  quatRot = FQuat::Identity )
 	{
 		//try to find the spawn archetype in the map, spawn a new one if not found, use it to initialize entity
 		//
 
-		auto Found = m_MapArchetypes.Find( handleID );
+		auto Found = USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Find( handleID );
 		TSharedPtr<ASimEcs_Archetype> FoundArchetype = nullptr;
 		if (!Found)
 		{
@@ -200,7 +198,7 @@ struct ArchetypeSpawnerSystem :public SystemT {
 			{
 				FString strInfor = TEXT( "m_mapArchetypes pawnerSystem" );
 				USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
-				m_MapArchetypes.Add( handleID, FoundArchetype);
+				USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Add( handleID, FoundArchetype);
 			}
 		}
 		else

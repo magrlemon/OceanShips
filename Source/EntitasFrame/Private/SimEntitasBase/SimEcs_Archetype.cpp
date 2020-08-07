@@ -5,7 +5,8 @@
 
 
 // Sets default values
-ASimEcs_Archetype::ASimEcs_Archetype()
+ASimEcs_Archetype::ASimEcs_Archetype( const FObjectInitializer& ObjectInitializer )
+	: Super( ObjectInitializer ) 
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -13,7 +14,7 @@ ASimEcs_Archetype::ASimEcs_Archetype()
 }
 
 
-void ASimEcs_Archetype::CreateNewEntityFromThis(EntityID  handleID)
+void ASimEcs_Archetype::CreateNewEntityFromThis( uint64  handleID)
 {
 	for (auto c : GetComponents( )) {
 		auto wr = Cast<IComponentWrapper>( c );

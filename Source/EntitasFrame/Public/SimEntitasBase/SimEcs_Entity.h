@@ -147,7 +147,9 @@
 			auto entFrameDate = sysLink_WeakPtr->GetEntityFrameData( );
 			if (!sysLink_WeakPtr || !entFrameDate.IsValid())
 				return;
-			TSubclassOf<ASimEcs_Archetype> typeClass =  entFrameDate.Pin()->GetSubClassByType( (int)STATIC_ENTITY_TYPE_ID );//
+			FString  strValue;			
+			GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, strValue.FromInt( _type ) );
+			TSubclassOf<ASimEcs_Archetype> typeClass =  entFrameDate.Pin()->GetSubClassByType( _type );//
 			if (!typeClass.Get( ))
 				return;
 			EntityHandle eh = sysLink_WeakPtr->GenHandEntity( );

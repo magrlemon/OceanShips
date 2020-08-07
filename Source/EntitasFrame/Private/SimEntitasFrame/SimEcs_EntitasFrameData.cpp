@@ -6,6 +6,12 @@
 #include "SimEcs_BoatArchetype.h"
 
 
+static const int32 bp_type_size[] = {
+	0,0, 0, 0, 0, 0,
+	6, 7, 0, 0,	0,		// 映射EEntityEquips 装备
+	0,1001,1002,1003,1004,0,0, // 映射EEntityEquips 海防障碍
+};
+
 ASimEcs_EntitasFrameData::ASimEcs_EntitasFrameData(/* const FObjectInitializer& ObjectInitializer*/ ) 
 	//: Super( ObjectInitializer )
 {
@@ -54,7 +60,11 @@ void ASimEcs_EntitasFrameData::BeginDestroy( ) {
 
 
 bool ASimEcs_EntitasFrameData::GenerateOBEntitys( int entType, TMapScenario & refScenarioXmlData ) {
-
+#if WITH_EDITOR
+	if (GIsEditor == true) {
+		return false;
+	}
+#endif
 	/*find entity type by key*/
 	if (refScenarioXmlData.Num( ) <= 0 || entType <= 0)
 		return false;
@@ -84,8 +94,6 @@ bool ASimEcs_EntitasFrameData::GenerateOBEntitys( int entType, TMapScenario & re
 
 		CASE_TYPE( DRONEBOAT, DroneBoat )
 			CASE_TYPE( NAVALCRAFT, NavalCraft )
-			
-
 			CASE_TYPE( OBSTACLE_HLS, HLS )					//三角锥		 1001
 			CASE_TYPE( OBSTACLE_SJZ, SJZ )					//海立石		 1002
 			CASE_TYPE( OBSTACLE_GTZ, GTZ )					//轨条砦		 1003
@@ -153,9 +161,10 @@ void ASimEcs_EntitasFrameData::GenCoastDefBarrierObjects( )
 }
 //
 TSubclassOf<ASimEcs_Archetype> ASimEcs_EntitasFrameData::GetSubClassByType( int type ) {
-	if (type <= 0)
-		return nullptr;
-	return m_MapSubClass_BP[type];
+	if (m_MapSubClass_BP.Contains( type ))
+		return m_MapSubClass_BP[type];
+
+	return nullptr;
 }
 
 /* Update the character. (Running, health etc).*/

@@ -23,14 +23,12 @@ class SimEcs_World;
 
 //base class for pure entity archetypes. This class cant be used directly, but can be spawned from an SimEcs spawner type system
 UCLASS(Blueprintable)
-class ENTITASFRAME_API ASimEcs_Archetype : public AInfo
+class ENTITASFRAME_API ASimEcs_Archetype :  public AActor
 {
-	GENERATED_BODY()
-	
+	GENERATED_UCLASS_BODY()
 public:	
 	
-	ASimEcs_Archetype();
 	
-	virtual void CreateNewEntityFromThis( EntityID  handleID );
+	virtual void CreateNewEntityFromThis( uint64  handleID );
 	
 };

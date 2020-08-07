@@ -303,7 +303,7 @@ public:
 	};
 
 	FSCoastDefGCWPropertyData& operator = ( TMapScenario& refScenaData );
-	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_GTZ_TYPE;
+	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_GCW_TYPE;
 	float heath;
 };
 
@@ -315,7 +315,7 @@ public:
 	};
 
 	FSCoastDefTSWSFPropertyData& operator = ( TMapScenario& refScenaData );
-	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_SJZ_TYPE;
+	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_TSW_SF_TYPE;
 	float heath;
 };
 
@@ -327,7 +327,7 @@ public:
 	};
 
 	FSCoastDefTSWYLPropertyData& operator = ( TMapScenario& refScenaData );
-	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_HLS_TYPE;
+	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_TSW_YL_TYPE;
 	float heath;
 };
 
@@ -339,7 +339,7 @@ public:
 	};
 
 	FSCoastDefZGQPropertyData& operator = ( TMapScenario& refScenaData );
-	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_HLS_TYPE;
+	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_ZGQ_TYPE;
 	float heath;
 };
 
@@ -351,7 +351,7 @@ public:
 	};
 
 	FSCoastDefHHLCPropertyData& operator = ( TMapScenario& refScenaData );
-	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_HLS_TYPE;
+	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_HHLC_TYPE;
 	float heath;
 };
 
@@ -364,11 +364,11 @@ public:
 	};
 
 	FSCoastDefBLDSPropertyData& operator = ( TMapScenario& refScenaData );
-	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_HLS_TYPE;
+	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_BLDS_TYPE;
 	float heath;
 };
 
-
+/* Ë®¼£¹ìÌõíÎ	 1010 */
 class   FSCoastDefGTZSUIJIPropertyData : public FSPropertyDataBase {
 public:
 
@@ -377,11 +377,11 @@ public:
 	};
 
 	FSCoastDefGTZSUIJIPropertyData& operator = ( TMapScenario& refScenaData );
-	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_HLS_TYPE;
+	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_GTZ_SUIJI_TYPE;
 	float heath;
 };
 
-
+/* ×è¾øº¾	 1010 */
 class   FSCoastDefZJHPropertyData : public FSPropertyDataBase {
 public:
 
@@ -390,7 +390,7 @@ public:
 	};
 
 	FSCoastDefZJHPropertyData& operator = ( TMapScenario& refScenaData );
-	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_HLS_TYPE;
+	static const ComponentTypeId STATIC_ENTITY_TYPE_ID = EEntityEquips::EEE_COASTDEF_ZJH_TYPE;
 	float heath;
 };
 

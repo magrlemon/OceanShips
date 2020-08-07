@@ -65,7 +65,7 @@ struct OceanShipSystem :public SystemT {
 		SCOPE_CYCLE_COUNTER(STAT_Explosion);
 
 		registry.view<FOceanShip, FRotationComponent,FVelocity>().each([&, dt](auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel) {
-
+			ArchetypeSpawnerSystem* SpawnerSystem= static_cast<ArchetypeSpawnerSystem*>( World->GetArchetypeSpawnerSystem( ) );
 		rotation.rot = vel.vel.Rotation().Quaternion();
 			//scale.scale = FVector((ex.LiveTime / ex.Duration)*ex.MaxScale);
 			//root->AddForceAtLocation( root->GetRightVector( )  * ship.BoatMass * ship.SteeringSpeed, loc );
