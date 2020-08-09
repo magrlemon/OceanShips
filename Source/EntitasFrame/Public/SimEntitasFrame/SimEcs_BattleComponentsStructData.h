@@ -387,6 +387,7 @@ struct FOceanShip {
 	bool ReverseMoveEnd = false;
 	bool bSpeedDown = false;
 	bool bRollBack = false;
+	FVector LastPos;
 	FVector MoveOnPos;
 	FVector MoveBackPos;
 	FVector AttackPos;

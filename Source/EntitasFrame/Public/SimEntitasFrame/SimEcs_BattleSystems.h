@@ -157,7 +157,30 @@ struct OceanShipSystem :public SystemT {
 		//EnableEffect(true);
 	}
 
-	void  HoldOn(FVector nextTargetPos = FVector::ZeroVector)
+	void RecordBoatDetail(FOceanShip& ship, ASimEcs_Archetype* boat)
+	{
+		//record Move Speed
+		boat->Speed = boat->MainStaticMesh ? boat->MainStaticMesh->GetPhysicsLinearVelocity().Size() : 0.0f;
+
+		//record move distance		
+		if (ship.LastPos.Equals(FVector::ZeroVector))
+			ship.LastPos = boat->GetActorLocation();
+		else
+		{
+			float move = (ship.LastPos - boat->MainStaticMesh->GetComponentLocation()).Size2D();
+
+			if (ship.MoveMode == EBoatMoveMode_On)
+				boat->SailDistance += move;
+			if (ship.bSpeedDown)
+				boat->SpeedDownDistance += move;
+			if (ship.bRollBack)
+				boat->RollbackDistance += move;
+
+			ship.LastPos = boat->MainStaticMesh->GetComponentLocation();
+		}
+	}
+
+	void HoldOn(FVector nextTargetPos = FVector::ZeroVector)
 	{
 
 	}
@@ -168,13 +191,15 @@ struct OceanShipSystem :public SystemT {
 		SCOPE_CYCLE_COUNTER(STAT_Explosion);
 
 		registry.view<FOceanShip, FRotationComponent,FVelocity>().each([&, dt](auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel) {
-			ArchetypeSpawnerSystem* SpawnerSystem= static_cast<ArchetypeSpawnerSystem*>( World->GetArchetypeSpawnerSystem( ) );
+			//ArchetypeSpawnerSystem* SpawnerSystem= static_cast<ArchetypeSpawnerSystem*>( World->GetArchetypeSpawnerSystem( ) );
 		FVector moveOnPos(-180180 + 5000, -370000 + 5000, -6600);
 		//rotation.rot = vel.vel.Rotation().Quaternion();
 		TSharedPtr<ASimEcs_Archetype>* boat = USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Find(entity);
 		if (boat)
-		{			
-			boat->Get()->EntityId = entity;
+		{	
+			RecordBoatDetail(ship, boat->Get());
+
+			//boat->Get()->EntityId = entity;
 			MainLoopLogic(ship, boat->Get()->ForceLocation, Cast<UStaticMeshComponent>(boat->Get()->GetRootComponent()));
 			
 			if(ship.MoveMode == EBoatMoveMode_Idle)
@@ -183,8 +208,8 @@ struct OceanShipSystem :public SystemT {
 			}
 			if(ship.MoveMode == EBoatMoveMode_On)
 			{
-				boat->Get()->EnableWaveForce(true);
-				boat->Get()->EnableBoatEffect(true);
+				//boat->Get()->EnableWaveForce(true);
+				//boat->Get()->EnableBoatEffect(true);
 			}
 
 			GEngine->AddOnScreenDebugMessage

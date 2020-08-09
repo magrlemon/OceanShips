@@ -17,8 +17,6 @@
 #include "SimEcs_Archetype.generated.h"
 
 
-
-
 class SimEcs_World;
 
 //base class for pure entity archetypes. This class cant be used directly, but can be spawned from an SimEcs spawner type system
@@ -27,9 +25,20 @@ class ENTITASFRAME_API ASimEcs_Archetype :  public AActor
 {
 	GENERATED_UCLASS_BODY()
 public:	
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OceanShip")
+		FVector ForceLocation;
+
 	UFUNCTION(BlueprintCallable, Category = "Game")
 		void GrapMesh(UStaticMeshComponent* mainMesh);
 	virtual void CreateNewEntityFromThis( uint64  handleID );
-	
+
+public:
+	float Speed;
+	float SailDistance;
+	float SailAngle;
+	float SpeedDownDistance;
+	float HorizontalDistance;
+	float RollbackDistance;
+	float RollbackAngle;
+	UStaticMeshComponent* MainStaticMesh;
 };

@@ -6,6 +6,7 @@
 #include "SlateExtras.h"
 #include "OceanBoats.h"
 //#include "SoldierLeaderboards.h"
+#include "SoldierScoreboardWidgetStyle.h"
 
 /** leaderboard row display information */
 struct FBoatboardRow
@@ -139,6 +140,8 @@ protected:
 	
 	/** Handle to the registered LoginComplete delegate */
 	FDelegateHandle OnLoginCompleteDelegateHandle;
+
+	const FSoldierScoreboardStyle* ScoreboardStyle;
 };
 
 

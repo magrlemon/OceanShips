@@ -8,6 +8,8 @@
 #include "GameModeInterface.h"
 #include "SoldierPlayerState.h"
 #include "Interface/BoatInterface.h"
+#include "SimEcs_Archetype.h"
+
 //FBoatboardRow::FBoatboardRow(const FOnlineStatsRow& Row)
 //	: Rank(FString::FromInt(Row.Rank))
 //	, PlayerName(Row.NickName)
@@ -36,6 +38,7 @@ void SBoatBoard::Construct(const FArguments& InArgs)
 	bReadingStats = false;
 
 	//LeaderboardReadCompleteDelegate = FOnLeaderboardReadCompleteDelegate::CreateRaw(this, &SBoatBoard::OnStatsRead);
+	ScoreboardStyle = &FArmySimStyle::Get().GetWidgetStyle<FSoldierScoreboardStyle>("DefaultSoldierScoreboardStyle");
 
 	ChildSlot
 	.VAlign(VAlign_Fill)
@@ -47,26 +50,32 @@ void SBoatBoard::Construct(const FArguments& InArgs)
 		[
 			SNew(SBox)  
 			.WidthOverride(BoxWidth)
-			.HeightOverride(1200)			
+			.HeightOverride(600)			
 			[
-				SAssignNew(RowListWidget, SListView< TSharedPtr<FBoatboardRow> >)
-				.ItemHeight(30)
-				.ListItemsSource(&StatRows)
-				.SelectionMode(ESelectionMode::Single)
-				.OnGenerateRow(this, &SBoatBoard::MakeListViewWidget)
-				.OnSelectionChanged(this, &SBoatBoard::EntrySelectionChanged)
-				.HeaderRow(
-				SNew(SHeaderRow)				
-					.Style(FArmySimStyle::Get(), "OceanBoats.Row.HeaderRowStyle")
-				+ SHeaderRow::Column("PlayerName").FixedWidth(BoxWidth/8) .DefaultLabel(NSLOCTEXT("LeaderBoard", "PlayerNameColumn", "BoatName"))
-				+ SHeaderRow::Column("Speed").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "PlayerSpeedColumn", "Speed"))
-				+ SHeaderRow::Column("SailAngle").FixedWidth(BoxWidth/8).DefaultLabel(NSLOCTEXT("LeaderBoard", "SailAngleColumn", "SailAngle"))
-				+ SHeaderRow::Column("SailDistance").FixedWidth(BoxWidth/8).DefaultLabel(NSLOCTEXT("LeaderBoard", "SailDistanceColumn", "SailDistance"))
-				+ SHeaderRow::Column("SpeedDownDistance").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "SpeedDownDistanceColumn", "SpeedDownDistance"))
-				+ SHeaderRow::Column("HorizontalDistance").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "HorizontalDistanceColumn", "HorizontalDistance"))
-				+ SHeaderRow::Column("RollbackDistance").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "RollbackDistanceColumn", "RollbackDistance"))
-				+ SHeaderRow::Column("RollbackAngle").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "RollbackAngleColumn", "RollbackAngle"))
-				)
+				SNew(SBorder)
+				.BorderBackgroundColor(FLinearColor(0.2f, 0.2f, 0.2f, 0.4f))
+				.BorderImage(&ScoreboardStyle->ItemBorderBrush)
+				[
+					SAssignNew(RowListWidget, SListView< TSharedPtr<FBoatboardRow> >)
+					.ItemHeight(30)
+					.ListItemsSource(&StatRows)
+					.SelectionMode(ESelectionMode::Single)
+					.OnGenerateRow(this, &SBoatBoard::MakeListViewWidget)
+					.OnSelectionChanged(this, &SBoatBoard::EntrySelectionChanged)
+					.HeaderRow(
+						SNew(SHeaderRow)
+						.Style(FArmySimStyle::Get(), "OceanBoats.Row.HeaderRowStyle")
+						+ SHeaderRow::Column("PlayerName").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "PlayerNameColumn", "BoatName"))
+						+ SHeaderRow::Column("Speed").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "PlayerSpeedColumn", "Speed"))
+						+ SHeaderRow::Column("SailAngle").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "SailAngleColumn", "SailAngle"))
+						+ SHeaderRow::Column("SailDistance").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "SailDistanceColumn", "SailDistance"))
+						+ SHeaderRow::Column("SpeedDownDistance").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "SpeedDownDistanceColumn", "SpeedDownDistance"))
+						+ SHeaderRow::Column("HorizontalDistance").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "HorizontalDistanceColumn", "HorizontalDistance"))
+						+ SHeaderRow::Column("RollbackDistance").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "RollbackDistanceColumn", "RollbackDistance"))
+						+ SHeaderRow::Column("RollbackAngle").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "RollbackAngleColumn", "RollbackAngle"))
+					)
+				]
+				
 			]
 		]
 		+ SVerticalBox::Slot()
@@ -184,21 +193,21 @@ void SBoatBoard::OnStatsRead(bool bWasSuccessful)
 	int num = playerState->GetBoats();
 	for (int i = 0; i < num; ++i)
 	{
-		AActor* boat = playerState->GetBoat(i);
+		ASimEcs_Archetype* boat = Cast<ASimEcs_Archetype>(playerState->GetBoat(i));
 		TSharedPtr<FBoatboardRow> NewRow = MakeShareable(new FBoatboardRow(boat->GetName()));
 		//NewRow->Kills = FString::FromInt(playerState->GetKilledBy(boat->GetUniqueID()));
 
-		NewRow->Speed = FText::AsNumber(IBoatInterface::Execute_GetSpeed(boat) * 0.01f, &NumberFormatOptions).ToString() + FString("m");
+		NewRow->Speed = FText::AsNumber(boat->Speed * 0.01f, &NumberFormatOptions).ToString() + FString("m");
 		//FString::SanitizeFloat(IBoatInterface::Execute_GetSpeed(boat) * 0.01f,3) + FString("m/s");
-		NewRow->SailAngle = FString::SanitizeFloat(IBoatInterface::Execute_GetSailAngle(boat));
-		NewRow->SailDistance = FText::AsNumber(IBoatInterface::Execute_GetSailDistance(boat) * 0.01f, &NumberFormatOptions).ToString() + FString("m");
+		NewRow->SailAngle = FString::SanitizeFloat(boat->SailAngle);
+		NewRow->SailDistance = FText::AsNumber(boat->SailDistance * 0.01f, &NumberFormatOptions).ToString() + FString("m");
 		//FString::SanitizeFloat(IBoatInterface::Execute_GetSailDistance(boat) * 0.01f,3) + FString("m");
-		NewRow->SpeedDownDistance = FText::AsNumber(IBoatInterface::Execute_GetSpeedDownDistance(boat) * 0.01f, &NumberFormatOptions).ToString() + FString("m");
+		NewRow->SpeedDownDistance = FText::AsNumber(boat->SpeedDownDistance * 0.01f, &NumberFormatOptions).ToString() + FString("m");
 			//FString::SanitizeFloat(IBoatInterface::Execute_GetSpeedDownDistance(boat) * 0.01f,3) + FString("m");
-		NewRow->HorizontalDistance = FString::SanitizeFloat(IBoatInterface::Execute_GetHorizontalDistance(boat) * 0.01f);
-		NewRow->RollbackDistance = FText::AsNumber(IBoatInterface::Execute_GetRollbackDistance(boat) * 0.01f, &NumberFormatOptions).ToString() + FString("m");
+		NewRow->HorizontalDistance = FString::SanitizeFloat(boat->HorizontalDistance * 0.01f);
+		NewRow->RollbackDistance = FText::AsNumber(boat->RollbackDistance * 0.01f, &NumberFormatOptions).ToString() + FString("m");
 			//FString::SanitizeFloat(IBoatInterface::Execute_GetRollbackDistance(boat) * 0.01f,3) + FString("m");
-		NewRow->RollbackAngle = FString::SanitizeFloat(IBoatInterface::Execute_GetRollbackAngle(boat));
+		NewRow->RollbackAngle = FString::SanitizeFloat(boat->RollbackAngle);
 		StatRows.Add(NewRow);
 	}
 	RowListWidget->RequestListRefresh();

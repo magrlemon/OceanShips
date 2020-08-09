@@ -534,13 +534,30 @@ int AOceanBoatsGameMode::GetKilledNum_Implementation(ObstacleType type)
 
 int AOceanBoatsGameMode::GetBoatNum_Implementation()
 {
-	return boats.Num();
+	return USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Num();//boats.Num();
 }
 
 AActor* AOceanBoatsGameMode::GetBoat_Implementation(int index)
 {
-	if(index < boats.Num())
-		return boats[index];
+	int num = USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Num();
+	int step = 0;
+	for (auto boat : USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes)
+	{
+		if (step == num)
+		{
+			break;
+		}
+		if (step != index)
+		{
+			step++;
+			continue;
+		}
+		else
+			return boat.Value.Get();
+
+	}
+	//if(index < boats.Num())
+	//	return boats[index];
 
 	return nullptr;
 }
