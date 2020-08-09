@@ -12,12 +12,11 @@
 USimOceanSceneManager_Singleton::USimOceanSceneManager_Singleton( const FObjectInitializer& ObjectInitializer )
 	: Super( ObjectInitializer )
 {
-
 	//m_gpsDataTransfer.InitData( );
 }
 
 void USimOceanSceneManager_Singleton::Initialize( ) {
-	MakeRoot(  );
+	MakeRoot( );
 }
 
 void USimOceanSceneManager_Singleton::GenOceanScenarioActor( ) {
@@ -46,7 +45,7 @@ void USimOceanSceneManager_Singleton::MakeRoot( ) {
 	m_ScenarioMeshTransform.SetLocation( m_vecScenarioMesh );
 
 	/* Barrier Area Region A */
-	m_ScenarioBarrierMeshTransform.SetRotation( FQuat::MakeFromEuler( FVector( 0.0f, 0.0f, 0.0f ) ) );
+	m_ScenarioBarrierMeshTransform.SetRotation( FQuat::MakeFromEuler( FVector( 0.0f, 0.0f, 180.0f ) ) );
 	m_ScenarioBarrierMeshTransform.SetLocation( m_vecScenarioBarrierMesh );
 
 }
@@ -157,6 +156,7 @@ FVector USimOceanSceneManager_Singleton::GetCovertScenePosition( FVector ImagePo
 	switch (erc) {
 	case E_BARRIER_POINT:
 	{
+		ConvertPixToWorldPositon( ImagePosition );
 		return m_ScenarioBarrierMeshTransform.TransformPosition( ImagePosition );
 	}
 	case E_SENERAIO_POINT:
@@ -174,6 +174,13 @@ FVector USimOceanSceneManager_Singleton::GetCovertScenePosition( FVector ImagePo
 
 	return FVector::ZeroVector;
 }
+
+void USimOceanSceneManager_Singleton::ConvertPixToWorldPositon( FVector& fPos ) {
+	fPos.X = (fPos.X / 3920)*(40800.0f);
+	fPos.Y = (fPos.Y / 1742)*(18600.0f);
+}
+
+
 
 DVector2 USimOceanSceneManager_Singleton::ConvertWorldPositonToLatLon( FVector fPos ) {
 	return m_gpsDataTransfer.GetLatLon( fPos );

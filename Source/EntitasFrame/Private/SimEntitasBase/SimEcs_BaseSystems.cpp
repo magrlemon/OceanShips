@@ -158,10 +158,10 @@ void ArchetypeSpawnerSystem::update(SimEcs_Registry &registry, float dt)
 			if (spawner.ArchetypeClass)
 			{ 
 				ESceneRelevantConv esrc = spawner.ActorType < 1000 ? ESceneRelevantConv::E_SENERAIO_POINT : ESceneRelevantConv::E_BARRIER_POINT;
-				FVector relativePos; relativePos.Set( SpawnPosition.X*100.0f, SpawnPosition.Y*100.0f, 0 );
+				FVector relativePos; relativePos.Set( SpawnPosition.X, SpawnPosition.Y, SpawnPosition.Z );
 				relativePos = USimOceanSceneManager_Singleton::GetInstance( )->GetCovertScenePosition( relativePos , esrc );
 				SpawnFromArchetype( registry, spawner.entHandleId, spawner.ArchetypeClass , relativePos, quatRot );
-				registry.accommodate<FPosition>( spawner.entHandleId, SpawnPosition);
+				registry.accommodate<FPosition>( spawner.entHandleId, relativePos );
 			}
 
 			if (spawner.bLoopSpawn)
@@ -241,8 +241,6 @@ void RaycastSystem::update(SimEcs_Registry &registry, float dt)
 			
 			registry.accommodate<FRaycastResult>(entity, hit);		
 
-			FString strInfor = TEXT( "FMovementRaycast 002" );
-			USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
 
 		}
 	});	
@@ -256,7 +254,7 @@ void BarrierFixedRaycastSystem::update(SimEcs_Registry &registry, float dt)
 	SCOPE_CYCLE_COUNTER(STAT_ECSBarFixedRaycast);
 
 	//check all the raycast results from the async raycast
-	registry.view<FPosition,FBarrierFixedRaycastResult>().each([&, dt](auto entity, FPosition& pos, FBarrierFixedRaycastResult & ray) {
+	registry.view<FPosition,FBarrierFixedRaycastResult, FHealth>().each([&, dt](auto entity, FPosition& pos, FBarrierFixedRaycastResult & ray, FHealth & health) {
 		FHitResult  HitResult(ForceInit);
 		FVector fPos, dir;
 		auto archtype = USimOceanSceneManager_Singleton::GetInstance( )->FindArchetype( entity );
@@ -275,15 +273,18 @@ void BarrierFixedRaycastSystem::update(SimEcs_Registry &registry, float dt)
 		UWorld* World = GEngine->GameViewport->GetWorld( );
 		World->LineTraceSingleByChannel(HitResult, beginPos, posEnd, ECC_WorldStatic, cqq);
 
-		DrawDebugLine( World, beginPos, posEnd, FColor::Black, true, 5.0f);
+		DrawDebugLine( World, beginPos, posEnd, FColor::Green, true, 5.0f);
 		if (HitResult.GetActor())
 		{
 			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(HitResult.PhysMaterial.Get());
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, HitResult.GetActor()->GetName());
 			auto archeType = USimOceanSceneManager_Singleton::GetInstance()->FindArchetype(entity);
 			if (archeType && archeType.Get()->GetRootComponent()) {
-				pos.pos = pos.pos + dir * -10.0f;
-				archeType.Get()->GetRootComponent()->SetWorldLocation( pos.pos );
+				pos.pos = posEnd + dir * -1015.0f;
+				USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( pos.pos.ToString());
+				//archeType.Get()->GetRootComponent()->SetWorldLocation( pos.pos );
+				//archeType.Get( )->SetActorEnableCollision( true );
+				//CastChecked<UPrimitiveComponent>( archeType.Get( )->GetRootComponent( ) )->SetSimulatePhysics( true );
 			}
 		}
 	});

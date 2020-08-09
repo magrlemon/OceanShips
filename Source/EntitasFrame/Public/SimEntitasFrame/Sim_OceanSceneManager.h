@@ -83,6 +83,8 @@ public:
 
 	DVector2 ConvertWorldPositonToLatLon( FVector fPos );
 
+	void ConvertPixToWorldPositon( FVector& fPos );
+
 	SimEcs_Registry * GetSimRegistry() ;
 
 

@@ -70,13 +70,13 @@ void ASimContextDataTankEnvironment::SerializeStructure( TMapScenario & refScena
 		if (key.Key.Compare( TEXT( "编号" ) ) == 0) {
 			m_STPropData.entID = *(key.Value);
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "x" ) ) == 0) {
@@ -141,13 +141,13 @@ void ASimContextDataCharactorEnvironment::SerializeStructure( TMapScenario & ref
 		if (key.Key.Compare( TEXT( "编号" ) ) == 0) {
 			m_STPropData.entID = *(key.Value);
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "x" ) ) == 0) {
@@ -193,13 +193,13 @@ void ASimContextDataHelicopterEnvironment::SerializeStructure( TMapScenario & re
 		if (key.Key.Compare( TEXT( "编号" ) ) == 0) {
 			m_STPropData.entID = *(key.Value);
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "x" ) ) == 0) {
@@ -251,15 +251,15 @@ void ASimContextDataAirCraftEnvironment::SerializeStructure( TMapScenario & refS
 			m_STPropData.entID = *(key.Value);
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
@@ -544,15 +544,15 @@ void ASimContextDataVehicle4WEnvironment::SerializeStructure( TMapScenario & ref
 			m_STPropData.entID = *(key.Value);
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
@@ -1048,6 +1048,7 @@ void ASimContextDataHLSEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 
 		_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1064,15 +1065,15 @@ void ASimContextDataHLSEnvironment::SerializeStructure( TMapScenario & refScenar
 			m_STPropData.entID = *(key.Value);
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "Type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -1135,6 +1136,7 @@ void ASimContextDataSJZEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 
 		_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1152,15 +1154,15 @@ void ASimContextDataSJZEnvironment::SerializeStructure( TMapScenario & refScenar
 			m_STPropData.entID = *(key.Value);
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "Type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -1221,6 +1223,7 @@ void ASimContextDataGCWEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 
 		_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
@@ -1238,15 +1241,15 @@ void ASimContextDataGCWEnvironment::SerializeStructure( TMapScenario & refScenar
 			m_STPropData.entID = *(key.Value);
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "Type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -1309,6 +1312,7 @@ void ASimContextDataTSWSFEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSim
 
 		_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1327,15 +1331,15 @@ void ASimContextDataTSWSFEnvironment::SerializeStructure( TMapScenario & refScen
 			m_STPropData.entID = *(key.Value);
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "Type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -1397,6 +1401,7 @@ void ASimContextDataTSWYLEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSim
 
 		_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1415,15 +1420,15 @@ void ASimContextDataTSWYLEnvironment::SerializeStructure( TMapScenario & refScen
 			m_STPropData.entID = *(key.Value);
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "Type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -1483,6 +1488,7 @@ void ASimContextDataZGQEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 
 		_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1501,15 +1507,15 @@ void ASimContextDataZGQEnvironment::SerializeStructure( TMapScenario & refScenar
 			m_STPropData.entID = *(key.Value);
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "Type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -1570,6 +1576,7 @@ void ASimContextDataHHLCEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimE
 
 		_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1588,15 +1595,15 @@ void ASimContextDataHHLCEnvironment::SerializeStructure( TMapScenario & refScena
 			m_STPropData.entID = *(key.Value);
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "Type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -1656,6 +1663,7 @@ void ASimContextDataBLDSEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimE
 
 		_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1674,15 +1682,15 @@ void ASimContextDataBLDSEnvironment::SerializeStructure( TMapScenario & refScena
 			m_STPropData.entID = *(key.Value);
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "Type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -1742,6 +1750,7 @@ void ASimContextDataGTZSUIJIEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> p
 
 		_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1760,15 +1769,15 @@ void ASimContextDataGTZSUIJIEnvironment::SerializeStructure( TMapScenario & refS
 			m_STPropData.entID = *(key.Value);
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "Type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -1827,6 +1836,7 @@ void ASimContextDataZJHEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 
 		_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1845,15 +1855,15 @@ void ASimContextDataZJHEnvironment::SerializeStructure( TMapScenario & refScenar
 			m_STPropData.entID = *(key.Value);
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Name" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "Type" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "Type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "dir" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}

@@ -142,7 +142,7 @@ public:
 
 		WrapperDataInitializer wdl ;
 		wdl.GrapData<u64>( std::forward<ARGS>( args )... );
-		if (wdl.jsonValue.IsEmpty( ))
+		if (wdl.jsonValue.IsEmpty( ) && wdl.uHandleID<=0)
 			return nullptr;
 
 		// aqcuire memory for new component object of type T

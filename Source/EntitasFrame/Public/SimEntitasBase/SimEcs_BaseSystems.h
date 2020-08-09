@@ -30,11 +30,8 @@ struct DebugDrawSystem :public SystemT {
 		elapsed = UpdateRate;
 
 		registry.view<FDebugSphere, FPosition>().each([&,dt](auto entity, FDebugSphere & ds, FPosition & pos) {
-			FString strInfor = TEXT( "DebugDrawSystem 2" );
-			USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
 			SCOPE_CYCLE_COUNTER(STAT_DebugDraw);
 			DrawDebugSphere(OwnerActor->GetWorld(),pos.pos,ds.radius,12,ds.color,true,UpdateRate);
-			
 		});
 	}
 };
@@ -50,14 +47,12 @@ struct MovementSystem :public SystemT {
 		//movement raycast gets a "last position" component
 		registry.view<FMovementRaycast,FPosition>().each([&, dt](auto entity,FMovementRaycast & ray, FPosition & pos) {
 			registry.accommodate<FLastPosition>(entity, pos.pos);
-			FString strInfor = TEXT( "FMovementRaycast 2" );
-			USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
+
 		});
 
 		//add gravity and basic movement from velocity
 		registry.view<FMovement, FPosition, FVelocity>().each([&, dt](auto entity, FMovement & m, FPosition & pos, FVelocity & vel) {
-			FString strInfor = TEXT( "MovementSystem 0" );
-			USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
+
 			//gravity
 			const FVector gravity = FVector(0.f, 0.f, -980) * m.GravityStrenght;
 			vel.Add(gravity*dt);
@@ -117,8 +112,7 @@ struct CopyTransformToECSSystem :public SystemT {
 			SCOPE_CYCLE_COUNTER(STAT_UnpackActorTransform);
 			//unpack from ActorTransform into the separate transform components, only if the entity does have that component
 			registry.view<FActorTransform, FPosition>().each([&, dt](auto entity, FActorTransform & transform, FPosition & pos) {
-				FString strInfor = TEXT( "CopyTransformToECSSystem" );
-				USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
+
 			
 				pos.pos = transform.transform.GetLocation();
 			});

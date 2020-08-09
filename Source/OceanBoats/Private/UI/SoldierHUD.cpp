@@ -772,7 +772,7 @@ void ASoldierHUD::DrawDeathMessages()
 	const float BoxPadding = 2.0f;
 	const float MaxLineX = 300.0f;
 	const float InitialX = Offset * 2.0f * ScaleUI;
-	const float InitialY = DeathMsgsPosY + (DeathMessagesBg.VL - Offset * 2.5f) * ScaleUI;
+	const float InitialY = DeathMsgsPosY + (DeathMessagesBg.VL - Offset * 2.5f) * ScaleUI*1.5f;
 
 	// draw messages
 	float CurrentY = InitialY;
@@ -789,13 +789,13 @@ void ASoldierHUD::DrawDeathMessages()
 		FVector2D VictimNameSize(0.0f, 0.0f);
 		float TextScale = 1.00f;
 		Canvas->StrLen(NormalFont, Message.KillerDesc, KillerSize.X, KillerSize.Y);
-		TextItem.Scale = FVector2D( TextScale * ScaleUI*0.5f, TextScale * ScaleUI*0.5f );
+		TextItem.Scale = FVector2D( TextScale * ScaleUI*0.4f, TextScale * ScaleUI*0.4f );
 		TextItem.FontRenderInfo = ShadowedFont;
 		TextItem.SetColor(Message.bKillerIsOwner == true ? HUDLight : ( Message.KillerTeamNum == 0 ? RedTeamColor : BlueTeamColor));
 
 		TextItem.Text = FText::FromString( Message.KillerDesc );
 		Canvas->DrawItem(TextItem, CurrentX, CurrentY);
-		CurrentX += KillerSize.X * TextScale * ScaleUI*0.5f;
+		CurrentX += KillerSize.X * TextScale * ScaleUI*0.4f;
 		
 		if (Message.DamageType.IsValid())
 		{
@@ -809,12 +809,12 @@ void ASoldierHUD::DrawDeathMessages()
 		else
 		{
 			TextItem.Text = FText::FromString( KilledText );
-			TextItem.Scale = FVector2D( TextScale * ScaleUI*0.5f, TextScale * ScaleUI*0.5f );
+			TextItem.Scale = FVector2D( TextScale * ScaleUI*0.4f, TextScale * ScaleUI*0.4f );
 			TextItem.FontRenderInfo = ShadowedFont;
 			TextItem.SetColor(HUDDark);
 			Canvas->DrawItem( TextItem, CurrentX, CurrentY );
 
-			CurrentX += KilledTextSize.X * TextScale * ScaleUI*0.5f;
+			CurrentX += KilledTextSize.X * TextScale * ScaleUI*0.4f;
 		}
 			
 		TextItem.SetColor(Message.bVictimIsOwner == true ? HUDLight : (Message.VictimTeamNum == 0 ? RedTeamColor : BlueTeamColor));		
@@ -822,7 +822,7 @@ void ASoldierHUD::DrawDeathMessages()
 		Canvas->StrLen(NormalFont, Message.VictimDesc, VictimNameSize.X, VictimNameSize.Y);
 		TextItem.Text = FText::FromString( Message.VictimDesc );
 		Canvas->DrawItem( TextItem, CurrentX, CurrentY );
-		CurrentY -= (KilledTextSize.Y + LinePadding) * TextScale * ScaleUI*0.5f;
+		CurrentY -= (KilledTextSize.Y + LinePadding) * TextScale * ScaleUI*0.4f;
 	}
 }
 
