@@ -1,5 +1,6 @@
 #include "SimEcs_BaseSystems.h"
 #include "SimEcs_BattleComponents.h"
+#include "DestructibleComponent.h"
 
 DECLARE_CYCLE_STAT(TEXT("SimEcs: Instance Mesh Prepare"), STAT_InstancedMeshPrepare, STATGROUP_ECS);
 DECLARE_CYCLE_STAT(TEXT("SimEcs: Instance Mesh Draw"), STAT_InstancedMeshDraw, STATGROUP_ECS);
@@ -279,12 +280,31 @@ void BarrierFixedRaycastSystem::update(SimEcs_Registry &registry, float dt)
 			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(HitResult.PhysMaterial.Get());
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, HitResult.GetActor()->GetName());
 			auto archeType = USimOceanSceneManager_Singleton::GetInstance()->FindArchetype(entity);
-			if (archeType && archeType.Get()->GetRootComponent()) {
-				pos.pos = posEnd + dir * -1015.0f;
-				USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( pos.pos.ToString());
-				//archeType.Get()->GetRootComponent()->SetWorldLocation( pos.pos );
-				//archeType.Get( )->SetActorEnableCollision( true );
-				//CastChecked<UPrimitiveComponent>( archeType.Get( )->GetRootComponent( ) )->SetSimulatePhysics( true );
+			auto  SceneComponent = archeType.Get()->GetRootComponent();
+			if (archeType && SceneComponent) {
+				pos.pos = posEnd + dir * -800.0f;
+				//USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( pos.pos.ToString());
+				SceneComponent->SetWorldLocation( pos.pos );
+				archeType.Get( )->SetActorEnableCollision( true );
+				
+					/*if(UStaticMeshComponent* ChildComponent  = Cast<UStaticMeshComponent>(SceneComponent->GetAttachParent()))
+					{
+						ChildComponent->SetSimulatePhysics(true);
+					}*/
+					for (int32 ChildIndex = 0; ChildIndex < SceneComponent->GetNumChildrenComponents(); ++ChildIndex)
+					{
+						if (UDestructibleComponent* ChildComponent = Cast<UDestructibleComponent>(SceneComponent->GetChildComponent(ChildIndex)))
+						{
+							//USimOceanSceneManager_Singleton::GetInstance()->DebugLogger(pos.pos.ToString());
+							ChildComponent->SetSimulatePhysics(true);
+						}
+						else if (UStaticMeshComponent* ChildComponent = Cast<UStaticMeshComponent>(SceneComponent->GetChildComponent(ChildIndex)))
+						{
+							//USimOceanSceneManager_Singleton::GetInstance()->DebugLogger(pos.pos.ToString());
+							ChildComponent->SetSimulatePhysics(true);
+						}
+					}
+				//CastChecked<UStaticMeshComponent>( archeType.Get( )->GetRootComponent( )->GetChildComponent() )->SetSimulatePhysics( true );
 			}
 		}
 	});
