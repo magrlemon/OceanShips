@@ -490,6 +490,11 @@ void AOceanBoatsGameMode::StartMove_Implementation()
 		IBoatInterface::Execute_SpeedUp(boats[i]);
 	}*/
 	InitBehaviac( );
+	//FVector moveOnPos(-180180 + 5000, -370000 + 5000, -6600);
+	//for (auto& VT : USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes)
+	//{
+	//	VT.Value->MoveOn(moveOnPos);
+	//}
 }
 
 void AOceanBoatsGameMode::AddBoat_Implementation(AActor* boat)

@@ -12,10 +12,20 @@
 */
 
 #pragma once
-
+#include "Engine/EngineTypes.h"
 #include "SimEcs_Platform.h"
 #include "SimEcs_BattleComponentsStructData.generated.h"
 
+UENUM()
+enum BoatMoveMode
+{
+	EBoatMoveMode_On,
+	EBoatMoveMode_Back,
+	EBoatMoveMode_Fire,/*
+	EMoveMode_SpeedUp,
+	EMoveMode_SpeedDown,*/
+	EBoatMoveMode_Idle
+};
 
 
 //代理生成坐标点
@@ -351,8 +361,24 @@ struct FOceanShip {
 		float AccSpeedDownDistance = 0.0f;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
 		float AccRollbakDistance = 0.0f;
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
-		float ForwardAxisValue;
+		
+	BoatMoveMode MoveMode = BoatMoveMode::EBoatMoveMode_Idle;
+	UStaticMeshComponent* MainMeshComponent;
+	float ForwardAxisValue;
+	float RightAxisValue;
+	float CurrentSpeed = 0;
+	float ExpectSpeed = 0;
+	bool FireEnd = false;
+	int FireIndex = 0;
+	float FireTime;
+	int TurnIndex = 0;
+	bool ReverseMoveEnd = false;
+	bool bSpeedDown = false;
+	bool bRollBack = false;
+	FVector MoveOnPos;
+	FVector MoveBackPos;
+	FVector AttackPos;
+	FTimerHandle DelayHandler;
 };
 
 USTRUCT(BlueprintType)

@@ -17,7 +17,7 @@
 #include "SimEcs_BaseComponents.h"
 #include "SimEcs_Archetype.h"
 #include "SimEcs_BattleComponents.h"
-
+#include "Engine/Console.h"
 #include "LinearMemory.h"
 
 DECLARE_CYCLE_STAT(TEXT("SimEcs: Explosion System"), STAT_Explosion, STATGROUP_ECS);
@@ -58,6 +58,109 @@ struct ExplosionSystem :public SystemT {
 
 struct OceanShipSystem :public SystemT {
 	
+	FRotator MakeRotFromX(const FVector& X)
+	{
+		return FRotationMatrix::MakeFromX(X).Rotator();
+	}
+
+	FRotator FindLookAtRotation(const FVector& Start, const FVector& Target)
+	{
+		const FVector fLerpValue = FMath::Lerp(Target, Start, 0.001);
+		FVector fValue = Target - fLerpValue;
+		fValue.Z = 0.0;
+		float dist = FVector::Dist(Target, Start);
+		if (dist < 5000.0f) {
+			MakeRotFromX(fValue);
+		}
+		return MakeRotFromX(fValue);
+	}
+
+	//void TickMove(FOceanShip& ship, FVector loc, UPrimitiveComponent* root)
+	//{
+	//	if (ship.MoveMode == EBoatMoveMode_Idle)
+	//		return;
+
+	//	root->AddForceAtLocation(root->GetRightVector() * ship.RightAxisValue * root->GetMass() * ship.SteeringSpeed, loc);
+	//	root->AddForce(root->GetForwardVector() * root->GetMass() * ship.ForwardAxisValue * ship.ForwardSpeed);
+	//}
+
+	void CheckSpeedUp(FOceanShip& ship)
+	{
+		if (ship.MoveMode == EBoatMoveMode_On || ship.MoveMode == EBoatMoveMode_Back)
+		{
+			if (abs(ship.CurrentSpeed - ship.ExpectSpeed) > ship.StepSpeed*0.99)
+			{
+				if (ship.CurrentSpeed > ship.ExpectSpeed)
+				{
+					ship.bSpeedDown = true;
+					ship.CurrentSpeed = (ship.CurrentSpeed - ship.StepSpeed) > 0 ? (ship.CurrentSpeed - ship.StepSpeed) : 0;
+				}
+				else
+				{
+					ship.bSpeedDown = false;
+					ship.CurrentSpeed = (ship.CurrentSpeed + ship.StepSpeed) < ship.ExpectSpeed ? (ship.CurrentSpeed + ship.StepSpeed) : ship.ExpectSpeed;
+				}
+			}
+			else//fire
+			{
+				//if (MoveMode == EMoveMode_On && (abs(CurrentSpeed) < StepSpeed*0.99))
+				//{
+				//	SetMoveMode(EMoveMode_Idle);
+				//}
+			}
+		}
+	}
+
+	void MainLoopLogic(FOceanShip& ship, FVector forceLocation, UStaticMeshComponent* root)
+	{
+		ship.MainMeshComponent = root;
+		if (ship.MoveMode == EBoatMoveMode_Idle)
+			return;
+
+		root->AddForceAtLocation(root->GetRightVector() * ship.RightAxisValue * root->GetMass() * ship.SteeringSpeed, forceLocation);
+		root->AddForce(root->GetForwardVector() * root->GetMass() * ship.ForwardAxisValue * ship.ForwardSpeed);
+
+		ship.ForwardAxisValue = ship.CurrentSpeed;
+		CheckSpeedUp(ship);
+
+		if (ship.MoveMode == EBoatMoveMode_On)
+		{
+			ship.bRollBack = false;
+			FRotator rot;
+			rot.Yaw = FindLookAtRotation(ship.MainMeshComponent->GetComponentLocation(), ship.MoveOnPos).Yaw;
+
+			if (ship.MainMeshComponent != NULL)
+			{
+				ship.MainMeshComponent->SetWorldRotation(rot);
+			}
+		}
+	}
+
+	void CatchBoat(FOceanShip& ship)
+	{
+		GEngine->AddOnScreenDebugMessage
+		(
+			0,
+			2, 			//	显示的时间/秒
+			FColor::Yellow, 	//	显示的颜色
+			FString("No BoatAcheTypep---") + FString::FromInt(ship.MoveMode)	//	显示的信息
+		);
+	}
+
+	void Active_MoveOn(FOceanShip& ship, FVector targetPos = FVector::ZeroVector)
+	{
+		ship.MoveOnPos = targetPos;
+		ship.MoveMode = BoatMoveMode::EBoatMoveMode_On;
+		ship.ExpectSpeed = 1.0f;
+		ship.MainMeshComponent->SetSimulatePhysics(true);
+		//EnableBuoyancyForce(true);
+		//EnableEffect(true);
+	}
+
+	void  HoldOn(FVector nextTargetPos = FVector::ZeroVector)
+	{
+
+	}
 
 	void update(SimEcs_Registry &registry, float dt) override
 	{
@@ -65,12 +168,38 @@ struct OceanShipSystem :public SystemT {
 		SCOPE_CYCLE_COUNTER(STAT_Explosion);
 
 		registry.view<FOceanShip, FRotationComponent,FVelocity>().each([&, dt](auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel) {
-			ArchetypeSpawnerSystem* SpawnerSystem= static_cast<ArchetypeSpawnerSystem*>( World->GetArchetypeSpawnerSystem( ) );
-		rotation.rot = vel.vel.Rotation().Quaternion();
-			//scale.scale = FVector((ex.LiveTime / ex.Duration)*ex.MaxScale);
-			//root->AddForceAtLocation( root->GetRightVector( )  * ship.BoatMass * ship.SteeringSpeed, loc );
-		//	root->AddForce( root->GetForwardVector( ) * ship.BoatMass * ship.ForwardAxisValue * ship.ForwardSpeed );
 
+		FVector moveOnPos(-180180 + 5000, -370000 + 5000, -6600);
+		//rotation.rot = vel.vel.Rotation().Quaternion();
+		TSharedPtr<ASimEcs_Archetype>* boat = USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Find(entity);
+		if (boat)
+		{			
+			boat->Get()->EntityId = entity;
+			MainLoopLogic(ship, boat->Get()->ForceLocation, Cast<UStaticMeshComponent>(boat->Get()->GetRootComponent()));
+			
+			if(ship.MoveMode == EBoatMoveMode_Idle)
+			{
+				Active_MoveOn(ship, moveOnPos);
+			}
+			if(ship.MoveMode == EBoatMoveMode_On)
+			{
+				boat->Get()->EnableWaveForce(true);
+				boat->Get()->EnableBoatEffect(true);
+			}
+
+			GEngine->AddOnScreenDebugMessage
+			(
+				0,
+				2, 			//	显示的时间/秒
+				FColor::Yellow, 	//	显示的颜色
+				FString("----Ship Mode-----")+FString::FromInt(ship.MoveMode)	//	显示的信息
+			);
+		}
+		else
+		{
+			CatchBoat(ship);
+		}
+			
 		});
 
 
