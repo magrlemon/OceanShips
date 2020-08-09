@@ -42,21 +42,32 @@ public:
 		return gSingletonScene;
 	};
 
-	
+	using EntityHandleId = uint64_t;
+	TMap<EntityHandleId, TSharedPtr<ASimEcs_Archetype>> m_MapArchetypes;
 private:
 	static USimOceanSceneManager_Singleton* gSingletonScene;
-
+	TArray<FString> BrocastMessages;
 public:
 
 	void MakeRoot( );
 	/* initialize date */
 	void Initialize( );
-
 	// generate Ocean Actor
-	void GenOceanActorBarrier( );
-
+	void GenOceanScenarioActor( );
 	//generate Barrier
-	void GenOceanDefanceBarrier( );
+	void GenOceanScenarioBarrier( );
+
+	/*get arcthtype by entity*/
+	TSharedPtr<ASimEcs_Archetype>  FindArchetype(EntityHandleId handleID);
+	//////////////////////////////////////////////////////////////////////////
+	/*
+	// the message for ecs system
+	*/
+	bool IsHavSimMessage( );
+	void RemoveSimMessage( );
+	void PushSimMessage( FString& strMsg );
+	TArray<FString>& CopySimMessage( );
+	//////////////////////////////////////////////////////////////////////////
 
 	//get tag
 	TSharedPtr<AActor> GetSimActorWithTag(  FString& strTag );
@@ -99,15 +110,15 @@ public:
 
 		UPROPERTY( EditAnywhere, AdvancedDisplay, BlueprintReadWrite, Category = "Ocean Boats Settings" )
 			FVector m_vecScenarioMesh = FVector( -180180.0f, -370000.0f, -6600.0f );
+ 
+		/* Barrier Area Region A */
 		UPROPERTY( EditAnywhere, AdvancedDisplay, BlueprintReadWrite, Category = "Ocean Boats Settings" )
-			FVector m_vecScenarioBarrierMesh = FVector( -112500.0f, -135850.0f, -6600.0f ); 
+			FVector m_vecScenarioBarrierMesh = FVector( -112500.0f, -135850.0f, -6600.0f );
 
 		FTransform m_ScenarioMeshTransform;
 
 		FTransform m_ScenarioBarrierMeshTransform;
-public:
-	using EntityHandleId = uint64_t;
-	TMap<EntityHandleId, TSharedPtr<ASimEcs_Archetype>> m_MapArchetypes;
+
 private:
 	bool m_bLoadSuccess = false;
 	bool m_bLoadScenario = false;
@@ -115,4 +126,7 @@ private:
 
 	/* data be stored here*/
 	GpsDataTransfer m_gpsDataTransfer;
+
+	TArray<FString> m_arrSimMessage;
+
 };

@@ -78,6 +78,8 @@ public:
 	/** notify local client about deaths */
 	void OnDeathMessage(class ASoldierPlayerState* KillerPlayerState, class ASoldierPlayerState* KilledPlayerState, const UDamageType* KillerDamageType);
 
+	void OnBroadcastMessage( const FString& strFrom, const FString& strTo );
+
 	void OnToggleGameMainMenu( );
 	/** toggle InGameMenu handler */
 	void OnToggleInGameMenu();
@@ -305,6 +307,9 @@ public:
 	/** Notifies the server that the client has suicided */
 	UFUNCTION(reliable, server, WithValidation)
 	void ServerSuicide();
+
+	/* show broadcast information*/
+	void ShowBroadcastMessage( );
 
 	/** Updates achievements based on the PersistentUser stats at the end of a round */
 	void UpdateAchievementsOnGameEnd();

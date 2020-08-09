@@ -931,8 +931,6 @@ ASimContextDataGTZEnvironment::ASimContextDataGTZEnvironment( const FObjectIniti
 	: ASimEnvironment( ObjectInitializer ) {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-
-
 	// ...
 }
 
@@ -940,6 +938,7 @@ ASimContextDataGTZEnvironment::ASimContextDataGTZEnvironment( const FObjectIniti
 
 void ASimContextDataGTZEnvironment::BeginPlay( ) {
 	// ...
+
 }
 
 
@@ -952,11 +951,15 @@ void ASimContextDataGTZEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefGTZPropertyData>, int32, FVector>( 
 			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
-
+		if (pEnt) {
+			FString simMsg = FString::Printf( TEXT( "Create GTZ Actor's Name is : %s" ), *m_STPropData.entName   );
+			USimOceanSceneManager_Singleton::GetInstance( )->PushSimMessage( simMsg );
+		}
 #define  _GEN_COMPONENT_(TYPE)\
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
+			_GEN_COMPONENT_(BarrierFixedRaycast)
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1018,13 +1021,13 @@ ASimContextDataHLSEnvironment::ASimContextDataHLSEnvironment( const FObjectIniti
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 
-
 	// ...
 }
 // Called when the game starts
 
 void ASimContextDataHLSEnvironment::BeginPlay( ) {
 	// ...
+
 }
 
 
@@ -1036,11 +1039,15 @@ void ASimContextDataHLSEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefHLSPropertyData>, int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
-
+		if (pEnt) {
+			FString simMsg = FString::Printf( TEXT( "Create HLS Actor's Name is : %s" ), *m_STPropData.entName );
+			USimOceanSceneManager_Singleton::GetInstance( )->PushSimMessage( simMsg );
+		}
 #define  _GEN_COMPONENT_(TYPE)\
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
+			_GEN_COMPONENT_(BarrierFixedRaycast)
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1100,13 +1107,13 @@ ASimContextDataSJZEnvironment::ASimContextDataSJZEnvironment( const FObjectIniti
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 
-
 	// ...
 }
 
 // Called when the game starts
 void ASimContextDataSJZEnvironment::BeginPlay( ) {
 	// ...
+
 }
 
 
@@ -1119,11 +1126,15 @@ void ASimContextDataSJZEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>(
 			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
-
+		if (pEnt) {
+			FString simMsg = FString::Printf( TEXT( "Create SJZ Actor's Name is : %s" ), *m_STPropData.entName );
+			USimOceanSceneManager_Singleton::GetInstance( )->PushSimMessage( simMsg );
+		}
 #define  _GEN_COMPONENT_(TYPE)\
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
+			_GEN_COMPONENT_(BarrierFixedRaycast)
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1183,15 +1194,13 @@ ASimContextDataGCWEnvironment::ASimContextDataGCWEnvironment( const FObjectIniti
 	: ASimEnvironment( ObjectInitializer ) {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-
-
-	// ...
 }
 
 // Called when the game starts
 
 void ASimContextDataGCWEnvironment::BeginPlay( ) {
 	// ...
+
 }
 
 
@@ -1203,11 +1212,15 @@ void ASimContextDataGCWEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefGTZPropertyData>, int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
-
+		if (pEnt) {
+			FString simMsg = FString::Printf( TEXT( "Create GCW Actor's Name is : %s" ), *m_STPropData.entName );
+			USimOceanSceneManager_Singleton::GetInstance( )->PushSimMessage( simMsg );
+		}
 #define  _GEN_COMPONENT_(TYPE)\
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
+			_GEN_COMPONENT_(BarrierFixedRaycast)
 			_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
@@ -1269,13 +1282,13 @@ ASimContextDataTSWSFEnvironment::ASimContextDataTSWSFEnvironment( const FObjectI
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 
-
 	// ...
 }
 // Called when the game starts
 
 void ASimContextDataTSWSFEnvironment::BeginPlay( ) {
 	// ...
+
 }
 
 
@@ -1287,11 +1300,15 @@ void ASimContextDataTSWSFEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSim
 
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefHLSPropertyData>, int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
-
+		if (pEnt) {
+			FString simMsg = FString::Printf( TEXT( "Create TSWSF Actor's Name is : %s" ), *m_STPropData.entName );
+			USimOceanSceneManager_Singleton::GetInstance( )->PushSimMessage( simMsg );
+		}
 #define  _GEN_COMPONENT_(TYPE)\
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
+			_GEN_COMPONENT_(BarrierFixedRaycast)
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1353,13 +1370,13 @@ ASimContextDataTSWYLEnvironment::ASimContextDataTSWYLEnvironment( const FObjectI
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 
-
 	// ...
 }
 
 // Called when the game starts
 void ASimContextDataTSWYLEnvironment::BeginPlay( ) {
 	// ...
+
 }
 
 
@@ -1371,11 +1388,15 @@ void ASimContextDataTSWYLEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSim
 
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
-
+		if (pEnt) {
+			FString simMsg = FString::Printf( TEXT( "Create TSWYL Actor's Name is : %s" ), *m_STPropData.entName );
+			USimOceanSceneManager_Singleton::GetInstance( )->PushSimMessage( simMsg );
+		}
 #define  _GEN_COMPONENT_(TYPE)\
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
+			_GEN_COMPONENT_(BarrierFixedRaycast)
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1461,6 +1482,7 @@ void ASimContextDataZGQEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
+			_GEN_COMPONENT_(BarrierFixedRaycast)
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1547,6 +1569,7 @@ void ASimContextDataHHLCEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimE
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
+			_GEN_COMPONENT_(BarrierFixedRaycast)
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1632,6 +1655,7 @@ void ASimContextDataBLDSEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimE
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
+			_GEN_COMPONENT_(BarrierFixedRaycast)
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1717,6 +1741,7 @@ void ASimContextDataGTZSUIJIEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> p
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
+			_GEN_COMPONENT_(BarrierFixedRaycast)
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1801,6 +1826,7 @@ void ASimContextDataZJHEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
+			_GEN_COMPONENT_(BarrierFixedRaycast)
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 

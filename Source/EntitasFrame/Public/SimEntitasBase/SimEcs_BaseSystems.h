@@ -5,6 +5,7 @@
 #include "SimEcs_Archetype.h"
 #include "SimEcs_BattleComponents.h"
 #include "DrawDebugHelpers.h"
+#include "Sim_OceanSceneManager.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "ParallelFor.h"
 
@@ -171,9 +172,11 @@ struct CopyTransformToActorSystem :public SystemT {
 		}		
 	}
 };
-
+using EntityHandleId = uint64_t;
 DECLARE_CYCLE_STAT(TEXT("SimEcs: Spanwer System"), STAT_ECSSpawn, STATGROUP_ECS);
 struct ArchetypeSpawnerSystem :public SystemT {
+
+	//TMap<TSubclassOf<ASimEcs_Archetype>, ASimEcs_Archetype*> m_MapArchetypes;
 
 
 
@@ -196,9 +199,9 @@ struct ArchetypeSpawnerSystem :public SystemT {
 			}
 			else
 			{
-				FString strInfor = TEXT( "m_mapArchetypes pawnerSystem" );
-				USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
-				USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Add( handleID, FoundArchetype);
+				//FString strInfor = TEXT( "m_mapArchetypes pawnerSystem" );
+				//USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
+				USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypes.Add( handleID, FoundArchetype);
 			}
 		}
 		else
@@ -213,6 +216,10 @@ struct ArchetypeSpawnerSystem :public SystemT {
 		//	UE_LOG( LogFlying, Warning, TEXT( "Failed new Entity: %s" ), *GetNameSafe( ArchetypeClass ) );
 		//}
 
+	}
+
+	TSharedPtr<ASimEcs_Archetype> GetArcheTypeByHandleID( EntityHandleId handleID ) {
+		return USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypes[handleID];
 	}
 
 	void update(SimEcs_Registry &registry, float dt) override;
@@ -281,6 +288,13 @@ struct RaycastSystem :public SystemT {
 
 	void update(SimEcs_Registry &registry, float dt) override;
 };
+
+DECLARE_CYCLE_STAT(TEXT("SimEcs: BarrierFixed Raycast System"), STAT_ECSBarFixedRaycast, STATGROUP_ECS);
+struct BarrierFixedRaycastSystem :public SystemT {
+
+	void update(SimEcs_Registry &registry, float dt) override;
+};
+
 DECLARE_CYCLE_STAT(TEXT("SimEcs: Lifetime System"), STAT_Lifetime, STATGROUP_ECS);
 struct LifetimeSystem :public SystemT {
 

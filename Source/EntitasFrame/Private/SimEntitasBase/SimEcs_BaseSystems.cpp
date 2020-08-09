@@ -185,8 +185,6 @@ void RaycastSystem::update(SimEcs_Registry &registry, float dt)
 	//check all the raycast results from the async raycast
 	registry.view<FRaycastResult>().each([&, dt](auto entity, FRaycastResult & ray) {
 		
-		FString strInfor = TEXT( "FRaycastResult 1" );
-		USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
 		if (GameWorld->IsTraceHandleValid(ray.handle, false))
 		{			
 			FTraceDatum tdata;
@@ -248,4 +246,46 @@ void RaycastSystem::update(SimEcs_Registry &registry, float dt)
 
 		}
 	});	
+}
+
+
+void BarrierFixedRaycastSystem::update(SimEcs_Registry &registry, float dt)
+{
+	assert(OwnerActor);
+	UWorld * GameWorld = OwnerActor->GetWorld();
+	SCOPE_CYCLE_COUNTER(STAT_ECSBarFixedRaycast);
+
+	//check all the raycast results from the async raycast
+	registry.view<FPosition,FBarrierFixedRaycastResult>().each([&, dt](auto entity, FPosition& pos, FBarrierFixedRaycastResult & ray) {
+		FHitResult  HitResult(ForceInit);
+		FVector fPos, dir;
+		auto archtype = USimOceanSceneManager_Singleton::GetInstance( )->FindArchetype( entity );
+		if (!archtype)return;
+
+		FCollisionQueryParams cqq(FName(TEXT("Combattrace")), true, NULL);
+		cqq.bTraceComplex = true;
+		cqq.bReturnPhysicalMaterial = false;
+		cqq.AddIgnoredActor( archtype.Get() );
+		fPos = archtype.Get( )->GetTransform( ).GetLocation( ); 
+
+		const FRotator Rotation = archtype.Get( )->GetTransform( ).Rotator();
+		dir = FVector::UpVector * -1.0f;
+		FVector beginPos = fPos;
+		FVector posEnd = fPos + dir * 1000;
+		UWorld* World = GEngine->GameViewport->GetWorld( );
+		World->LineTraceSingleByChannel(HitResult, beginPos, posEnd, ECC_WorldStatic, cqq);
+
+		DrawDebugLine( World, beginPos, posEnd, FColor::Black, true, 5.0f);
+		if (HitResult.GetActor())
+		{
+			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(HitResult.PhysMaterial.Get());
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, HitResult.GetActor()->GetName());
+			auto archeType = USimOceanSceneManager_Singleton::GetInstance()->FindArchetype(entity);
+			if (archeType && archeType.Get()->GetRootComponent()) {
+				pos.pos = pos.pos + dir * -10.0f;
+				archeType.Get()->GetRootComponent()->SetWorldLocation( pos.pos );
+			}
+		}
+	});
+
 }

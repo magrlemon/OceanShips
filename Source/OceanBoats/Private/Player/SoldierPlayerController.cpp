@@ -156,7 +156,7 @@ void ASoldierPlayerController::TickActor( float DeltaTime, enum ELevelTick TickT
 	FAudioThread::RunCommandOnAudioThread( [UniqueID, bLocallyControlled]( ) {
 		USoundNodeLocalPlayer::GetLocallyControlledActorCache( ).Add( UniqueID, bLocallyControlled );
 	} );
-
+	ShowBroadcastMessage( );
 //	USimOceanSceneManager_Singleton::GetInstance( )->Update( DeltaTime );
 };
 
@@ -191,6 +191,18 @@ void ASoldierPlayerController::SetPlayer( UPlayer* InPlayer )
 
 		FInputModeGameOnly InputMode;
 		SetInputMode( InputMode );
+	}
+}
+
+void ASoldierPlayerController::ShowBroadcastMessage( ) {
+	if (USimOceanSceneManager_Singleton::GetInstance( )->IsHavSimMessage( )) {
+		TArray<FString>& arryMessage = USimOceanSceneManager_Singleton::GetInstance( )->CopySimMessage( );
+		for (auto msg: arryMessage)
+		{
+			FString strFrom= "-> ";
+			OnBroadcastMessage( strFrom, msg );
+		}
+		USimOceanSceneManager_Singleton::GetInstance( )->RemoveSimMessage( );
 	}
 }
 
@@ -427,6 +439,15 @@ void ASoldierPlayerController::OnDeathMessage( class ASoldierPlayerState* Killer
 	}
 
 	ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>( Player );
+
+}
+
+void ASoldierPlayerController::OnBroadcastMessage( const FString& strFrom, const FString& strTo )
+{
+	ASoldierHUD* SoldierHUD = GetSoldierHUD( );
+	if (SoldierHUD) {
+		SoldierHUD->ShowBroadcastMessage( strFrom, strTo );
+	}
 
 }
 
@@ -805,16 +826,13 @@ void ASoldierPlayerController::ToggleChatWindow( )
 
 void ASoldierPlayerController::LoadScenario( )
 {
-	USimOceanSceneManager_Singleton::GetInstance( )->GenOceanActorBarrier( );
+	USimOceanSceneManager_Singleton::GetInstance( )->GenOceanScenarioActor( );
 }
 
 void ASoldierPlayerController::LoadOceanBarrierScenario( )
 {
-	USimOceanSceneManager_Singleton::GetInstance( )->GenOceanDefanceBarrier( );
+	USimOceanSceneManager_Singleton::GetInstance( )->GenOceanScenarioBarrier( );
 }
-
-
-
 
 void ASoldierPlayerController::BoatDetails()
 {
@@ -847,6 +865,7 @@ void ASoldierPlayerController::StartSimulate()
 {
 	IGameModeInterface::Execute_StartMove(UGameplayStatics::GetGameMode(this));
 }
+
 void ASoldierPlayerController::ClientTeamMessage_Implementation( APlayerState* SenderPlayerState, const FString& S, FName Type, float MsgLifeTime )
 {
 	ASoldierHUD* SoldierHUD = Cast<ASoldierHUD>( GetHUD( ) );

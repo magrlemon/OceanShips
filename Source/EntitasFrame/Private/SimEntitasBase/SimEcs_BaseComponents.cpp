@@ -285,3 +285,17 @@ void USimEcs_MovementRaycastComponentWrapper::ParseJson( FString& jsonValue ) {
 	}
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////////
+void USimEcs_BarrierFixedRaycastComponentWrapper::ParseJson( FString& jsonValue ) {
+	if (jsonValue.IsEmpty( ))
+		return;
+	TSharedPtr<FJsonObject> JsonObject;
+	const TSharedRef< TJsonReader<> >& Reader = TJsonReaderFactory<>::Create( jsonValue );
+	if (FJsonSerializer::Deserialize( Reader, JsonObject )) {
+
+	}
+}
+

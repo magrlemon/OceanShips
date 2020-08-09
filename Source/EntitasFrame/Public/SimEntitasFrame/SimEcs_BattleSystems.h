@@ -168,7 +168,7 @@ struct OceanShipSystem :public SystemT {
 		SCOPE_CYCLE_COUNTER(STAT_Explosion);
 
 		registry.view<FOceanShip, FRotationComponent,FVelocity>().each([&, dt](auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel) {
-
+			ArchetypeSpawnerSystem* SpawnerSystem= static_cast<ArchetypeSpawnerSystem*>( World->GetArchetypeSpawnerSystem( ) );
 		FVector moveOnPos(-180180 + 5000, -370000 + 5000, -6600);
 		//rotation.rot = vel.vel.Rotation().Quaternion();
 		TSharedPtr<ASimEcs_Archetype>* boat = USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Find(entity);

@@ -764,7 +764,7 @@ void ASoldierHUD::DrawDeathMessages()
 	const FColor RedTeamColor = FColor(152, 70, 70, 255);
 	const FColor OwnerColor = HUDLight;
 
-	const FString KilledText = LOCTEXT("killed"," killed ").ToString();
+	const FString KilledText = LOCTEXT("killed"," [system]: ").ToString();
 	FVector2D KilledTextSize(0.0f, 0.0f);
 
 	const float GameTime = GetWorld()->GetTimeSeconds();
@@ -772,7 +772,7 @@ void ASoldierHUD::DrawDeathMessages()
 	const float BoxPadding = 2.0f;
 	const float MaxLineX = 300.0f;
 	const float InitialX = Offset * 2.0f * ScaleUI;
-	const float InitialY = DeathMsgsPosY + (DeathMessagesBg.VL - Offset * 2.5f) * ScaleUI ;
+	const float InitialY = DeathMsgsPosY + (DeathMessagesBg.VL - Offset * 2.5f) * ScaleUI;
 
 	// draw messages
 	float CurrentY = InitialY;
@@ -789,13 +789,13 @@ void ASoldierHUD::DrawDeathMessages()
 		FVector2D VictimNameSize(0.0f, 0.0f);
 		float TextScale = 1.00f;
 		Canvas->StrLen(NormalFont, Message.KillerDesc, KillerSize.X, KillerSize.Y);
-		TextItem.Scale = FVector2D( TextScale * ScaleUI, TextScale * ScaleUI );
+		TextItem.Scale = FVector2D( TextScale * ScaleUI*0.5f, TextScale * ScaleUI*0.5f );
 		TextItem.FontRenderInfo = ShadowedFont;
 		TextItem.SetColor(Message.bKillerIsOwner == true ? HUDLight : ( Message.KillerTeamNum == 0 ? RedTeamColor : BlueTeamColor));
 
 		TextItem.Text = FText::FromString( Message.KillerDesc );
 		Canvas->DrawItem(TextItem, CurrentX, CurrentY);
-		CurrentX += KillerSize.X * TextScale * ScaleUI;
+		CurrentX += KillerSize.X * TextScale * ScaleUI*0.5f;
 		
 		if (Message.DamageType.IsValid())
 		{
@@ -809,12 +809,12 @@ void ASoldierHUD::DrawDeathMessages()
 		else
 		{
 			TextItem.Text = FText::FromString( KilledText );
-			TextItem.Scale = FVector2D( TextScale * ScaleUI, TextScale * ScaleUI );
+			TextItem.Scale = FVector2D( TextScale * ScaleUI*0.5f, TextScale * ScaleUI*0.5f );
 			TextItem.FontRenderInfo = ShadowedFont;
 			TextItem.SetColor(HUDDark);
 			Canvas->DrawItem( TextItem, CurrentX, CurrentY );
 
-			CurrentX += KilledTextSize.X * TextScale * ScaleUI;
+			CurrentX += KilledTextSize.X * TextScale * ScaleUI*0.5f;
 		}
 			
 		TextItem.SetColor(Message.bVictimIsOwner == true ? HUDLight : (Message.VictimTeamNum == 0 ? RedTeamColor : BlueTeamColor));		
@@ -822,7 +822,42 @@ void ASoldierHUD::DrawDeathMessages()
 		Canvas->StrLen(NormalFont, Message.VictimDesc, VictimNameSize.X, VictimNameSize.Y);
 		TextItem.Text = FText::FromString( Message.VictimDesc );
 		Canvas->DrawItem( TextItem, CurrentX, CurrentY );
-		CurrentY -= (KilledTextSize.Y + LinePadding) * TextScale * ScaleUI;
+		CurrentY -= (KilledTextSize.Y + LinePadding) * TextScale * ScaleUI*0.5f;
+	}
+}
+
+
+void ASoldierHUD::ShowBroadcastMessage( const FString& strFrom , const FString& strTo )
+{
+	const int32 MaxDeathMessages = 8;
+	const float MessageDuration = 10.0f;
+
+	if (GetWorld( )->GetGameState( )) {
+		const AOceanBoatsGameMode* DefGame = GetWorld( )->GetGameState( )->GetDefaultGameMode<AOceanBoatsGameMode>( );
+		ASoldierPlayerState* MyPlayerState = PlayerOwner ? Cast<ASoldierPlayerState>( PlayerOwner->PlayerState ) : NULL;
+
+		if (DefGame) {
+			if (DeathMessages.Num( ) >= MaxDeathMessages) {
+				DeathMessages.RemoveAt( 0, 1, false );
+			}
+
+			FDeathMessage NewMessage;
+			NewMessage.KillerDesc = strFrom;
+			NewMessage.VictimDesc = strTo;
+			NewMessage.KillerTeamNum = 0;
+			NewMessage.VictimTeamNum = 0;
+			NewMessage.bKillerIsOwner = false;
+			NewMessage.bVictimIsOwner = false;
+
+			NewMessage.DamageType = nullptr;
+			NewMessage.HideTime = GetWorld( )->GetTimeSeconds( ) + MessageDuration;
+
+			DeathMessages.Add( NewMessage );
+			if (!strFrom.IsEmpty()) {
+				LastKillTime = GetWorld( )->GetTimeSeconds( );
+				CenteredKillMessage = FText::FromString( NewMessage.VictimDesc );
+			}
+		}
 	}
 }
 

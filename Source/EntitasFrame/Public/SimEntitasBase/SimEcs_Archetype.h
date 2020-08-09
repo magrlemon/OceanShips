@@ -18,41 +18,18 @@
 
 
 
-using EntityHandleId = uint64_t;
+
 class SimEcs_World;
 
 //base class for pure entity archetypes. This class cant be used directly, but can be spawned from an SimEcs spawner type system
 UCLASS(Blueprintable)
 class ENTITASFRAME_API ASimEcs_Archetype :  public AActor
 {
-	GENERATED_BODY()
-	
+	GENERATED_UCLASS_BODY()
 public:	
-	ASimEcs_Archetype();
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OceanShip")
-		FVector ForceLocation;
-
-	//UFUNCTION(/*BlueprintNativeEvent, */BlueprintCallable, Category = "Game")
-	//	void MoveOn(FVector targetPos = FVector::ZeroVector);
-	////virtual void MoveOn_Implementation(FVector targetPos = FVector::ZeroVector);
-	//UFUNCTION(/*BlueprintNativeEvent,*/ BlueprintCallable, Category = "Game")
-	//	void  HoldOn(FVector nextTargetPos = FVector::ZeroVector);
-	////virtual void HoldOn_Implementation(FVector nextTargetPos = FVector::ZeroVector);
-	//UFUNCTION(/*BlueprintNativeEvent,*/ BlueprintCallable, Category = "Game")
-	//	void  MoveBack(FVector targetPos = FVector::ZeroVector);
-	////virtual void MoveBack_Implementation(FVector targetPos = FVector::ZeroVector);
-
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		void EnableWaveForce(bool bEnable);
-	virtual void EnableWaveForce_Implementation(bool bEnable);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		void EnableBoatEffect(bool bEnable);
-	virtual void EnableBoatEffect_Implementation(bool bEnable);
-
+	
+	UFUNCTION(BlueprintCallable, Category = "Game")
+		void GrapMesh(UStaticMeshComponent* mainMesh);
 	virtual void CreateNewEntityFromThis( uint64  handleID );
 	
-public:
-	EntityHandleId EntityId;
 };

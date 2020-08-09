@@ -123,6 +123,8 @@ public:
 	 */
 	void ShowDeathMessage(class ASoldierPlayerState* KillerPlayerState, class ASoldierPlayerState* VictimPlayerState, const UDamageType* KillerDamageType);
 
+
+	void ShowBroadcastMessage( const FString& strFrom, const FString& strTo );
 	/*
 	 * Toggle chat window visibility.
 	 *

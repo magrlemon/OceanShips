@@ -375,3 +375,32 @@ public:
 		FMovementRaycast Value;
 
 };
+
+
+
+UCLASS(ClassGroup = (SimEcs), meta = (BlueprintSpawnableComponent))
+class ENTITASFRAME_API USimEcs_BarrierFixedRaycastComponentWrapper : public UActorComponent, public IComponentWrapper {
+	GENERATED_BODY()
+protected:
+	// Called when the Entity Generate successful
+	virtual void BeginPlay() {};
+	virtual void BeginDestory() {};
+public:
+	USimEcs_BarrierFixedRaycastComponentWrapper() {
+		PrimaryComponentTick.bCanEverTick = false;
+		IComponentWrapper::STATIC_COMPONENT_TYPE_ID = EComponentClass::ECC_BARRIERFIXEDRAYCAST_COMPONENT;
+	};
+
+	virtual void AddToEntity(u64 uHandleID, FString& jsonValue) {
+		auto simRegistry = USimOceanSceneManager_Singleton::GetInstance()->GetSimRegistry();
+		if (simRegistry) {
+			ParseJson(jsonValue);
+			simRegistry->accommodate<FBarrierFixedRaycastResult>(uHandleID, Value);
+		}
+	};
+	void ParseJson(FString& jsonValue);
+	UPROPERTY(EditAnywhere, Category = "SimEcs")
+		FBarrierFixedRaycastResult Value;
+
+};
+

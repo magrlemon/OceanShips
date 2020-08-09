@@ -12,6 +12,7 @@
 USimOceanSceneManager_Singleton::USimOceanSceneManager_Singleton( const FObjectInitializer& ObjectInitializer )
 	: Super( ObjectInitializer )
 {
+
 	//m_gpsDataTransfer.InitData( );
 }
 
@@ -19,7 +20,7 @@ void USimOceanSceneManager_Singleton::Initialize( ) {
 	MakeRoot(  );
 }
 
-void USimOceanSceneManager_Singleton::GenOceanActorBarrier( ) {
+void USimOceanSceneManager_Singleton::GenOceanScenarioActor( ) {
 #if WITH_EDITOR
 	if (GIsEditor == true) {
 		return;
@@ -29,7 +30,7 @@ void USimOceanSceneManager_Singleton::GenOceanActorBarrier( ) {
 	InitialzieScenarioData( );
 }
 
-void USimOceanSceneManager_Singleton::GenOceanDefanceBarrier( ) {
+void USimOceanSceneManager_Singleton::GenOceanScenarioBarrier( ) {
 #if WITH_EDITOR
 	if (GIsEditor == true) {
 		return;
@@ -39,18 +40,20 @@ void USimOceanSceneManager_Singleton::GenOceanDefanceBarrier( ) {
 	InitialzieOceanDefScenarioData( );
 }
 
-void USimOceanSceneManager_Singleton::MakeRoot(  ) {
+void USimOceanSceneManager_Singleton::MakeRoot( ) {
 
-	m_ScenarioMeshTransform.SetRotation( FQuat::MakeFromEuler( FVector( 0.0f ,0.0f,90.0f ) ) );
+	m_ScenarioMeshTransform.SetRotation( FQuat::MakeFromEuler( FVector( 0.0f, 0.0f, 90.0f ) ) );
 	m_ScenarioMeshTransform.SetLocation( m_vecScenarioMesh );
 
+	/* Barrier Area Region A */
 	m_ScenarioBarrierMeshTransform.SetRotation( FQuat::MakeFromEuler( FVector( 0.0f, 0.0f, 0.0f ) ) );
 	m_ScenarioBarrierMeshTransform.SetLocation( m_vecScenarioBarrierMesh );
+
 }
 
 
 //get tag
-TSharedPtr<AActor> USimOceanSceneManager_Singleton::GetSimActorWithTag(  FString& strTag ) {
+TSharedPtr<AActor> USimOceanSceneManager_Singleton::GetSimActorWithTag( FString& strTag ) {
 	if (!m_ScenarioSceneTap.IsValid( )) {
 		UWorld* World = GEngine->GameViewport->GetWorld( );
 		if (World == nullptr)
@@ -106,11 +109,10 @@ void USimOceanSceneManager_Singleton::ReSpawnSystemLink( ) {
 	if (!m_ComponentSL_Ptr && !m_bLoadSuccess) {
 		UWorld* World = GEngine->GameViewport->GetWorld( );
 		if (World == nullptr)
-			return ;
+			return;
 		TArray<AActor*> Actors;
 		UGameplayStatics::GetAllActorsWithTag( World, TEXT( "SimOceanBattle" ), Actors );
-		for (AActor* actor:Actors)
-		{
+		for (AActor* actor : Actors) {
 			TArray<UActorComponent*> SimSystemLinkComponents = actor->GetComponentsByClass( UActorComponent::StaticClass( ) );
 			for (UActorComponent* systemLinkComponent : SimSystemLinkComponents) {
 				if (systemLinkComponent->GetName( ).Compare( "SimEcs_ComponentSystemLink" ) != 0)
@@ -123,8 +125,14 @@ void USimOceanSceneManager_Singleton::ReSpawnSystemLink( ) {
 	}
 }
 
+/*get arcthtype by entity*/
+TSharedPtr<ASimEcs_Archetype> USimOceanSceneManager_Singleton::FindArchetype(EntityHandleId handleID) {
+	if (m_MapArchetypes.Find(handleID))
+		return m_MapArchetypes[handleID];
+	return nullptr;
+}
 
-SimEcs_Registry * USimOceanSceneManager_Singleton::GetSimRegistry( ) 
+SimEcs_Registry * USimOceanSceneManager_Singleton::GetSimRegistry( )
 {
 	UE_LOG( LogFlying, Warning, TEXT( "USimOceanSceneManager_Singleton::GetSimRegistry" ) );
 	return  m_ComponentSL_Ptr->m_WorldActorPtr->ECSWorld->GetRegistry( );
@@ -164,12 +172,35 @@ FVector USimOceanSceneManager_Singleton::GetCovertScenePosition( FVector ImagePo
 	}
 	}
 
-
 	return FVector::ZeroVector;
 }
 
-DVector2 USimOceanSceneManager_Singleton::ConvertWorldPositonToLatLon( FVector fPos) {
+DVector2 USimOceanSceneManager_Singleton::ConvertWorldPositonToLatLon( FVector fPos ) {
 	return m_gpsDataTransfer.GetLatLon( fPos );
+}
+
+
+/*
+// the message for ecs system
+*/
+bool USimOceanSceneManager_Singleton::IsHavSimMessage( ) {
+	return m_arrSimMessage.Num( ) > 0 ? true : false;
+}
+
+void USimOceanSceneManager_Singleton::PushSimMessage( FString& strMsg ) {
+	m_arrSimMessage.Add( strMsg );
+}
+
+TArray<FString>& USimOceanSceneManager_Singleton::CopySimMessage( ) {
+	return m_arrSimMessage;
+}
+
+auto RemoveMsg = [=]( FString& strMsg ) {
+	return strMsg.IsEmpty() == false;
+};
+
+void USimOceanSceneManager_Singleton::RemoveSimMessage( ) {
+	m_arrSimMessage.RemoveAll( RemoveMsg );
 }
 
 USimOceanSceneManager_Singleton* USimOceanSceneManager_Singleton::gSingletonScene = nullptr;

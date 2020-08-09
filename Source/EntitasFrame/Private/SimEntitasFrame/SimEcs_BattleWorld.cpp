@@ -28,6 +28,7 @@ void ASimEcs_WorldActor::BeginPlay()
 		ECSWorld->CreateAndRegisterSystem<ExplosionSystem>();
 		ECSWorld->CreateAndRegisterSystem<OceanShipSystem>();
 		ECSWorld->CreateAndRegisterSystem<RaycastSystem>();
+		ECSWorld->CreateAndRegisterSystem<BarrierFixedRaycastSystem>();
 		ECSWorld->CreateAndRegisterSystem<LifetimeSystem>();
 		ECSWorld->CreateAndRegisterSystem<StaticMeshDrawSystem>();
 		ECSWorld->CreateAndRegisterSystem<DebugDrawSystem>();

@@ -176,6 +176,18 @@ struct FRaycastResult {
 
 };
 
+USTRUCT(BlueprintType)
+struct FBarrierFixedRaycastResult {
+
+	GENERATED_BODY()
+	FBarrierFixedRaycastResult() {};
+	FBarrierFixedRaycastResult(TEnumAsByte<ECollisionChannel> _trace) : RayChannel(_trace) { };
+
+	UPROPERTY(EditAnywhere, Category = SimEcs)
+		TEnumAsByte<ECollisionChannel> RayChannel;
+
+};
+
 struct FGridMap {
 	FIntVector GridLocation;
 };
