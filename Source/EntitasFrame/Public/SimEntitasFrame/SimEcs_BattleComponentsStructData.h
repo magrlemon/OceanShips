@@ -181,10 +181,14 @@ struct FBarrierFixedRaycastResult {
 
 	GENERATED_BODY()
 	FBarrierFixedRaycastResult() {};
-	FBarrierFixedRaycastResult(TEnumAsByte<ECollisionChannel> _trace) : RayChannel(_trace) { };
+	FBarrierFixedRaycastResult(TEnumAsByte<ECollisionChannel> _trace) : RayChannel(_trace), Distance(100000.0f){ };
 
 	UPROPERTY(EditAnywhere, Category = SimEcs)
 		TEnumAsByte<ECollisionChannel> RayChannel;
+
+
+	UPROPERTY( EditAnywhere, Category = SimEcs )
+		float Distance;
 
 };
 
@@ -249,6 +253,22 @@ struct FLifetime {
 	UPROPERTY( EditAnywhere, Category = "SimEcs" )
 		float LifeLeft;
 };
+
+USTRUCT( BlueprintType )
+struct FSimulatePhysical {
+	GENERATED_BODY( )
+		FSimulatePhysical( ) :LifeLeft( 0.0f ), SecLifeLeft(0.0f),bSimulatePhysical( false), bJumpOne(false){}
+
+	UPROPERTY( EditAnywhere, Category = "SimEcs" )
+		float LifeLeft;
+	UPROPERTY( EditAnywhere, Category = "SimEcs" )
+		float SecLifeLeft;
+	UPROPERTY( EditAnywhere, Category = "SimEcs" )
+		bool bSimulatePhysical;
+	UPROPERTY( EditAnywhere, Category = "SimEcs" )
+		bool bJumpOne;
+};
+
 
 struct FDestroy {
 

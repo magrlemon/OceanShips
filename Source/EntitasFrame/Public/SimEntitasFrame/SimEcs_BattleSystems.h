@@ -165,7 +165,7 @@ struct OceanShipSystem :public SystemT {
 		//record move distance		
 		if (ship.LastPos.Equals(FVector::ZeroVector))
 			ship.LastPos = boat->GetActorLocation();
-		else
+		else if(boat->MainStaticMesh)
 		{
 			float move = (ship.LastPos - boat->MainStaticMesh->GetComponentLocation()).Size2D();
 

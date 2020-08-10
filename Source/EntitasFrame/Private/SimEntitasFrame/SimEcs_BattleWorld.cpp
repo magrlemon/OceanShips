@@ -30,8 +30,9 @@ void ASimEcs_WorldActor::BeginPlay()
 		ECSWorld->CreateAndRegisterSystem<RaycastSystem>();
 		ECSWorld->CreateAndRegisterSystem<BarrierFixedRaycastSystem>();
 		ECSWorld->CreateAndRegisterSystem<LifetimeSystem>();
+		ECSWorld->CreateAndRegisterSystem<SwitchSimulatePhysicalSystem>( );
 		ECSWorld->CreateAndRegisterSystem<StaticMeshDrawSystem>();
-		ECSWorld->CreateAndRegisterSystem<DebugDrawSystem>();
+		//ECSWorld->CreateAndRegisterSystem<DebugDrawSystem>();
 		ECSWorld->CreateAndRegisterSystem<CopyTransformToActorSystem>();
 		ECSWorld->CreateAndRegisterSystem<ArchetypeSpawnerSystem>();		
 		ECSWorld->InitializeSystems(this);

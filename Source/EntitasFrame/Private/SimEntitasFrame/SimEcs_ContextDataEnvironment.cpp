@@ -1007,6 +1007,7 @@ void ASimContextDataGTZEnvironment::SerializeStructure( TMapScenario & refScenar
 			Writer->WriteValue( "health:", *(key.Value) );
 		}
 	}
+	Writer->WriteValue( "distance:", 10000 );
 	Writer->WriteObjectEnd( );
 	Writer->Close( );
 }

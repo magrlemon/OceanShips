@@ -71,7 +71,7 @@ void USimEcs_ComponentSystemLink::BeginDestroy( )
 }
 
 
-EntityHandle USimEcs_ComponentSystemLink::GenHandEntity( ) {
+EntityHandle USimEcs_ComponentSystemLink::GenHandEntityID( ) {
 	if (m_WorldActorPtr.IsValid( ))
 		return m_WorldActorPtr.Get( )->ECSWorld->NewEntity( );
 
@@ -290,11 +290,13 @@ void USimEcs_MovementRaycastComponentWrapper::ParseJson( FString& jsonValue ) {
 //
 //////////////////////////////////////////////////////////////////////////
 void USimEcs_BarrierFixedRaycastComponentWrapper::ParseJson( FString& jsonValue ) {
+	Value.Distance = 10000.0f;
 	if (jsonValue.IsEmpty( ))
 		return;
 	TSharedPtr<FJsonObject> JsonObject;
 	const TSharedRef< TJsonReader<> >& Reader = TJsonReaderFactory<>::Create( jsonValue );
 	if (FJsonSerializer::Deserialize( Reader, JsonObject )) {
+		Value.Distance = JsonObject->GetIntegerField( "distance:" );
 
 	}
 }

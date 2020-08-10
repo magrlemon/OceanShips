@@ -48,7 +48,7 @@ public:
 	void GenSimSceneObjects( );
 	void GenSimOceanDefSceneObjects( );
 
-	EntityHandle GenHandEntity( );
+	EntityHandle GenHandEntityID( );
 public:
 	EntityHandle myEntity;
 	TSharedPtr<ASimEcs_WorldActor> m_WorldActorPtr = nullptr;

@@ -490,11 +490,6 @@ void AOceanBoatsGameMode::StartMove_Implementation()
 		IBoatInterface::Execute_SpeedUp(boats[i]);
 	}*/
 	InitBehaviac( );
-	//FVector moveOnPos(-180180 + 5000, -370000 + 5000, -6600);
-	//for (auto& VT : USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes)
-	//{
-	//	VT.Value->MoveOn(moveOnPos);
-	//}
 }
 
 void AOceanBoatsGameMode::AddBoat_Implementation(AActor* boat)
@@ -534,30 +529,13 @@ int AOceanBoatsGameMode::GetKilledNum_Implementation(ObstacleType type)
 
 int AOceanBoatsGameMode::GetBoatNum_Implementation()
 {
-	return USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Num();//boats.Num();
+	return boats.Num();
 }
 
 AActor* AOceanBoatsGameMode::GetBoat_Implementation(int index)
 {
-	int num = USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Num();
-	int step = 0;
-	for (auto boat : USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes)
-	{
-		if (step == num)
-		{
-			break;
-		}
-		if (step != index)
-		{
-			step++;
-			continue;
-		}
-		else
-			return boat.Value.Get();
-
-	}
-	//if(index < boats.Num())
-	//	return boats[index];
+	if(index < boats.Num())
+		return boats[index];
 
 	return nullptr;
 }

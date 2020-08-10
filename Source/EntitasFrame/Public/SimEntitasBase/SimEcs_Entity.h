@@ -152,23 +152,25 @@
 			TSubclassOf<ASimEcs_Archetype> typeClass =  entFrameDate.Pin()->GetSubClassByType( _type );//
 			if (!typeClass.Get( ))
 				return;
-			EntityHandle eh = sysLink_WeakPtr->GenHandEntity( );
-			m_eHandleID = eh.handle;
+			EntityHandle eh = sysLink_WeakPtr->GenHandEntityID( );
+			EntityHandleId handleID = m_eHandleID = eh.handle;
 
 			auto simRegistry = osmSingleton->GetSimRegistry();
-			simRegistry->assign<FPrePosition>( m_eHandleID );
-			simRegistry->assign<FRotationComponent>( m_eHandleID );
-			simRegistry->assign<FLifetime>( m_eHandleID );
-			simRegistry->assign<FArchetypeSpawner>( m_eHandleID );
-			simRegistry->get<FPrePosition>( m_eHandleID).pos = _pos;
-			simRegistry->get<FRotationComponent>( m_eHandleID ).rot = FQuat::MakeFromEuler(FVector(0.0f,0.0f, _heading) );
-			simRegistry->get<FLifetime>( m_eHandleID ).LifeLeft = 0.5f;
-			FArchetypeSpawner &spawn = simRegistry->get<FArchetypeSpawner>( m_eHandleID );
+			simRegistry->assign<FPrePosition>( handleID );
+			simRegistry->assign<FRotationComponent>( handleID );
+			simRegistry->assign<FLifetime>( handleID );
+			simRegistry->assign<FArchetypeSpawner>( handleID );
+			simRegistry->get<FPrePosition>( handleID ).pos = _pos;
+			simRegistry->get<FRotationComponent>( handleID ).rot = FQuat::MakeFromEuler(FVector(0.0f,0.0f, _heading) );
+			simRegistry->get<FLifetime>( handleID ).LifeLeft = 0.5f;
+			FArchetypeSpawner &spawn = simRegistry->get<FArchetypeSpawner>( handleID );
 			spawn.ActorType = _type;
 			spawn.bLoopSpawn = false;
 			spawn.ArchetypeClass = typeClass;
 			spawn.SpawnRate = 1;
 			spawn.TimeUntilSpawn = 0.1f;
+			EntityHandle entityHandleID = sysLink_WeakPtr->GenHandEntityID( );
+			m_eHandleID = entityHandleID.handle;
 			spawn.entHandleId = m_eHandleID;
 		}
 

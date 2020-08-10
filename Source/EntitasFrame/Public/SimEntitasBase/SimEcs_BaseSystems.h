@@ -285,7 +285,6 @@ struct RaycastSystem :public SystemT {
 
 DECLARE_CYCLE_STAT(TEXT("SimEcs: BarrierFixed Raycast System"), STAT_ECSBarFixedRaycast, STATGROUP_ECS);
 struct BarrierFixedRaycastSystem :public SystemT {
-
 	void update(SimEcs_Registry &registry, float dt) override;
 };
 
@@ -323,3 +322,13 @@ struct LifetimeSystem :public SystemT {
 		}		
 	}
 };
+
+
+
+DECLARE_CYCLE_STAT( TEXT( "SimEcs: SimulatePhysical System" ), STAT_SimulatePhysical, STATGROUP_ECS );
+struct SwitchSimulatePhysicalSystem :public SystemT {
+
+	void update( SimEcs_Registry &registry, float dt ) override;
+
+};
+
