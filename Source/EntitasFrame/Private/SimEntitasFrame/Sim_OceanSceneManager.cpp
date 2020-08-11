@@ -99,6 +99,12 @@ USimEcs_ComponentSystemLink* USimOceanSceneManager_Singleton::GetComponentSysLin
 	return  m_ComponentSL_Ptr;
 }
 
+
+TWeakPtr<SimEcs_Engine> USimOceanSceneManager_Singleton::GetSimEcsEnginePtr() {
+	return  m_ComponentSL_Ptr->GetEntityFrameData().Pin()->GetEcsEnginePtr();
+}
+
+
 void USimOceanSceneManager_Singleton::ReSpawnSystemLink( ) {
 #if WITH_EDITOR
 	if (GIsEditor == true) {
