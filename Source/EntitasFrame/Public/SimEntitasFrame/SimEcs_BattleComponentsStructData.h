@@ -393,6 +393,14 @@ struct FOceanShip {
 		float AccSpeedDownDistance = 0.0f;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
 		float AccRollbakDistance = 0.0f;
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
+		bool isLeader  = false;
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
+		FVector UnderwaterMax = FVector(75.0, 200.0,75.0f);
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
+		FVector UnderwaterMin = FVector( -75.0, -200.0f, -75.0f );
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
+		float UnderwaterBoxLength = 450.0f;
 		
 	BoatMoveMode MoveMode = BoatMoveMode::EBoatMoveMode_Idle;
 	UStaticMeshComponent* MainMeshComponent;
@@ -448,5 +456,13 @@ struct FHealth {
 
 	UPROPERTY(EditAnywhere)
 		float Health;
+};
+
+USTRUCT( BlueprintType )
+struct FFormation {
+	GENERATED_BODY( )
+
+	UPROPERTY( EditAnywhere )
+		int32 FormationValue;
 };
 

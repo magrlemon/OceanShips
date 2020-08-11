@@ -161,7 +161,7 @@ FVector USimOceanSceneManager_Singleton::GetCovertScenePosition( FVector ImagePo
 	}
 	case E_SENERAIO_POINT:
 	{
-		return m_ScenarioMeshTransform.TransformPosition( ImagePosition );
+		return m_ScenarioMeshTransform.TransformPosition( ImagePosition*100.0f );
 	}
 	case E_SYSTEM_LINK_POINT:
 	default:

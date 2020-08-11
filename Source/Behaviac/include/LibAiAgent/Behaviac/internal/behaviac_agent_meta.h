@@ -15,9 +15,13 @@ namespace behaviac
 	// ---------------------------------------------------------------------
 
 	inline void FunctionPointer_behaviac_Agent_LogMessage(char* param0) { behaviac::Agent::LogMessage(param0); }
+	inline void FunctionPointer_AiImagineAgent_CreateCamera(Agent* self, double posx, double posy, double posz, int dir) { ((AiImagineAgent*)self)->CreateCamera(posx, posy, posz, dir); }
 	inline void FunctionPointer_AiImagineAgent_End(Agent* self) { ((AiImagineAgent*)self)->End(); }
+	inline void FunctionPointer_AiImagineAgent_Fire(Agent* self, behaviac::string EntityName, bool IsFire) { ((AiImagineAgent*)self)->Fire(EntityName, IsFire); }
 	inline void FunctionPointer_AiImagineAgent_LogMessage(char* param0) { AiImagineAgent::LogMessage(param0); }
+	inline void FunctionPointer_AiImagineAgent_MoveBackEntity(Agent* self, behaviac::string EntityName, double PosX, double PosY, double PosZ, int Dir) { ((AiImagineAgent*)self)->MoveBackEntity(EntityName, PosX, PosY, PosZ, Dir); }
 	inline behaviac::EBTStatus FunctionPointer_AiImagineAgent_MoveEntity(Agent* self, behaviac::string entityname, double posx, double posy, double dir) { return ((AiImagineAgent*)self)->MoveEntity(entityname, posx, posy, dir); }
+	inline void FunctionPointer_AiImagineAgent_PlayAnimation(Agent* self, behaviac::string EntityName, behaviac::string ActionName) { ((AiImagineAgent*)self)->PlayAnimation(EntityName, ActionName); }
 	inline void FunctionPointer_AiImagineAgent_SayHello(Agent* self) { ((AiImagineAgent*)self)->SayHello(); }
 	inline void FunctionPointer_AiImagineAgent_SayHelloWorld(Agent* self) { ((AiImagineAgent*)self)->SayHelloWorld(); }
 	inline void FunctionPointer_AiImagineAgent_Start(Agent* self) { ((AiImagineAgent*)self)->Start(); }

@@ -177,6 +177,8 @@ public:
 	void InitBehaviac();
 
 	RetVar MoveEntity(int argc, void ** argv);
+	RetVar MoveBackEntity(int argc, void ** argv);
+	RetVar Fire(int argc, void ** argv);
 	RetVar EndTask(int argc, void ** argv);
 	RetVar MoveEntity(FString name,double PosX,double PosY,double dir);
 	void BehaviacExec();

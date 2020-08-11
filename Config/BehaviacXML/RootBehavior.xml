@@ -7,133 +7,45 @@
       <property Method="Self.AiImagineAgent::Start()" />
       <property ResultOption="BT_SUCCESS" />
     </node>
-    <node class="Parallel" id="3">
-      <property ChildFinishPolicy="CHILDFINISH_ONCE" />
-      <property ExitPolicy="EXIT_ABORT_RUNNINGSIBLINGS" />
-      <property FailurePolicy="FAIL_ON_ONE" />
-      <property SuccessPolicy="SUCCEED_ON_ALL" />
-      <node class="Action" id="4">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT5_2&quot;,500,500,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-      <node class="Action" id="5">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT_EX4_5&quot;,500,600,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-      <node class="Action" id="6">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_GCZYJT_2&quot;,600,450,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-      <node class="Action" id="13">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT_EX_2&quot;,500,450,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-      <node class="Action" id="14">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT_EX2_5&quot;,500,550,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
+    <node class="Action" id="4">
+      <property Method="Self.AiImagineAgent::MoveEntity(&quot;破障艇&quot;,500,500,50)" />
+      <property ResultOption="BT_INVALID" />
     </node>
-    <node class="DecoratorTime" id="7">
+    <node class="Action" id="5">
+      <property Method="Self.AiImagineAgent::MoveEntity(&quot;破障艇&quot;,500,500,50)" />
+      <property ResultOption="BT_INVALID" />
+    </node>
+    <node class="Action" id="3">
+      <property Method="Self.AiImagineAgent::MoveEntity(&quot;破障艇&quot;,500,500,50)" />
+      <property ResultOption="BT_INVALID" />
+    </node>
+    <node class="DecoratorTime" id="8">
       <property DecorateWhenChildEnds="false" />
-      <property Time="const float 30000" />
-      <node class="Action" id="12">
-        <property Method="Self.AiImagineAgent::Wait()" />
-        <property ResultOption="BT_SUCCESS" />
-      </node>
-    </node>
-    <node class="Parallel" id="17">
-      <property ChildFinishPolicy="CHILDFINISH_LOOP" />
-      <property ExitPolicy="EXIT_ABORT_RUNNINGSIBLINGS" />
-      <property FailurePolicy="FAIL_ON_ONE" />
-      <property SuccessPolicy="SUCCEED_ON_ALL" />
-      <node class="Action" id="18">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT5_2&quot;,800,800,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-      <node class="Action" id="19">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT_EX4_5&quot;,600,850,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-      <node class="Action" id="20">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_GCZYJT_2&quot;,700,750,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-      <node class="Action" id="21">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT_EX_2&quot;,800,730,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-      <node class="Action" id="22">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT_EX2_5&quot;,800,830,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-    </node>
-    <node class="DecoratorTime" id="23">
-      <property DecorateWhenChildEnds="false" />
-      <property Time="const float 30000" />
-      <node class="Action" id="24">
-        <property Method="Self.AiImagineAgent::Wait()" />
-        <property ResultOption="BT_SUCCESS" />
-      </node>
-    </node>
-    <node class="Parallel" id="25">
-      <property ChildFinishPolicy="CHILDFINISH_LOOP" />
-      <property ExitPolicy="EXIT_ABORT_RUNNINGSIBLINGS" />
-      <property FailurePolicy="FAIL_ON_ONE" />
-      <property SuccessPolicy="SUCCEED_ON_ALL" />
-      <node class="Action" id="26">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT5_2&quot;,620,1200,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-      <node class="Action" id="27">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT_EX4_5&quot;,460,800,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-      <node class="Action" id="28">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_GCZYJT_2&quot;,600,1300,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-      <node class="Action" id="29">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT_EX_2&quot;,580,1030,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-      <node class="Action" id="30">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT_EX2_5&quot;,510,1030,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-    </node>
-    <node class="DecoratorTime" id="31">
-      <property DecorateWhenChildEnds="false" />
-      <property Time="const float 30000" />
-      <node class="Action" id="32">
-        <property Method="Self.AiImagineAgent::Wait()" />
-        <property ResultOption="BT_SUCCESS" />
-      </node>
-    </node>
-    <node class="Parallel" id="1">
-      <property ChildFinishPolicy="CHILDFINISH_LOOP" />
-      <property ExitPolicy="EXIT_ABORT_RUNNINGSIBLINGS" />
-      <property FailurePolicy="FAIL_ON_ONE" />
-      <property SuccessPolicy="SUCCEED_ON_ALL" />
-      <node class="Action" id="2">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT5_2&quot;,-400,800,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
-      <node class="Action" id="8">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT_EX4_5&quot;,-300,650,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
+      <property Time="const float 15000" />
       <node class="Action" id="9">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_GCZYJT_2&quot;,-500,950,0)" />
-        <property ResultOption="BT_INVALID" />
+        <property Method="Self.AiImagineAgent::Wait()" />
+        <property ResultOption="BT_SUCCESS" />
       </node>
-      <node class="Action" id="15">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT_EX_2&quot;,-450,700,0)" />
-        <property ResultOption="BT_INVALID" />
+    </node>
+    <node class="Action" id="12">
+      <property Method="Self.AiImagineAgent::Fire(&quot;破障艇&quot;,true)" />
+      <property ResultOption="BT_SUCCESS" />
+    </node>
+    <node class="DecoratorTime" id="1">
+      <property DecorateWhenChildEnds="false" />
+      <property Time="const float 15000" />
+      <node class="Action" id="2">
+        <property Method="Self.AiImagineAgent::Wait()" />
+        <property ResultOption="BT_SUCCESS" />
       </node>
-      <node class="Action" id="16">
-        <property Method="Self.AiImagineAgent::MoveEntity(&quot;BP_Boats_XLT_EX2_5&quot;,-340,700,0)" />
-        <property ResultOption="BT_INVALID" />
-      </node>
+    </node>
+    <node class="Action" id="6">
+      <property Method="Self.AiImagineAgent::MoveBackEntity(&quot;破障艇&quot;,500,500,50,0)" />
+      <property ResultOption="BT_SUCCESS" />
+    </node>
+    <node class="Action" id="7">
+      <property Method="Self.AiImagineAgent::MoveEntity(&quot;破障艇&quot;,500,500,50)" />
+      <property ResultOption="BT_INVALID" />
     </node>
     <node class="Action" id="10">
       <property Method="Self.AiImagineAgent::End()" />

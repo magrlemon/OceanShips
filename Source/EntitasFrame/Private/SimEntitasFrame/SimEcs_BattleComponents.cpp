@@ -139,7 +139,48 @@ void USimEcs_ExplosionComponentWrapper::AddToEntity( u64 uHandleID ,FString& jso
 };
 
 void USimEcs_ExplosionComponentWrapper::ParseJson( FString& jsonValue ) {
+	if (jsonValue.IsEmpty( ))
+		return;
+	TSharedPtr<FJsonObject> JsonObject;
+	const TSharedRef< TJsonReader<> >& Reader = TJsonReaderFactory<>::Create( jsonValue );
+	if (FJsonSerializer::Deserialize( Reader, JsonObject )) {
 
+	}
 }
 
 	 // namespace SimEcs
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//////////////                                        //////////////////////            
+//////////////            Boat Formation             /////////////////////                                 
+//////////////                                        ////////////////////              
+/////////////////////////////////////////////////////////////////////////
+//
+
+//* FExplosion
+USimEcs_FormationComponentWrapper::USimEcs_FormationComponentWrapper( )
+{
+	PrimaryComponentTick.bCanEverTick = false;
+	IComponentWrapper::STATIC_COMPONENT_TYPE_ID = EComponentClass::ECC_ENT_FORMAION_COMPONENT;
+}
+
+void USimEcs_FormationComponentWrapper::AddToEntity( u64 uHandleID, FString& jsonValue ) {
+	auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
+	if (simRegistry) {
+		ParseJson( jsonValue );
+		simRegistry->accommodate<FFormation>( uHandleID, Value );
+	}
+}
+
+void USimEcs_FormationComponentWrapper::ParseJson( FString& jsonValue ) {
+	if (jsonValue.IsEmpty( ))
+		return;
+	TSharedPtr<FJsonObject> JsonObject;
+	const TSharedRef< TJsonReader<> >& Reader = TJsonReaderFactory<>::Create( jsonValue );
+	if (FJsonSerializer::Deserialize( Reader, JsonObject )) {
+		Value.FormationValue = JsonObject->GetIntegerField( "FormationValue:" );
+	}
+}
+

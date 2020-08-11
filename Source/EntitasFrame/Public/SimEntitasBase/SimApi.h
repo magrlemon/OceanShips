@@ -57,7 +57,7 @@ static const FString bp_type_names[] = {
 
 
 	//-----------船艇-------------
-	"/Game/ShipsAndExamples/BP_ECSBoat_XLT",	  //8
+	"/Game/ShipsAndExamples/BP_ECSBoat_XLT",	  //9
 	"/Game/ShipsAndExamples/BP_Boats_YSC",
 	"/Game/ShipsAndExamples/BP_ECSBoat_GCZYJT",
 	//----------------------------
@@ -132,6 +132,7 @@ enum   EComponentClass {
 	ECC_HEALTH_COMPONENT,				//毁伤组件
 	ECC_DEBUGSPHERE_COMPONENT,			//调试球组件 
 	ECC_ENT_FORCE_COMPONENT,			//物理作用力组件
+	ECC_ENT_FORMAION_COMPONENT,			//编队组件
 	ECC_COMPONENT_NUM = ECC_ENT_FORCE_COMPONENT
 };
 

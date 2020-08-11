@@ -31,7 +31,10 @@ public:
 	void Start() {}
 	void End();
 	void Wait()  {}
-
+	void MoveBackEntity(behaviac::string EntityName, double PosX, double PosY, double PosZ, int Dir);
+	void PlayAnimation(behaviac::string EntityName, behaviac::string ActionName);
+	void Fire(behaviac::string EntityName, bool IsFire);
+	void CreateCamera(double posx, double posy, double posz, int dir);
 ///<<< BEGIN WRITING YOUR CODE CLASS_PART
 
 ///<<< END WRITING YOUR CODE

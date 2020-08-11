@@ -63,7 +63,8 @@ void AOceanBoatsGameMode::InitBehaviac() {
 	behaviac::Workspace::GetInstance()->SetFileFormat(behaviac::Workspace::EFF_xml);
 	BahaviacManager::GetInstance().GetBehaviacHandler().ReginsterHandler<AOceanBoatsGameMode>(ENUM_METHOD_END, this, &AOceanBoatsGameMode::EndTask);
 	BahaviacManager::GetInstance().GetBehaviacHandler().ReginsterHandler<AOceanBoatsGameMode>(ENUM_METHOD_ENTITY_MOVE, this, &AOceanBoatsGameMode::MoveEntity);
-
+	BahaviacManager::GetInstance().GetBehaviacHandler().ReginsterHandler<AOceanBoatsGameMode>(ENUM_METHOD_ENTITY_MOVE_BACK, this, &AOceanBoatsGameMode::MoveBackEntity);
+	BahaviacManager::GetInstance().GetBehaviacHandler().ReginsterHandler<AOceanBoatsGameMode>(ENUM_METHOD_ENTITY_FIRE, this, &AOceanBoatsGameMode::Fire);
 	_AiImagineAgent = behaviac::Agent::Create<AiImagineAgent>();
 	bool bRet = _AiImagineAgent->btload("RootBehavior");
 	_AiImagineAgent->btsetcurrent("RootBehavior");
@@ -94,9 +95,40 @@ RetVar AOceanBoatsGameMode::MoveEntity(int argc, void ** argv)
 		double PosX = *((double*)(argv[1]));
 		double PosY = *((double*)(argv[2]));
 		double dir  = *((double*)(argv[3]));
-		return MoveEntity(name,PosX,PosY,dir);
+		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "MoveEntity");
+		//return MoveEntity(name,PosX,PosY,dir);
 	}
-	ret.iRet = behaviac::BT_FAILURE;
+	ret.iRet = behaviac::BT_SUCCESS;
+	return ret;
+}
+
+RetVar AOceanBoatsGameMode::MoveBackEntity(int argc, void ** argv)
+{
+	RetVar ret;
+	if (argc > 0 && argv)
+	{
+		FString name;
+		name += FString(UTF8_TO_TCHAR((char *)argv[0]));
+		double PosX = *((double*)(argv[1]));
+		double PosY = *((double*)(argv[2]));
+		double dir = *((double*)(argv[3]));
+		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "MoveBackEntity");
+		return MoveEntity(name, PosX, PosY, dir);
+	}
+	ret.iRet = behaviac::BT_SUCCESS;
+	return ret;
+}
+RetVar AOceanBoatsGameMode::Fire(int argc, void ** argv) {
+	RetVar ret;
+	if (argc > 0 && argv)
+	{
+		FString name;
+		name += FString(UTF8_TO_TCHAR((char *)argv[0]));
+		bool bFire = *((bool*)(argv[1]));
+		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "Fire");
+	//	return MoveEntity(name, PosX, PosY, dir);
+	}
+	ret.iRet = behaviac::BT_SUCCESS;
 	return ret;
 }
 

@@ -309,7 +309,10 @@ void ASimContextDataDroneBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> 
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSDroneBoatPropertyData>, int32, FVector>( 
 			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
-
+		if (pEnt) {
+			FString simMsg = FString::Printf( TEXT( "Create DroneBoat Actor's Name is : %s" ), *m_STPropData.entName );
+			USimOceanSceneManager_Singleton::GetInstance( )->PushSimMessage( simMsg );
+		}
 #define  _GEN_COMPONENT_(TYPE)\
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId(),m_JsonValue );\
 
@@ -422,7 +425,10 @@ void ASimContextDataNavalCraftEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine>
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSDroneBoatPropertyData>, int32, FVector>( 
 			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
-
+		if (pEnt) {
+			FString simMsg = FString::Printf( TEXT( "Create NavalCraft Actor's Name is : %s" ), *m_STPropData.entName );
+			USimOceanSceneManager_Singleton::GetInstance( )->PushSimMessage( simMsg );
+		}
 #define  _GEN_COMPONENT_(TYPE)\
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId(),m_JsonValue );\
 
@@ -438,6 +444,8 @@ void ASimContextDataNavalCraftEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine>
 #undef  _GEN_COMPONENT_	
 	}
 }
+
+
 
 
 

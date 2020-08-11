@@ -170,9 +170,6 @@ using EntityHandleId = uint64_t;
 DECLARE_CYCLE_STAT(TEXT("SimEcs: Spanwer System"), STAT_ECSSpawn, STATGROUP_ECS);
 struct ArchetypeSpawnerSystem :public SystemT {
 
-	//TMap<TSubclassOf<ASimEcs_Archetype>, ASimEcs_Archetype*> m_MapArchetypes;
-
-
 
 	void SpawnFromArchetype(SimEcs_Registry & registry, EntityHandleId handleID,TSubclassOf<ASimEcs_Archetype> &ArchetypeClass, const FVector &SpawnPosition ,const FQuat  quatRot = FQuat::Identity )
 	{

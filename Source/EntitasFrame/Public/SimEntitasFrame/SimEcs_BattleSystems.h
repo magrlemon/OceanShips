@@ -565,3 +565,46 @@ struct BoidSystem :public SystemT {
 
 	}
 };
+
+
+/////////////////////////////////////////////////////////////////////////////
+//////////////                                        //////////////////////            
+//////////////            Boat Formation             /////////////////////                                 
+//////////////                                        ////////////////////              
+/////////////////////////////////////////////////////////////////////////
+
+
+struct BoatFormationSystem :public SystemT {
+
+	const float UpdateRate = 0.1;
+
+	float elapsed = 0;
+
+	void update( SimEcs_Registry &registry, float dt ) override
+	{
+		assert( OwnerActor );
+		SCOPE_CYCLE_COUNTER( STAT_Explosion );
+
+		auto AllExplosionsView = registry.view<FExplosion>( );
+		for (auto e : AllExplosionsView) {
+			FExplosion & ex = AllExplosionsView.get( e );
+
+			ex.LiveTime += dt;
+			if (ex.LiveTime > ex.Duration) {
+				registry.assign<FDestroy>( e );
+			}
+		}
+
+
+		registry.view<FExplosion, FScale>( ).each( [&, dt]( auto entity, FExplosion & ex, FScale & scale ) {
+
+
+			scale.scale = FVector( (ex.LiveTime / ex.Duration)*ex.MaxScale );
+
+		} );
+
+
+	}
+};
+
+
