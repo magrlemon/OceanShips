@@ -100,7 +100,7 @@ public:
 	///* Get Sim Ecs Root Actor*/
 	USimEcs_ComponentSystemLink* GetComponentSysLinkPtr( );
 
-	TWeakPtr<SimEcs_Engine> GetSimEcsEnginePtr();
+	TWeakPtr<SimEcs_Engine> GetSimEcsEngineWeakPtr();
 
 	UPROPERTY( EditAnywhere, AdvancedDisplay, BlueprintReadWrite, Category = "Ocean Boats Settings" )
 	USimEcs_ComponentSystemLink* m_ComponentSL_Ptr = nullptr;

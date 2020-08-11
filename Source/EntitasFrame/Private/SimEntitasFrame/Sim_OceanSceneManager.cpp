@@ -100,7 +100,7 @@ USimEcs_ComponentSystemLink* USimOceanSceneManager_Singleton::GetComponentSysLin
 }
 
 
-TWeakPtr<SimEcs_Engine> USimOceanSceneManager_Singleton::GetSimEcsEnginePtr() {
+TWeakPtr<SimEcs_Engine> USimOceanSceneManager_Singleton::GetSimEcsEngineWeakPtr() {
 	return  m_ComponentSL_Ptr->GetEntityFrameData().Pin()->GetEcsEnginePtr();
 }
 
