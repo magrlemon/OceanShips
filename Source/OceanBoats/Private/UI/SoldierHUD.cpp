@@ -12,6 +12,7 @@
 #include "Misc/NetworkVersion.h"
 #include "OnlineSubsystemUtils.h"
 #include "UI/Menu/Widgets/SBoatBoard.h"
+#include "UI/Menu/Widgets/STopBar.h"
 #include "SoldierPlayerState.h"
 
 #define LOCTEXT_NAMESPACE "OceanBoats.HUD.Menu"
@@ -1003,6 +1004,10 @@ void ASoldierHUD::PostInitializeComponents()
 			Voice->AddOnPlayerTalkingStateChangedDelegate_Handle(OnPlayerTalkingStateChangedDelegate);
 		}
 	}
+
+	GEngine->GameViewport->AddViewportWidgetContent(
+		SAssignNew(TopBar,STopBar)
+	);
 }
 
 void ASoldierHUD::ConditionalCloseScoreboard(bool bFocus)

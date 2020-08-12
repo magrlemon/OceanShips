@@ -210,24 +210,24 @@ void SSoldierScoreboardWidget::UpdateScoreboardGrid()
 			[
 				MakePlayerRows(TeamNum)
 			];
-		//If we have more than one team, we are playing team based game mode, add totals
-		if (PlayerStateMaps.Num() > 1 && PlayerStateMaps[TeamNum].Num() > 0)
-		{
-			// Horizontal Ruler
-			ScoreboardData->AddSlot() .AutoHeight() .Padding(NORM_PADDING)
-				[
-					SNew(SBorder)
-					.Padding(1)
-					.BorderImage(&ScoreboardStyle->ItemBorderBrush)
-				];
-			ScoreboardData->AddSlot() .AutoHeight()
-				[
-					MakeTotalsRow(TeamNum)
-				];
-		}
+		////If we have more than one team, we are playing team based game mode, add totals
+		//if (PlayerStateMaps.Num() > 1 && PlayerStateMaps[TeamNum].Num() > 0)
+		//{
+		//	// Horizontal Ruler
+		//	ScoreboardData->AddSlot() .AutoHeight() .Padding(NORM_PADDING)
+		//		[
+		//			SNew(SBorder)
+		//			.Padding(1)
+		//			.BorderImage(&ScoreboardStyle->ItemBorderBrush)
+		//		];
+		//	ScoreboardData->AddSlot() .AutoHeight()
+		//		[
+		//			MakeTotalsRow(TeamNum)
+		//		];
+		//}
 	}
 
-	if (MatchState > ESimMatchState::Playing)
+	/*if (MatchState > ESimMatchState::Playing)
 	{
 		ScoreboardData->AddSlot() .AutoHeight() .Padding(NORM_PADDING)
 			[
@@ -274,7 +274,7 @@ void SSoldierScoreboardWidget::UpdateScoreboardGrid()
 					]
 				]
 			];
-	}
+	}*/
 }
 
 void SSoldierScoreboardWidget::UpdatePlayerStateMaps()

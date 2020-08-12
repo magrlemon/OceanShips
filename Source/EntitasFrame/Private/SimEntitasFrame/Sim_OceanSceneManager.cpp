@@ -240,21 +240,32 @@ void  USimOceanSceneManager_Singleton::MoveEntity( const FString& strName, const
 	if (strName.IsEmpty( ))return;
 	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
 	if (ehandleID > 0) {
-		FOceanShip fOceShip;
-		GetSimRegistry( )->replace<FOceanShip>( ehandleID, fOceShip );
+		//FOceanShip fOceShip;
+		//fOceShip.MoveOnPos = posRef;
+		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveOnPos = posRef;
 	}
 }
 
 void  USimOceanSceneManager_Singleton::MoveBackEntity( const FString& strName, const FVector& posRef ) {
 	if (strName.IsEmpty( ))return;
 	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
-	
+	if (ehandleID > 0) {
+		/*FOceanShip fOceShip;
+		fOceShip.MoveOnPos = posRef;
+		GetSimRegistry()->replace<FOceanShip>(ehandleID, fOceShip);*/
+		GetSimRegistry()->get<FOceanShip>(ehandleID).MoveOnPos = posRef;
+	}
 }
 
 void USimOceanSceneManager_Singleton::Firing( const FString& strName, const bool bFire ) {
 	if (strName.IsEmpty( ))return;
 	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
-	
+	if (ehandleID > 0) {
+		/*FOceanShip fOceShip;
+		fOceShip.MoveMode = EBoatMoveMode_Fire;
+		GetSimRegistry()->replace<FOceanShip>(ehandleID, fOceShip);*/
+		GetSimRegistry()->get<FOceanShip>(ehandleID).MoveMode = EBoatMoveMode_Fire;
+	}
 }
 
 USimOceanSceneManager_Singleton* USimOceanSceneManager_Singleton::gSingletonScene = nullptr;

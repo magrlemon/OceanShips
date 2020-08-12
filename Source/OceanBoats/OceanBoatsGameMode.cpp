@@ -12,6 +12,8 @@
 #include "SoldierPlayerState.h"
 #include "BoatInterface.h"
 #include "Sim_OceanSceneManager.h"
+#include "SimDataStructure.h"
+#include "SimEcs_EntityManager.h"
 #include "Boat_Archetype.h"
 //#include "ObstacleInterface.h"
 
@@ -97,6 +99,9 @@ RetVar AOceanBoatsGameMode::MoveEntity(int argc, void ** argv)
 		double dir  = *((double*)(argv[3]));
 		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "MoveEntity");
 		//return MoveEntity(name,PosX,PosY,dir);
+		USimOceanSceneManager_Singleton::GetInstance()->MoveEntity(name, FVector(PosX, PosY, 0));
+		
+		
 	}
 	ret.iRet = behaviac::BT_SUCCESS;
 	return ret;
@@ -561,14 +566,30 @@ int AOceanBoatsGameMode::GetKilledNum_Implementation(ObstacleType type)
 
 int AOceanBoatsGameMode::GetBoatNum_Implementation()
 {
-	return boats.Num();
+	return USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Num();//boats.Num();
 }
 
 AActor* AOceanBoatsGameMode::GetBoat_Implementation(int index)
 {
-	if(index < boats.Num())
-		return boats[index];
+	int num = USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Num();
+	int step = 0;
+	for (auto boat : USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes)
+	{
+		if (step == num)
+		{
+			break;
+		}
+		if (step != index)
+		{
+			step++;
+			continue;
+		}
+		else
+			return boat.Value.Get();
 
+	}
+	//if(index < boats.Num())
+	//	return boats[index];
 	return nullptr;
 }
 

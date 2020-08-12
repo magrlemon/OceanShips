@@ -23,8 +23,10 @@ class SimEcs_World;
 UCLASS(Blueprintable)
 class ENTITASFRAME_API ASimEcs_Archetype :  public AActor
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 public:	
+	ASimEcs_Archetype();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OceanShip")
 		FVector ForceLocation;
 
@@ -32,7 +34,19 @@ public:
 		void GrapMesh(UStaticMeshComponent* mainMesh);
 	virtual void CreateNewEntityFromThis( uint64  handleID );
 	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void EnableWaveForce(bool enable);
+	virtual void EnableWaveForce_Implementation(bool enable);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void EnableBoatEffect(bool enable);
+	virtual void EnableBoatEffect_Implementation(bool enable);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void StartFire();
+	virtual void StartFire_Implementation();
 public:
+	uint64 EntId;
 	float Speed;
 	float SailDistance;
 	float SailAngle;

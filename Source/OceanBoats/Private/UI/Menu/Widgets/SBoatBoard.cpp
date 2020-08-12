@@ -50,7 +50,7 @@ void SBoatBoard::Construct(const FArguments& InArgs)
 		[
 			SNew(SBox)  
 			.WidthOverride(BoxWidth)
-			.HeightOverride(600)			
+			.HeightOverride(500)			
 			[
 				SNew(SBorder)
 				.BorderBackgroundColor(FLinearColor(0.2f, 0.2f, 0.2f, 0.4f))

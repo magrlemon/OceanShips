@@ -22,6 +22,11 @@ const FSoldierScoreboardStyle& FSoldierScoreboardStyle::GetDefault()
 void FSoldierScoreboardStyle::GetResources(TArray<const FSlateBrush*>& OutBrushes) const
 {
 	OutBrushes.Add(&ItemBorderBrush);
+	OutBrushes.Add(&ItemButton);
+	OutBrushes.Add(&ItemBackGround);
+	OutBrushes.Add(&ItemBeginButton);
+	OutBrushes.Add(&ItemPauseButton);
+	OutBrushes.Add(&ItemEndButton);
 }
 
 

@@ -28,7 +28,28 @@ struct FSoldierScoreboardStyle : public FSlateWidgetStyle
 	UPROPERTY(EditAnywhere, Category=Appearance)
 	FSlateBrush ItemBorderBrush;
 	FSoldierScoreboardStyle& SetItemBorderBrush(const FSlateBrush& InItemBorderBrush) { ItemBorderBrush = InItemBorderBrush; return *this; }
+	/**
+	 * The brush used for the item border
+	 */
+	UPROPERTY(EditAnywhere, Category = Appearance)
+		FSlateBrush ItemButton;
+	FSoldierScoreboardStyle& SetItemButton(const FSlateBrush& InItemBorderBrush) { ItemButton = InItemBorderBrush; return *this; }
 
+	UPROPERTY(EditAnywhere, Category = Appearance)
+		FSlateBrush ItemBackGround;
+	FSoldierScoreboardStyle& SetItemBackGround(const FSlateBrush& InItemBorderBrush) { ItemBackGround = InItemBorderBrush; return *this; }
+
+	UPROPERTY(EditAnywhere, Category = Appearance)
+		FSlateBrush ItemBeginButton;
+	FSoldierScoreboardStyle& SetItemBeginButton(const FSlateBrush& InItemBorderBrush) { ItemBeginButton = InItemBorderBrush; return *this; }
+
+	UPROPERTY(EditAnywhere, Category = Appearance)
+		FSlateBrush ItemPauseButton;
+	FSoldierScoreboardStyle& SetItemPauseButton(const FSlateBrush& InItemBorderBrush) { ItemPauseButton = InItemBorderBrush; return *this; }
+
+	UPROPERTY(EditAnywhere, Category = Appearance)
+		FSlateBrush ItemEndButton;
+	FSoldierScoreboardStyle& SetItemEndButton(const FSlateBrush& InItemBorderBrush) { ItemEndButton = InItemBorderBrush; return *this; }
 	/**
 	 * The color used for the kill stat
 	 */	

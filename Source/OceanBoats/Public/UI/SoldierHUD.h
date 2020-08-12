@@ -6,6 +6,7 @@
 #include "SoldierHUD.generated.h"
 
 class SBoatBoard;
+class STopBar;
 
 struct FHitData
 {
@@ -302,6 +303,7 @@ protected:
 	/** Scoreboard widget. */
 	TSharedPtr<class SOceanBoatsScoreboardWidget>	ScoreboardWidget;
 	TSharedPtr<class SBoatBoard>	BoatDetailWidget;
+	TSharedPtr<class STopBar> TopBar;
 	/** Scoreboard widget overlay. */
 	TSharedPtr<class SOverlay>	ScoreboardWidgetOverlay;
 

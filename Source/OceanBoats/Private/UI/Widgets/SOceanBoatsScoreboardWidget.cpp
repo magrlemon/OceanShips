@@ -103,7 +103,7 @@ void SOceanBoatsScoreboardWidget::Construct(const FArguments& InArgs)
 			.Padding(NORM_PADDING)
 			.VAlign(VAlign_Center)
 			.HAlign(HAlign_Center)
-			.BorderImage(&ScoreboardStyle->ItemBorderBrush)
+			.BorderImage(&ScoreboardStyle->ItemBackGround)
 			.BorderBackgroundColor(ScoreboardTint)
 			[
 				SNew(SBox)
@@ -131,7 +131,7 @@ void SOceanBoatsScoreboardWidget::Construct(const FArguments& InArgs)
 
 	SBorder::Construct(
 		SBorder::FArguments()
-		.BorderImage(&ScoreboardStyle->ItemBorderBrush)
+		.BorderImage(&ScoreboardStyle->ItemBackGround)
 		.BorderBackgroundColor(ScoreboardTint)
 		[
 			ScoreboardGrid
