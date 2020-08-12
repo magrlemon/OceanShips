@@ -45,7 +45,8 @@ void ASimContextDataTankEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimE
 	if (pSimEcs_Engine.IsValid( )) {
 		int32 entType = GetEntityType( );
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSTankPropertyData>, int32, FVector>( std::move( entType ), 
-			std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+			std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) 
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 #define  _GEN_COMPONENT_(TYPE)\
 		//pEnt->AddComponent<typename Sim##TYPE##Component, int32>( std::move( entType ) );\
@@ -116,7 +117,8 @@ void ASimContextDataCharactorEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> 
 	if (pSimEcs_Engine.IsValid( )) {
 		int32 entType = GetEntityType( );
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCharactorPropertyData>, int32, FVector>(
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 #define  _GEN_COMPONENT_(TYPE)\
 		//pEnt->AddComponent<typename Sim##TYPE##Component, int32>( std::move( entType ) );\
@@ -308,7 +310,8 @@ void ASimContextDataDroneBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> 
 			return;
 
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSDroneBoatPropertyData>, int32, FVector>( 
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+			,std::move( m_STPropData.entLader ) , std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
 			FString simMsg = FString::Printf( TEXT( "Create DroneBoat Actor's Name is : %s" ), *m_STPropData.entName );
@@ -394,6 +397,14 @@ void ASimContextDataDroneBoatEnvironment::SerializeStructure( TMapScenario & ref
 			m_STPropData.entPos.Z = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
+		else if (key.Key.Compare( TEXT( "队长" ) ) == 0) {
+			m_STPropData.entLader = FCString::Atoi( *(key.Value) );
+			Writer->WriteValue( "Leader:", (key.Value) );
+		}
+		else if (key.Key.Compare( TEXT( "编组" ) ) == 0) {
+			m_STPropData.entGroupName = key.Value;
+			Writer->WriteValue( "FormationGroup:", (key.Value) );
+		}
 	}
 	Writer->WriteObjectEnd( );
 	Writer->Close( );
@@ -424,7 +435,8 @@ void ASimContextDataNavalCraftEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine>
 			return;
 
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSNavalCraftPropertyData>, int32, FVector>(
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
 			FString simMsg = FString::Printf( TEXT( "Create NavalCraft Actor's Name is : %s" ), *m_STPropData.entName );
@@ -511,6 +523,14 @@ void ASimContextDataNavalCraftEnvironment::SerializeStructure( TMapScenario & re
 		else if (key.Key.Compare( TEXT( "旋转步率" ) ) == 0) {
 			m_STPropData.entPos.Z = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
+		}
+		else if (key.Key.Compare( TEXT( "队长" ) ) == 0) {
+			m_STPropData.entLader = FCString::Atoi( *(key.Value) );
+			Writer->WriteValue( "Leader:", (key.Value) );
+		}
+		else if (key.Key.Compare( TEXT( "编组" ) ) == 0) {
+			m_STPropData.entGroupName = key.Value;
+			Writer->WriteValue( "FormationGroup:", (key.Value) );
 		}
 	}
 	Writer->WriteObjectEnd( );
@@ -611,7 +631,8 @@ void ASimContextDataPatrolBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine>
 			return;
 		GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "CreateEntity  PatrolBoat!!!" );
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSPatrolBoatPropertyData>, int32, FVector>( 
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		return;
 #define  _GEN_COMPONENT_(TYPE)\
@@ -727,7 +748,8 @@ void ASimContextDataTrafficBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine
 			return;
 
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSTrafficBoatPropertyData>, int32, FVector>( 
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) 
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		return;
 #define  _GEN_COMPONENT_(TYPE)\
@@ -843,7 +865,8 @@ void ASimContextDataEngineeringBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_En
 			return;
 
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSEngineeringBoatPropertyData>, int32, FVector>(
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		return;
 #define  _GEN_COMPONENT_(TYPE)\
@@ -958,7 +981,8 @@ void ASimContextDataGTZEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 			return;
 
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefGTZPropertyData>, int32, FVector>( 
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
 			FString simMsg = FString::Printf( TEXT( "Create GTZ Actor's Name is : %s" ), *m_STPropData.entName   );
@@ -1047,7 +1071,10 @@ void ASimContextDataHLSEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		if (entType < 0)
 			return;
 
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefHLSPropertyData>, int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefHLSPropertyData>,
+			int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ),
+				std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ),
+				std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
 			FString simMsg = FString::Printf( TEXT( "Create HLS Actor's Name is : %s" ), *m_STPropData.entName );
@@ -1135,7 +1162,8 @@ void ASimContextDataSJZEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 			return;
 
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>(
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
 			FString simMsg = FString::Printf( TEXT( "Create SJZ Actor's Name is : %s" ), *m_STPropData.entName );
@@ -1222,7 +1250,9 @@ void ASimContextDataGCWEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		if (entType < 0)
 			return;
 
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefGTZPropertyData>, int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefGTZPropertyData>, int32, FVector>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) 
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
 			FString simMsg = FString::Printf( TEXT( "Create GCW Actor's Name is : %s" ), *m_STPropData.entName );
@@ -1311,7 +1341,9 @@ void ASimContextDataTSWSFEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSim
 		if (entType < 0)
 			return;
 
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefHLSPropertyData>, int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefHLSPropertyData>, int32, FVector>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) 
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
 			FString simMsg = FString::Printf( TEXT( "Create TSWSF Actor's Name is : %s" ), *m_STPropData.entName );
@@ -1400,7 +1432,9 @@ void ASimContextDataTSWYLEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSim
 		if (entType < 0)
 			return;
 
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>( 
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
 			FString simMsg = FString::Printf( TEXT( "Create TSWYL Actor's Name is : %s" ), *m_STPropData.entName );
@@ -1490,7 +1524,9 @@ void ASimContextDataZGQEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		if (entType < 0)
 			return;
 
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) );
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 
 #define  _GEN_COMPONENT_(TYPE)\
@@ -1578,7 +1614,9 @@ void ASimContextDataHHLCEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimE
 		if (entType < 0)
 			return;
 
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ));
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>( 
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 
 #define  _GEN_COMPONENT_(TYPE)\
@@ -1665,7 +1703,9 @@ void ASimContextDataBLDSEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimE
 		if (entType < 0)
 			return;
 
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ));
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 
 #define  _GEN_COMPONENT_(TYPE)\
@@ -1752,7 +1792,9 @@ void ASimContextDataGTZSUIJIEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> p
 		if (entType < 0)
 			return;
 
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ));
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 
 #define  _GEN_COMPONENT_(TYPE)\
@@ -1838,7 +1880,9 @@ void ASimContextDataZJHEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		if (entType < 0)
 			return;
 
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ));
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>( 
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 
 #define  _GEN_COMPONENT_(TYPE)\

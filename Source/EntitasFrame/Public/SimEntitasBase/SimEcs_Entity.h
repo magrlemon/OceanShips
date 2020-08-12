@@ -165,8 +165,10 @@
 			simRegistry->get<FLifetime>( handleID ).LifeLeft = 0.5f;
 			FArchetypeSpawner &spawn = simRegistry->get<FArchetypeSpawner>( handleID );
 			spawn.Name = *_name;
+			spawn.GroupName = _groupName;
 			spawn.ActorType = _type;
 			spawn.bLoopSpawn = false;
+			spawn.isLeader = _isLeader;
 			spawn.ArchetypeClass = typeClass;
 			spawn.SpawnRate = 1;
 			spawn.TimeUntilSpawn = 0.1f;
@@ -179,12 +181,14 @@
 
 
 		virtual const EntityHandleId GetEntityHandleId( ) { return m_eHandleID; };
-		SimEcs_Entity(int type,FVector entPos, float heading, FString name ):SimEcs_IEntity()
+		SimEcs_Entity(int type,FVector entPos, float heading, FString name ,bool isLeader, FString groupName ):SimEcs_IEntity()
 		{
 			_type = type;
 			_pos = entPos;
 			_heading = heading;
 			_name = name;
+			_isLeader = isLeader;
+			_groupName = groupName;
 		}
 
 		virtual ~SimEcs_Entity()
@@ -210,6 +214,8 @@
 			FVector _pos = FVector::ZeroVector;
 			float _heading = 0.0f;
 			FString _name = "";
+			bool _isLeader = false ;
+			FString _groupName = "";
 	};
 
 	using EntityTypeId = TypeID;

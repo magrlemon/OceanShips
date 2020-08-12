@@ -56,6 +56,7 @@ struct ExplosionSystem :public SystemT {
 	}
 };
 
+DECLARE_CYCLE_STAT( TEXT( "SimEcs: OceanShip System" ), STAT_OceanShip, STATGROUP_ECS );
 struct OceanShipSystem :public SystemT {
 	
 	FRotator MakeRotFromX(const FVector& X)
@@ -194,7 +195,7 @@ struct OceanShipSystem :public SystemT {
 	void update(SimEcs_Registry &registry, float dt) override
 	{
 		assert(OwnerActor);
-		SCOPE_CYCLE_COUNTER(STAT_Explosion);
+		SCOPE_CYCLE_COUNTER( STAT_OceanShip );
 
 		registry.view<FOceanShip, FRotationComponent,FVelocity>().each([&, dt](auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel) {
 			//ArchetypeSpawnerSystem* SpawnerSystem= static_cast<ArchetypeSpawnerSystem*>( World->GetArchetypeSpawnerSystem( ) );
@@ -569,17 +570,72 @@ struct BoidSystem :public SystemT {
 //////////////                                        ////////////////////              
 /////////////////////////////////////////////////////////////////////////
 
-
+DECLARE_CYCLE_STAT( TEXT( "SimEcs: BoatFormation System" ), STAT_BoatFormation, STATGROUP_ECS );
 struct BoatFormationSystem :public SystemT {
 
 	const float UpdateRate = 0.1;
 
 	float elapsed = 0;
+	struct BoatFormationStruct {
+		BoatFormationStruct( FVector4 locate, bool isLeader ) : BoatLocate( locate ), IsLeader( isLeader ){};
+		
+		FVector4 BoatLocate = FVector4( 0.0f, 0.0f, 0.0f, 0.0f );
+		bool IsLeader = false;
+	};
+
+	float baseFormationAngle = 10.0f;
+	float formationAngle = 10.0f;
+	float formationLength = 30000.0f;
+	using EntityHandleId = uint64_t;
+	TMap<FString,TMap<EntityHandleId, BoatFormationStruct>> m_TTMapBoatFormationInfo; //FVector4(pos3,dir)
+
+	void GrapFormationInfo( ) {
+		auto nodeList = m_TTMapBoatFormationInfo;
+		for (auto node : nodeList) {
+			TMap<EntityHandleId, FVector4> mapEntityInfo;
+			auto chList = mapEntityInfo;
+			for (auto chNode : chList) {
+				auto attList = mapEntityInfo;
+				for (auto attr : attList) {
+					mapEntityInfo.Add( 1, FVector4(0.0f,0.0f,0.0f,0.0f) );
+				}
+			}
+
+			if (m_TTMapBoatFormationInfo.Num( ) > 0) {
+				//m_TTMapBoatFormationInfo.Add( mapEntityInfo );
+			}
+		}
+	}
+
+	FVector4 CaculateNextFormationLocate( float fNextDistance, float formationAngle) {
+
+	}
+
+	//temp 
+	void LeaderFormation( EBoatFormation ebf) {
+		for (auto itmeGroup: m_TTMapBoatFormationInfo) {
+			int location = 0;
+			for(auto item : itmeGroup.Value)
+			{
+				float followDis = ( location / 2) * formationLength;
+				if (location % 2 == 0) {
+
+				}
+				else {
+
+				}
+				location++;
+			}
+		}
+	}
+
+
+	
 
 	void update( SimEcs_Registry &registry, float dt ) override
 	{
 		assert( OwnerActor );
-		SCOPE_CYCLE_COUNTER( STAT_Explosion );
+		SCOPE_CYCLE_COUNTER( STAT_BoatFormation );
 
 		auto AllExplosionsView = registry.view<FExplosion>( );
 		for (auto e : AllExplosionsView) {

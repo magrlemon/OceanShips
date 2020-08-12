@@ -81,6 +81,12 @@ enum   ESceneRelevantConv {
 };
 
 
+enum   EBoatFormation {
+	E_LEADER_FORMATION,
+	E_TWOLINE_FORMATION
+};
+
+
 enum   EEntityEquips {
 	EEE_NONE = 0,
 	EEE_TANK_TYPE,				//坦克					1
@@ -138,7 +144,7 @@ enum   EComponentClass {
 
 
 
-
+#define  BP_ACTOR_TYPE_SPLIT 1000    //蓝图资源分割线
 //namespace Internal
 
 class  MemoryManager;

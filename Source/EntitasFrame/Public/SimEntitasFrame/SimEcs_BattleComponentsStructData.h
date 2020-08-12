@@ -318,11 +318,17 @@ struct FArchetypeSpawner {
 		bool bLoopSpawn;
 	UPROPERTY( EditAnywhere, Category = SimEcs )
 		int32 ActorType;
+	UPROPERTY( EditAnywhere, Category = SimEcs )
+		bool isLeader;
+	UPROPERTY( EditAnywhere, Category = SimEcs )
+		FName Name;
+	UPROPERTY( EditAnywhere, Category = SimEcs )
+		FString GroupName;
 
 	using EntityHandleId = uint64_t;
 	EntityHandleId   entHandleId;
 	
-	FName Name;
+
 };
 
 

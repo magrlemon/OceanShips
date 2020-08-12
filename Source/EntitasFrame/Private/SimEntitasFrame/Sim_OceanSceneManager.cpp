@@ -79,6 +79,12 @@ TSharedPtr<AActor> USimOceanSceneManager_Singleton::GetSimActorWithTag( const FS
 	return nullptr;
 }
 
+//get leader position
+FVector USimOceanSceneManager_Singleton::GetSimLeaderPosition( const FString& strGroup ) {
+
+	return FVector( 0.0f, 0.0f, 0.0f );
+}
+
 void USimOceanSceneManager_Singleton::InitialzieScenarioData( ) {
 	if (m_bLoadScenario) return;
 	UWorld* World = GEngine->GameViewport->GetWorld( );

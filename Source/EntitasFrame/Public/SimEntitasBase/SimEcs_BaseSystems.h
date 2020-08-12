@@ -182,7 +182,6 @@ struct ArchetypeSpawnerSystem :public SystemT {
 		if (!Found)
 		{
 			FActorSpawnParameters SpawnInfo;
-			SpawnInfo.Name = "";
 			SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			FoundArchetype = MakeShareable( OwnerActor->GetWorld()->SpawnActor<ASimEcs_Archetype>(ArchetypeClass, SpawnPosition , quatRot.Rotator(), SpawnInfo ));
 			if (!FoundArchetype.IsValid( ))return;
@@ -238,7 +237,23 @@ struct ArchetypeSpawnerSystem :public SystemT {
 				UE_LOG( LogFlying, Warning, TEXT( "Error when spawning archetype: %s" ), *GetNameSafe( spawner.ArchetypeClass ) );
 			}
 			else {
-				if (spawner.ActorType < 1000) {
+				if (spawner.ActorType < BP_ACTOR_TYPE_SPLIT) {
+					USimOceanSceneManager_Singleton::BoatFormationStruct boatFormate;
+					boatFormate.Name = *(FoundArchetype->GetName( ));
+					boatFormate.BoatLocate = SpawnPosition;
+					boatFormate.ForwardVector = quatRot.GetForwardVector( );
+					boatFormate.IsLeader = spawner.isLeader;
+				
+					auto FoundGroup = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo.Find( spawner.GroupName );
+					if (!FoundGroup) {
+						TMap<EntityHandleId, USimOceanSceneManager_Singleton::BoatFormationStruct> mapBoatsFormation;
+						//TMap<EntityHandleId, BoatFormationStruct>
+						mapBoatsFormation.Add( spawner.entHandleId, boatFormate );
+						USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo.Add( spawner.GroupName, mapBoatsFormation );
+					}
+					else {
+						FoundGroup->Add( spawner.entHandleId, boatFormate );
+					}
 					USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypesName.Add( spawner.entHandleId, *(FoundArchetype->GetName( )) );
 					GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, FoundArchetype->GetName( ) );
 				}

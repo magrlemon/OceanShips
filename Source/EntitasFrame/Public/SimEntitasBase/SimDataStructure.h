@@ -18,6 +18,8 @@ public:
 		entID = "";				// entity serial number
 		entName = "";
 		entPos = FVector::ZeroVector;
+		entGroupName = "";
+		entLader = false;
 	};
 	~FSPropertyDataBase() {}
 
@@ -27,6 +29,8 @@ public:
 	FName		 entID;				// entity serial number
 	FString		 entName;
 	FVector		 entPos;
+	FString		 entGroupName;
+	bool		 entLader;
 };
 
 

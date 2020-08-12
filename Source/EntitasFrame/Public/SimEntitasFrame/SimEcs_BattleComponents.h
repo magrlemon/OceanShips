@@ -98,22 +98,6 @@ public:
 //////////////            Boat Formation             /////////////////////                                 
 //////////////                                        ////////////////////              
 /////////////////////////////////////////////////////////////////////////
-//
-//UCLASS( ClassGroup = (SimEcs), meta = (BlueprintSpawnableComponent) )
-//class ENTITASFRAME_API USimEcs_FormationComponentWrapper : public UActorComponent, public IComponentWrapper {
-//	GENERATED_BODY( )
-//protected:
-//	// Called when the Entity Generate successful
-//	virtual void BeginPlay( ) {};
-//	virtual void BeginDestory( ) {};
-//public:
-//	USimEcs_FormationComponentWrapper( );
-//	virtual void AddToEntity( u64 uHandleID, FString& jsonValue );
-//	void ParseJson( FString& jsonValue );
-//	UPROPERTY( EditAnywhere, Category = SimEcs )
-//		FFormation Value;
-//};
-
 
 
 UCLASS( ClassGroup = (SimEcs), meta = (BlueprintSpawnableComponent) )
