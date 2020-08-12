@@ -322,7 +322,7 @@ struct FArchetypeSpawner {
 	using EntityHandleId = uint64_t;
 	EntityHandleId   entHandleId;
 	
-
+	FName Name;
 };
 
 
@@ -415,6 +415,7 @@ struct FOceanShip {
 	bool ReverseMoveEnd = false;
 	bool bSpeedDown = false;
 	bool bRollBack = false;
+	FName Name;
 	FVector LastPos;
 	FVector MoveOnPos;
 	FVector MoveBackPos;

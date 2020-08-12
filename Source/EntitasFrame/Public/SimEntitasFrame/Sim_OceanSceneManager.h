@@ -44,6 +44,9 @@ public:
 
 	using EntityHandleId = uint64_t;
 	TMap<EntityHandleId, TSharedPtr<ASimEcs_Archetype>> m_MapArchetypes;
+
+	/* save boat'name for scenario'file */
+	TMap<EntityHandleId, FName> m_MapArchetypesName;
 private:
 	static USimOceanSceneManager_Singleton* gSingletonScene;
 	TArray<FString> BrocastMessages;
@@ -67,10 +70,21 @@ public:
 	void RemoveSimMessage( );
 	void PushSimMessage( FString& strMsg );
 	TArray<FString>& CopySimMessage( );
-	//////////////////////////////////////////////////////////////////////////
 
+	//////////////////////////////////////////////////////////////////////////
+	/*
+	//  deal  boat data,replace (boat component )date to ecs system
+	*/
+	//////////////////////////////////////////////////////////////////////////
+	void  MoveEntity( const FString& strName, const FVector& posRef );
+	void  MoveBackEntity( const FString& strName, const FVector& posRef );
+	void Firing( const FString& strName, const bool bFire );
+	//////////////////////////////////////////////////////////////////////////
 	//get tag
-	TSharedPtr<AActor> GetSimActorWithTag(  FString& strTag );
+	TSharedPtr<AActor> GetSimActorWithTag( const  FString& strTag );
+
+	//get name
+	EntityHandleId GetSimHandleIDWithName( const FString& strName );
 
 	/* terminate object date */
 	void Terminate( );

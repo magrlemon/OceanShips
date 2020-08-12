@@ -51,8 +51,21 @@ void USimOceanSceneManager_Singleton::MakeRoot( ) {
 }
 
 
+//get name
+using EntityHandleId = uint64_t;
+EntityHandleId USimOceanSceneManager_Singleton::GetSimHandleIDWithName( const FString& strName ) {
+	for (auto itme:m_MapArchetypesName)
+	{
+		if (itme.Value.Compare( *strName ) == 0)
+		{
+			return itme.Key;
+		}
+	}
+	return EntityHandleId(0);
+}
+
 //get tag
-TSharedPtr<AActor> USimOceanSceneManager_Singleton::GetSimActorWithTag( FString& strTag ) {
+TSharedPtr<AActor> USimOceanSceneManager_Singleton::GetSimActorWithTag( const FString& strTag ) {
 	if (!m_ScenarioSceneTap.IsValid( )) {
 		UWorld* World = GEngine->GameViewport->GetWorld( );
 		if (World == nullptr)
@@ -140,6 +153,8 @@ TSharedPtr<ASimEcs_Archetype> USimOceanSceneManager_Singleton::FindArchetype(Ent
 SimEcs_Registry * USimOceanSceneManager_Singleton::GetSimRegistry( )
 {
 	UE_LOG( LogFlying, Warning, TEXT( "USimOceanSceneManager_Singleton::GetSimRegistry" ) );
+	if (!m_ComponentSL_Ptr || !m_ComponentSL_Ptr->m_WorldActorPtr.IsValid( ))
+		return nullptr;
 	return  m_ComponentSL_Ptr->m_WorldActorPtr->ECSWorld->GetRegistry( );
 }
 
@@ -214,6 +229,32 @@ auto RemoveMsg = [=]( FString& strMsg ) {
 
 void USimOceanSceneManager_Singleton::RemoveSimMessage( ) {
 	m_arrSimMessage.RemoveAll( RemoveMsg );
+}
+
+//////////////////////////////////////////////////////////////////////////
+/*
+//  deal  boat data,replace (boat component )date to ecs system
+*/
+//////////////////////////////////////////////////////////////////////////
+void  USimOceanSceneManager_Singleton::MoveEntity( const FString& strName, const FVector& posRef ) {
+	if (strName.IsEmpty( ))return;
+	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
+	if (ehandleID > 0) {
+		FOceanShip fOceShip;
+		GetSimRegistry( )->replace<FOceanShip>( ehandleID, fOceShip );
+	}
+}
+
+void  USimOceanSceneManager_Singleton::MoveBackEntity( const FString& strName, const FVector& posRef ) {
+	if (strName.IsEmpty( ))return;
+	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
+	
+}
+
+void USimOceanSceneManager_Singleton::Firing( const FString& strName, const bool bFire ) {
+	if (strName.IsEmpty( ))return;
+	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
+	
 }
 
 USimOceanSceneManager_Singleton* USimOceanSceneManager_Singleton::gSingletonScene = nullptr;

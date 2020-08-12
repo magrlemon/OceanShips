@@ -85,6 +85,8 @@ void USimEcs_OceanShipComponentWrapper::ParseJson( FString& jsonValue ) {
 	TSharedPtr<FJsonObject> JsonObject;
 	const TSharedRef< TJsonReader<> >& Reader = TJsonReaderFactory<>::Create( jsonValue );
 	if (FJsonSerializer::Deserialize( Reader, JsonObject )) {
+	
+		Value.Name = *(JsonObject->GetStringField( "name:" ));
 		Value.AvoidanceStrenght = JsonObject->GetIntegerField( "AvoidanceStrenght:" );
 		Value.MaxVelocity = JsonObject->GetIntegerField( "MaxVelocity:" );
 		Value.BoatMass = JsonObject->GetIntegerField( "BoatMass:" );

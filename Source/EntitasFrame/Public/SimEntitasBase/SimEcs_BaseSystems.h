@@ -171,7 +171,8 @@ DECLARE_CYCLE_STAT(TEXT("SimEcs: Spanwer System"), STAT_ECSSpawn, STATGROUP_ECS)
 struct ArchetypeSpawnerSystem :public SystemT {
 
 
-	void SpawnFromArchetype(SimEcs_Registry & registry, EntityHandleId handleID,TSubclassOf<ASimEcs_Archetype> &ArchetypeClass, const FVector &SpawnPosition ,const FQuat  quatRot = FQuat::Identity )
+	void SpawnFromArchetype(SimEcs_Registry & registry, EntityHandleId handleID, int32 actorType ,TSubclassOf<ASimEcs_Archetype> &ArchetypeClass,
+		const FVector &SpawnPosition ,const FQuat  quatRot = FQuat::Identity )
 	{
 		//try to find the spawn archetype in the map, spawn a new one if not found, use it to initialize entity
 		//
@@ -180,7 +181,10 @@ struct ArchetypeSpawnerSystem :public SystemT {
 		TSharedPtr<ASimEcs_Archetype> FoundArchetype = nullptr;
 		if (!Found)
 		{
-			FoundArchetype = MakeShareable( OwnerActor->GetWorld()->SpawnActor<ASimEcs_Archetype>(ArchetypeClass, SpawnPosition , quatRot.Rotator()));
+			FActorSpawnParameters SpawnInfo;
+			SpawnInfo.Name = "";
+			SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			FoundArchetype = MakeShareable( OwnerActor->GetWorld()->SpawnActor<ASimEcs_Archetype>(ArchetypeClass, SpawnPosition , quatRot.Rotator(), SpawnInfo ));
 			if (!FoundArchetype.IsValid( ))return;
 			FoundArchetype->SetActorLabel( *GetNameSafe( FoundArchetype.Get() ) );
 			UE_LOG(LogFlying, Warning, TEXT("Spawned archetype: %s"), *GetNameSafe( FoundArchetype.Get( ) ));
@@ -190,6 +194,10 @@ struct ArchetypeSpawnerSystem :public SystemT {
 			}
 			else
 			{
+				if (actorType < 1000) {
+					USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypesName.Add( handleID, *(FoundArchetype->GetName( )) );
+					GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, FoundArchetype->GetName( ) );
+				}
 				//FString strInfor = TEXT( "m_mapArchetypes pawnerSystem" );
 				//USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
 				USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypes.Add( handleID, FoundArchetype);
@@ -197,6 +205,49 @@ struct ArchetypeSpawnerSystem :public SystemT {
 		}
 		else
 		{
+			FoundArchetype = *Found;
+			FoundArchetype->SetActorLocation( SpawnPosition );
+		}
+		//if (FoundArchetype) {
+		//	return FoundArchetype->CreateNewEntityFromThis( handleID );
+		//}
+		//else {
+		//	UE_LOG( LogFlying, Warning, TEXT( "Failed new Entity: %s" ), *GetNameSafe( ArchetypeClass ) );
+		//}
+
+	}
+
+
+
+	void SpawnFromArchetype( SimEcs_Registry & registry, FArchetypeSpawner& spawner, const FVector &SpawnPosition, const FQuat  quatRot = FQuat::Identity )
+	{
+		//try to find the spawn archetype in the map, spawn a new one if not found, use it to initialize entity
+		//
+
+		auto Found = USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypes.Find( spawner.entHandleId );
+		TSharedPtr<ASimEcs_Archetype> FoundArchetype = nullptr;
+		if (!Found) {
+			FActorSpawnParameters SpawnInfo;
+			SpawnInfo.Name = spawner.Name;
+			SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			FoundArchetype = MakeShareable( OwnerActor->GetWorld( )->SpawnActor<ASimEcs_Archetype>( spawner.ArchetypeClass, SpawnPosition, quatRot.Rotator( ), SpawnInfo ) );
+			if (!FoundArchetype.IsValid( ))return;
+			FoundArchetype->SetActorLabel( *GetNameSafe( FoundArchetype.Get( ) ) );
+			UE_LOG( LogFlying, Warning, TEXT( "Spawned archetype: %s" ), *GetNameSafe( FoundArchetype.Get( ) ) );
+			if (!FoundArchetype) {
+				UE_LOG( LogFlying, Warning, TEXT( "Error when spawning archetype: %s" ), *GetNameSafe( spawner.ArchetypeClass ) );
+			}
+			else {
+				if (spawner.ActorType < 1000) {
+					USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypesName.Add( spawner.entHandleId, *(FoundArchetype->GetName( )) );
+					GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, FoundArchetype->GetName( ) );
+				}
+				//FString strInfor = TEXT( "m_mapArchetypes pawnerSystem" );
+				//USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
+				USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypes.Add( spawner.entHandleId, FoundArchetype );
+			}
+		}
+		else {
 			FoundArchetype = *Found;
 			FoundArchetype->SetActorLocation( SpawnPosition );
 		}

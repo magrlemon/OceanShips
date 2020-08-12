@@ -58,8 +58,6 @@ void StaticMeshDrawSystem::update( SimEcs_Registry &registry, float dt )
 			}
 			MeshData->rendered++;
 		}
-
-
 	}
 
 	for (auto &i : MeshMap) {
@@ -103,7 +101,7 @@ void ArchetypeSpawnerSystem::update( SimEcs_Registry &registry, float dt )
 
 		if (spawner.TimeUntilSpawn < 0) {
 			if (spawner.ArchetypeClass) {
-				SpawnFromArchetype( registry, spawner.entHandleId, spawner.ArchetypeClass, ActorTransform.GetLocation( ) );
+				SpawnFromArchetype( registry, spawner.entHandleId, spawner.ActorType, spawner.ArchetypeClass, ActorTransform.GetLocation( ) );
 
 				registry.accommodate<FPosition>( spawner.entHandleId, ActorTransform.GetLocation( ) );
 
@@ -143,7 +141,7 @@ void ArchetypeSpawnerSystem::update( SimEcs_Registry &registry, float dt )
 				ESceneRelevantConv esrc = spawner.ActorType < 1000 ? ESceneRelevantConv::E_SENERAIO_POINT : ESceneRelevantConv::E_BARRIER_POINT;
 				FVector relativePos; relativePos.Set( SpawnPosition.X, SpawnPosition.Y, SpawnPosition.Z );
 				relativePos = USimOceanSceneManager_Singleton::GetInstance( )->GetCovertScenePosition( relativePos, esrc );
-				SpawnFromArchetype( registry, spawner.entHandleId, spawner.ArchetypeClass, relativePos, quatRot );
+				SpawnFromArchetype( registry, spawner , relativePos, quatRot );
 				registry.accommodate<FPosition>( spawner.entHandleId, relativePos );
 			}
 
