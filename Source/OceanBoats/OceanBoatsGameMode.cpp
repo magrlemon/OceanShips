@@ -103,7 +103,7 @@ RetVar AOceanBoatsGameMode::MoveEntity(int argc, void ** argv)
 		
 		
 	}
-	ret.iRet = behaviac::BT_SUCCESS;
+	ret.iRet = behaviac::BT_RUNNING;
 	return ret;
 }
 
@@ -120,7 +120,7 @@ RetVar AOceanBoatsGameMode::MoveBackEntity(int argc, void ** argv)
 		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "MoveBackEntity");
 		return MoveEntity(name, PosX, PosY, dir);
 	}
-	ret.iRet = behaviac::BT_SUCCESS;
+	ret.iRet = behaviac::BT_RUNNING;
 	return ret;
 }
 RetVar AOceanBoatsGameMode::Fire(int argc, void ** argv) {
