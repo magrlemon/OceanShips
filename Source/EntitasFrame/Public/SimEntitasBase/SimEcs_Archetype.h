@@ -45,6 +45,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void StartFire();
 	virtual void StartFire_Implementation();
+
 public:
 	uint64 EntId;
 	float Speed;

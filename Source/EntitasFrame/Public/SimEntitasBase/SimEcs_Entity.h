@@ -148,7 +148,7 @@
 			if (!sysLink_WeakPtr || !entFrameDate.IsValid())
 				return;
 			FString  strValue;			
-			GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, strValue.FromInt( _type ) );
+			//GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, strValue.FromInt( _type ) );
 			TSubclassOf<ASimEcs_Archetype> typeClass =  entFrameDate.Pin()->GetSubClassByType( _type );//
 			if (!typeClass.Get( ))
 				return;
@@ -181,7 +181,7 @@
 
 
 		virtual const EntityHandleId GetEntityHandleId( ) { return m_eHandleID; };
-		SimEcs_Entity(int type,FVector entPos, float heading, FString name ,bool isLeader, FString groupName ):SimEcs_IEntity()
+		SimEcs_Entity(int32 type,FVector entPos, float heading, FString name ,bool isLeader, FString groupName ):SimEcs_IEntity()
 		{
 			_type = type;
 			_pos = entPos;

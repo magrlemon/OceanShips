@@ -195,7 +195,7 @@ struct ArchetypeSpawnerSystem :public SystemT {
 			{
 				if (actorType < 1000) {
 					USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypesName.Add( handleID, *(FoundArchetype->GetName( )) );
-					GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, FoundArchetype->GetName( ) );
+					//GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, FoundArchetype->GetName( ) );
 				}
 				//FString strInfor = TEXT( "m_mapArchetypes pawnerSystem" );
 				//USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
@@ -255,7 +255,7 @@ struct ArchetypeSpawnerSystem :public SystemT {
 						FoundGroup->Add( spawner.entHandleId, boatFormate );
 					}
 					USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypesName.Add( spawner.entHandleId, *(FoundArchetype->GetName( )) );
-					GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, FoundArchetype->GetName( ) );
+					//GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, FoundArchetype->GetName( ) );
 				}
 				//FString strInfor = TEXT( "m_mapArchetypes pawnerSystem" );
 				//USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );

@@ -231,10 +231,14 @@ void BarrierFixedRaycastSystem::update( SimEcs_Registry &registry, float dt )
 		auto archeType = USimOceanSceneManager_Singleton::GetInstance( )->FindArchetype( entity );
 		if (!archeType)return;
 
-		FCollisionQueryParams cqq( FName( TEXT( "Combattrace" ) ), true, NULL );
+		FCollisionQueryParams cqq( FName( TEXT( "sim_ocean" ) ), true, NULL );
 		cqq.bTraceComplex = true;
 		cqq.bReturnPhysicalMaterial = false;
-		cqq.AddIgnoredActor( archeType.Get( ) );
+		TArray<AActor* > InIgnoreActors;
+		InIgnoreActors.Add( archeType.Get() );
+		InIgnoreActors.Add( USimOceanSceneManager_Singleton::GetInstance( )->GetOceanActor( ) );
+		cqq.AddIgnoredActors( InIgnoreActors );
+		
 		fPos = archeType.Get( )->GetTransform( ).GetLocation( );
 
 		const FRotator Rotation = archeType.Get( )->GetTransform( ).Rotator( );
@@ -248,12 +252,12 @@ void BarrierFixedRaycastSystem::update( SimEcs_Registry &registry, float dt )
 
 		if (HitResult.GetActor( )) {
 			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType( HitResult.PhysMaterial.Get( ) );
-			//GEngine->AddOnScreenDebugMessage( -1, 5.0f, FColor::Red, HitResult.GetActor( )->GetName( ) );
+
 			auto  SceneComponent = archeType.Get( )->GetRootComponent( );
 			if (archeType && SceneComponent) {
 				pos.pos = HitResult.Location + dir * -10.0f;
 				
-				GEngine->AddOnScreenDebugMessage( -1, 5.0f, FColor::Red, FString::FromInt( ray.Distance ) );
+				GEngine->AddOnScreenDebugMessage( -1, 5.0f, FColor::Red, FString::FromInt(SurfaceType ) );
 				if (ray.Distance < 15.0f) {
 					FSimulatePhysical fsp;
 					fsp.LifeLeft = 0.5f;
@@ -262,7 +266,7 @@ void BarrierFixedRaycastSystem::update( SimEcs_Registry &registry, float dt )
 					fsp.bJumpOne = true;
 					registry.remove<FBarrierFixedRaycastResult>( entity );
 					registry.accommodate<FSimulatePhysical>( entity, fsp );
-					GEngine->AddOnScreenDebugMessage( -1, 5.0f, FColor::Red, HitResult.GetActor( )->GetName( ) );
+				//	GEngine->AddOnScreenDebugMessage( -1, 5.0f, FColor::Red, HitResult.GetActor( )->GetName( ) );
 					return;
 				}
 				DrawDebugLine( World, archeType->GetTransform( ).GetTranslation( ), pos.pos, FColor::Green, true, 5.0f );
@@ -303,10 +307,6 @@ void SwitchSimulatePhysicalSystem::update( SimEcs_Registry &registry, float dt )
 			for (int32 ChildIndex = 0; ChildIndex < SceneComponent->GetNumChildrenComponents( ); ++ChildIndex) {
 				if (UDestructibleComponent* ChildComponent = Cast<UDestructibleComponent>( SceneComponent->GetChildComponent( ChildIndex ) )) {
 					ChildComponent->SetSimulatePhysics( simPhy.bSimulatePhysical );
-					if(simPhy.bSimulatePhysical)
-					GEngine->AddOnScreenDebugMessage( -1, 5.0f, FColor::Red, "simPhy.bSimulatePhysical is true" );
-					else
-						GEngine->AddOnScreenDebugMessage( -1, 5.0f, FColor::Red, "simPhy.bSimulatePhysical is false" );
 					bRemoveSimCom = true;
 				}
 			}

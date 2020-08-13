@@ -24,7 +24,7 @@ Preprocessor defines:
 #define __SIM_API_H__
 #pragma once
 
-#define ENITY_LUT_GROW						1024
+#define ENITY_LUT_GROW						2048
 
 #define ENITY_T_CHUNK_SIZE					512
 

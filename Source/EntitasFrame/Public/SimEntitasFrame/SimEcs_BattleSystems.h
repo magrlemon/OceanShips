@@ -56,9 +56,9 @@ struct ExplosionSystem :public SystemT {
 	}
 };
 
-DECLARE_CYCLE_STAT( TEXT( "SimEcs: OceanShip System" ), STAT_OceanShip, STATGROUP_ECS );
+DECLARE_CYCLE_STAT(TEXT("SimEcs: OceanShip System"), STAT_OceanShip, STATGROUP_ECS);
 struct OceanShipSystem :public SystemT {
-	
+
 	FRotator MakeRotFromX(const FVector& X)
 	{
 		return FRotationMatrix::MakeFromX(X).Rotator();
@@ -115,11 +115,11 @@ struct OceanShipSystem :public SystemT {
 	void MainLoopLogic(FOceanShip& ship, FVector forceLocation, UStaticMeshComponent* root)
 	{
 		ship.MainMeshComponent = root;
-		if (ship.MoveMode != EBoatMoveMode_On && ship.MoveMode != EBoatMoveMode_Back)
-			return;
-
 		root->AddForceAtLocation(root->GetRightVector() * ship.RightAxisValue * root->GetMass() * ship.SteeringSpeed, forceLocation);
 		root->AddForce(root->GetForwardVector() * root->GetMass() * ship.ForwardAxisValue * ship.ForwardSpeed);
+
+		if (ship.MoveMode == EBoatMoveMode_Idle)
+			return;
 
 		ship.ForwardAxisValue = ship.CurrentSpeed;
 		if (ship.StepSpeed <= 0)
@@ -172,7 +172,7 @@ struct OceanShipSystem :public SystemT {
 		//record move distance		
 		if (ship.LastPos.Equals(FVector::ZeroVector))
 			ship.LastPos = boat->GetActorLocation();
-		else if(boat->MainStaticMesh)
+		else if (boat->MainStaticMesh)
 		{
 			float move = (ship.LastPos - boat->MainStaticMesh->GetComponentLocation()).Size2D();
 
@@ -195,33 +195,36 @@ struct OceanShipSystem :public SystemT {
 	void update(SimEcs_Registry &registry, float dt) override
 	{
 		assert(OwnerActor);
-		SCOPE_CYCLE_COUNTER( STAT_OceanShip );
+		SCOPE_CYCLE_COUNTER(STAT_OceanShip);
 
-		registry.view<FOceanShip, FRotationComponent,FVelocity>().each([&, dt](auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel) {
-			//ArchetypeSpawnerSystem* SpawnerSystem= static_cast<ArchetypeSpawnerSystem*>( World->GetArchetypeSpawnerSystem( ) );
-		//FVector moveOnPos(-180180 + 5000, -370000 + 5000, -6600);
-		//rotation.rot = vel.vel.Rotation().Quaternion();
-		TSharedPtr<ASimEcs_Archetype>* boat = USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Find(entity);
-		if (boat)
-		{	
-			RecordBoatDetail(ship, boat->Get());
+		registry.view<FOceanShip, FRotationComponent, FVelocity>().each([&, dt](auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel) {
 
-			MainLoopLogic(ship, boat->Get()->ForceLocation, Cast<UStaticMeshComponent>(boat->Get()->GetRootComponent()));
-			
-			if(ship.MoveMode == EBoatMoveMode_On)
+			TSharedPtr<ASimEcs_Archetype>* boat = USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Find(entity);
+			if (boat)
 			{
-				boat->Get()->EnableWaveForce(true);
-				boat->Get()->EnableBoatEffect(true);
-			}
+				RecordBoatDetail(ship, boat->Get());
 
-			if (ship.MoveMode == EBoatMoveMode_Fire)
-			{
-				if(!ship.FireEnd)
+				MainLoopLogic(ship, boat->Get()->ForceLocation, Cast<UStaticMeshComponent>(boat->Get()->GetRootComponent()));
+
+				if (ship.MoveMode == EBoatMoveMode_On)
+				{
+					boat->Get()->EnableWaveForce(true);
+					boat->Get()->EnableBoatEffect(true);
+				}
+				else if (ship.MoveMode == EBoatMoveMode_Idle) {
+					boat->Get()->EnableBoatEffect(false);
+				}
+
+				if (ship.MoveMode == EBoatMoveMode_Fire)
+				{
+					//if (!ship.FireEnd) {
+					ship.ExpectSpeed = 0;
 					boat->Get()->StartFire();
+					GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "boat->Get( )->StartFire( );");
+					ship.MoveMode = EBoatMoveMode_Idle;
+					//}
+				}
 			}
-						
-		}
-			
 		});
 
 
@@ -630,8 +633,6 @@ struct BoatFormationSystem :public SystemT {
 	}
 
 
-	
-
 	void update( SimEcs_Registry &registry, float dt ) override
 	{
 		assert( OwnerActor );
@@ -649,13 +650,9 @@ struct BoatFormationSystem :public SystemT {
 
 
 		registry.view<FExplosion, FScale>( ).each( [&, dt]( auto entity, FExplosion & ex, FScale & scale ) {
-
-
 			scale.scale = FVector( (ex.LiveTime / ex.Duration)*ex.MaxScale );
 
 		} );
-
-
 	}
 };
 

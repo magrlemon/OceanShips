@@ -96,6 +96,9 @@ public:
 	//  deal  boat data,replace (boat component )date to ecs system
 	*/
 	//////////////////////////////////////////////////////////////////////////
+
+	void  SetIdle( const FString& strName, const FVector& posRef );
+	bool  IsArriving( const FString& strName, const FVector& posRef );
 	void  MoveEntity( const FString& strName, const FVector& posRef );
 	void  MoveBackEntity( const FString& strName, const FVector& posRef );
 	void Firing( const FString& strName, const bool bFire );
@@ -105,6 +108,8 @@ public:
 
 	//get name
 	EntityHandleId GetSimHandleIDWithName( const FString& strName );
+
+	AActor* GetOceanActor( );
 
 	//get leader position
 	FVector GetSimLeaderPosition( const FString& strGroup );
@@ -168,5 +173,7 @@ private:
 	GpsDataTransfer m_gpsDataTransfer;
 
 	TArray<FString> m_arrSimMessage;
+
+	AActor* m_oceanActor;
 
 };

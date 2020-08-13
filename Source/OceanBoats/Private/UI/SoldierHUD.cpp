@@ -773,7 +773,7 @@ void ASoldierHUD::DrawDeathMessages()
 	const float BoxPadding = 2.0f;
 	const float MaxLineX = 300.0f;
 	const float InitialX = Offset * 2.0f * ScaleUI;
-	const float InitialY = DeathMsgsPosY + (DeathMessagesBg.VL - Offset * 2.5f) * ScaleUI*1.5f;
+	const float InitialY = DeathMsgsPosY + (DeathMessagesBg.VL - Offset * 2.5f) * ScaleUI;
 
 	// draw messages
 	float CurrentY = InitialY;
@@ -830,7 +830,7 @@ void ASoldierHUD::DrawDeathMessages()
 
 void ASoldierHUD::ShowBroadcastMessage( const FString& strFrom , const FString& strTo )
 {
-	const int32 MaxDeathMessages = 8;
+	const int32 MaxDeathMessages = 5;
 	const float MessageDuration = 10.0f;
 
 	if (GetWorld( )->GetGameState( )) {

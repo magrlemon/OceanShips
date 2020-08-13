@@ -44,8 +44,9 @@ void ASimContextDataTankEnvironment::BeginPlay( ) {
 void ASimContextDataTankEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEcs_Engine ) {
 	if (pSimEcs_Engine.IsValid( )) {
 		int32 entType = GetEntityType( );
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSTankPropertyData>, int32, FVector>( std::move( entType ), 
-			std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) 
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSTankPropertyData>, int32, FVector, float, FString, bool, FString>( std::move( entType ),
+			std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 #define  _GEN_COMPONENT_(TYPE)\
@@ -73,7 +74,7 @@ void ASimContextDataTankEnvironment::SerializeStructure( TMapScenario & refScena
 			m_STPropData.entID = *(key.Value);
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
@@ -116,8 +117,9 @@ void ASimContextDataCharactorEnvironment::BeginPlay( ) {
 void ASimContextDataCharactorEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEcs_Engine ) {
 	if (pSimEcs_Engine.IsValid( )) {
 		int32 entType = GetEntityType( );
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCharactorPropertyData>, int32, FVector>(
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCharactorPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 #define  _GEN_COMPONENT_(TYPE)\
@@ -145,7 +147,7 @@ void ASimContextDataCharactorEnvironment::SerializeStructure( TMapScenario & ref
 			m_STPropData.entID = *(key.Value);
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
@@ -197,7 +199,7 @@ void ASimContextDataHelicopterEnvironment::SerializeStructure( TMapScenario & re
 			m_STPropData.entID = *(key.Value);
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
@@ -255,7 +257,7 @@ void ASimContextDataAirCraftEnvironment::SerializeStructure( TMapScenario & refS
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
@@ -308,10 +310,11 @@ void ASimContextDataDroneBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> 
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSDroneBoatPropertyData>, int32, FVector>( 
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
-			,std::move( m_STPropData.entLader ) , std::move( m_STPropData.entGroupName ) );
+		FString entName = m_STPropData.entName;
+		GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Black, m_STPropData.entName );
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSDroneBoatPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
+			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
 			FString simMsg = FString::Printf( TEXT( "Create DroneBoat Actor's Name is : %s" ), *m_STPropData.entName );
@@ -346,14 +349,16 @@ void ASimContextDataDroneBoatEnvironment::SerializeStructure( TMapScenario & ref
 			Writer->WriteValue( "number:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "name:", *(key.Value) );
+			GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Green, m_STPropData.entName );
+
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "方位" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -370,19 +375,15 @@ void ASimContextDataDroneBoatEnvironment::SerializeStructure( TMapScenario & ref
 			Writer->WriteValue( "z:", *(key.Value) );
 		}//BoatMass 
 		else if (key.Key.Compare( TEXT( "质量" ) ) == 0) {
-			m_STPropData.entPos.Z = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "BoatMass:", *(key.Value) );
 		}//StepSpeed 
 		else if (key.Key.Compare( TEXT( "转速" ) ) == 0) {
-			m_STPropData.entPos.Z = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "StepSpeed:", *(key.Value) );
 		}//SteeringSpeed 
 		else if (key.Key.Compare( TEXT( "转向速度" ) ) == 0) {
-			m_STPropData.entPos.Z = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "SteeringSpeed:", *(key.Value) );
 		}//ForwardSpeed 
 		else if (key.Key.Compare( TEXT( "前向速度" ) ) == 0) {
-			m_STPropData.entPos.Z = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "ForwardSpeed:", *(key.Value) );
 		}//MaxVelocity;
 		else if (key.Key.Compare( TEXT( "最大速度" ) ) == 0) {
@@ -433,9 +434,9 @@ void ASimContextDataNavalCraftEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine>
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSNavalCraftPropertyData>, int32, FVector>(
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSNavalCraftPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
@@ -473,14 +474,14 @@ void ASimContextDataNavalCraftEnvironment::SerializeStructure( TMapScenario & re
 			Writer->WriteValue( "number:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "name:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "方位" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -574,7 +575,7 @@ void ASimContextDataVehicle4WEnvironment::SerializeStructure( TMapScenario & ref
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
@@ -629,9 +630,10 @@ void ASimContextDataPatrolBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine>
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
+		FString entName = m_STPropData.entName;
 		GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "CreateEntity  PatrolBoat!!!" );
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSPatrolBoatPropertyData>, int32, FVector>( 
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSPatrolBoatPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		return;
@@ -669,7 +671,7 @@ void ASimContextDataPatrolBoatEnvironment::SerializeStructure( TMapScenario & re
 			//m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "方位" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
 			//m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -746,9 +748,9 @@ void ASimContextDataTrafficBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSTrafficBoatPropertyData>, int32, FVector>( 
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) 
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSTrafficBoatPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		return;
@@ -786,7 +788,7 @@ void ASimContextDataTrafficBoatEnvironment::SerializeStructure( TMapScenario & r
 			//m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "方位" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
 			//m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -863,9 +865,9 @@ void ASimContextDataEngineeringBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_En
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSEngineeringBoatPropertyData>, int32, FVector>(
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSEngineeringBoatPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		return;
@@ -904,7 +906,7 @@ void ASimContextDataEngineeringBoatEnvironment::SerializeStructure( TMapScenario
 			//m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "方位" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
 			//m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -979,20 +981,20 @@ void ASimContextDataGTZEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefGTZPropertyData>, int32, FVector>( 
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefGTZPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
-			FString simMsg = FString::Printf( TEXT( "Create GTZ Actor's Name is : %s" ), *m_STPropData.entName   );
+			FString simMsg = FString::Printf( TEXT( "Create GTZ Actor's Name is : %s" ), *m_STPropData.entName );
 			USimOceanSceneManager_Singleton::GetInstance( )->PushSimMessage( simMsg );
 		}
 #define  _GEN_COMPONENT_(TYPE)\
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1012,14 +1014,14 @@ void ASimContextDataGTZEnvironment::SerializeStructure( TMapScenario & refScenar
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "Type:", *(key.Value) );
 		}
-		else if (key.Key.Compare( TEXT( "方位" ) ) == 0) {
+		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
 			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "heading:", *(key.Value) );
 		}
@@ -1070,10 +1072,10 @@ void ASimContextDataHLSEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
+		FString entName = m_STPropData.entName;
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefHLSPropertyData>,
-			int32, FVector>( std::move( entType ), std::move( m_STPropData.entPos ),
-				std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ),
+			int32, FVector, float, FString, bool, FString>( std::move( entType ), std::move( m_STPropData.entPos ),
+				std::move( m_STPropData.entDirection ), std::move(entName),
 				std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
@@ -1084,7 +1086,7 @@ void ASimContextDataHLSEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
@@ -1103,7 +1105,7 @@ void ASimContextDataHLSEnvironment::SerializeStructure( TMapScenario & refScenar
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
@@ -1160,9 +1162,9 @@ void ASimContextDataSJZEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		int32 entType = GetEntityType( );
 		if (entType <= 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>(
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
@@ -1173,7 +1175,7 @@ void ASimContextDataSJZEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
@@ -1193,7 +1195,7 @@ void ASimContextDataSJZEnvironment::SerializeStructure( TMapScenario & refScenar
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
@@ -1249,9 +1251,9 @@ void ASimContextDataGCWEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefGTZPropertyData>, int32, FVector>(
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) 
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefGCWPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
@@ -1262,7 +1264,7 @@ void ASimContextDataGCWEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( DebugSphere )
 
@@ -1282,7 +1284,7 @@ void ASimContextDataGCWEnvironment::SerializeStructure( TMapScenario & refScenar
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
@@ -1340,9 +1342,9 @@ void ASimContextDataTSWSFEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSim
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefHLSPropertyData>, int32, FVector>(
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName ) 
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefTSWSFPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
@@ -1353,7 +1355,7 @@ void ASimContextDataTSWSFEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSim
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
@@ -1374,7 +1376,7 @@ void ASimContextDataTSWSFEnvironment::SerializeStructure( TMapScenario & refScen
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
@@ -1431,9 +1433,9 @@ void ASimContextDataTSWYLEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSim
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>( 
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 		if (pEnt) {
@@ -1444,7 +1446,7 @@ void ASimContextDataTSWYLEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSim
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
@@ -1465,7 +1467,7 @@ void ASimContextDataTSWYLEnvironment::SerializeStructure( TMapScenario & refScen
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
@@ -1523,9 +1525,9 @@ void ASimContextDataZGQEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>(
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefZGQPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 
@@ -1533,7 +1535,7 @@ void ASimContextDataZGQEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
@@ -1554,7 +1556,7 @@ void ASimContextDataZGQEnvironment::SerializeStructure( TMapScenario & refScenar
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
@@ -1613,9 +1615,9 @@ void ASimContextDataHHLCEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimE
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>( 
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefZGQPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 
@@ -1623,7 +1625,7 @@ void ASimContextDataHHLCEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimE
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
@@ -1644,7 +1646,7 @@ void ASimContextDataHHLCEnvironment::SerializeStructure( TMapScenario & refScena
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
@@ -1702,9 +1704,9 @@ void ASimContextDataBLDSEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimE
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>(
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefBLDSPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 
@@ -1712,7 +1714,7 @@ void ASimContextDataBLDSEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimE
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
@@ -1733,7 +1735,7 @@ void ASimContextDataBLDSEnvironment::SerializeStructure( TMapScenario & refScena
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
@@ -1791,9 +1793,9 @@ void ASimContextDataGTZSUIJIEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> p
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>(
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefGTZSUIJIPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 
@@ -1801,7 +1803,7 @@ void ASimContextDataGTZSUIJIEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> p
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
@@ -1822,7 +1824,7 @@ void ASimContextDataGTZSUIJIEnvironment::SerializeStructure( TMapScenario & refS
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
@@ -1879,9 +1881,9 @@ void ASimContextDataZJHEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		int32 entType = GetEntityType( );
 		if (entType < 0)
 			return;
-
-		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefSJZPropertyData>, int32, FVector>( 
-			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ),std::move( m_STPropData.entName )
+		FString entName = m_STPropData.entName;
+		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSCoastDefZJHPropertyData>, int32, FVector, float, FString, bool, FString>(
+			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
 		SimEcs_IEntity* pEnt = pSimEcs_Engine.Pin( )->GetEntityManager( )->GetEntity( entID );
 
@@ -1889,7 +1891,7 @@ void ASimContextDataZJHEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId() );\
 
 		_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_(BarrierFixedRaycast)
+			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( DebugSphere )
@@ -1910,7 +1912,7 @@ void ASimContextDataZJHEnvironment::SerializeStructure( TMapScenario & refScenar
 			Writer->WriteValue( "ID:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
-			m_STPropData.entName = *(key.Value);
+			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "Name:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
