@@ -100,6 +100,7 @@ public:
 	void  SetIdle( const FString& strName, const FVector& posRef );
 	bool  IsArriving( const FString& strName, const FVector& posRef );
 	void  MoveEntity( const FString& strName, const FVector& posRef );
+	void  MoveEntity(EntityHandleId ehandleID, const FVector& posRef);
 	void  MoveBackEntity( const FString& strName, const FVector& posRef );
 	void Firing( const FString& strName, const bool bFire );
 	//////////////////////////////////////////////////////////////////////////

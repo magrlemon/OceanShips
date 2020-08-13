@@ -208,7 +208,7 @@ struct OceanShipSystem :public SystemT {
 		//record move distance		
 		if (ship.LastPos.Equals(FVector::ZeroVector))
 			ship.LastPos = boat->GetActorLocation();
-		else if(boat->MainStaticMesh)
+		else if (boat->MainStaticMesh)
 		{
 			float move = (ship.LastPos - boat->MainStaticMesh->GetComponentLocation()).Size2D();
 
@@ -254,7 +254,7 @@ struct OceanShipSystem :public SystemT {
 	void update(SimEcs_Registry &registry, float dt) override
 	{
 		assert(OwnerActor);
-		SCOPE_CYCLE_COUNTER( STAT_OceanShip );
+		SCOPE_CYCLE_COUNTER(STAT_OceanShip);
 
 		registry.view<FOceanShip, FRotationComponent,FVelocity>().each([&, dt](auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel) {
 			
@@ -286,9 +286,6 @@ struct OceanShipSystem :public SystemT {
 				boat->Get()->EnableWaveForce(false);
 				boat->Get()->EnableBoatEffect(false);				
 			}*/
-						
-		}
-			
 		});
 
 
@@ -323,7 +320,6 @@ struct BoidSystem :public SystemT {
 		FOceanShip ship;
 		FPosition pos;
 		FFaction  faction;
-
 		//velocity is a pointer so it can be modified
 		FVelocity * vel;
 	};
@@ -336,7 +332,6 @@ struct BoidSystem :public SystemT {
 	{
 		const FIntVector GridLoc = FIntVector(pos.pos / GRID_DIMENSION);
 		auto SearchGrid = GridMap.Find(GridLoc);
-
 		GridItem item;
 		item.ID = ent;
 		item.Position = pos.pos;
@@ -350,16 +345,13 @@ struct BoidSystem :public SystemT {
 			item.Faction = EFaction::Neutral;
 		}
 
-
 		if (!SearchGrid)
 		{
 			TArray<GridItem> NewGrid;
-
 			NewGrid.Reserve(10);
 			NewGrid.Add(item);
 
 			GridMap.Emplace(GridLoc, std::move(NewGrid));
-
 		}
 		else
 		{
@@ -650,79 +642,64 @@ struct BoatFormationSystem :public SystemT {
 		bool IsLeader = false;
 	};
 
-	float baseFormationAngle = 10.0f;
+	float baseFormationAngle = 40.0f;
 	float formationAngle = 10.0f;
 	float formationLength = 30000.0f;
 	using EntityHandleId = uint64_t;
-	TMap<FString,TMap<EntityHandleId, BoatFormationStruct>> m_TTMapBoatFormationInfo; //FVector4(pos3,dir)
 
-	void GrapFormationInfo( ) {
-		auto nodeList = m_TTMapBoatFormationInfo;
-		for (auto node : nodeList) {
-			TMap<EntityHandleId, FVector4> mapEntityInfo;
-			auto chList = mapEntityInfo;
-			for (auto chNode : chList) {
-				auto attList = mapEntityInfo;
-				for (auto attr : attList) {
-					mapEntityInfo.Add( 1, FVector4(0.0f,0.0f,0.0f,0.0f) );
-				}
-			}
 
-			if (m_TTMapBoatFormationInfo.Num( ) > 0) {
-				//m_TTMapBoatFormationInfo.Add( mapEntityInfo );
-			}
-		}
-	}
-
-	FVector4 CaculateNextFormationLocate( float fNextDistance, float formationAngle) {
-
+	FVector4 CaculateNextFormationLocate(FVector4 leaderPos,  float  fNextDistance, float formationAngle) {
+		float a, b, c, t, sqrt_part;
+		float x1, x2, y1, y2;
+		t = FMath::Tan(formationAngle);
+		a = t * t + 1; b = -2.0f* leaderPos.X - 4.0* t * t *  leaderPos.X;
+		c = t * t * leaderPos.X* leaderPos.X + leaderPos.X* leaderPos.X - fNextDistance* fNextDistance;
+		sqrt_part = FMath::Sqrt(b * b - 4.0f* a * c);
+		x1 = (-1.0f* b + sqrt_part) / (2.0*a);
+		x2 = (-1.0f* b - sqrt_part) / (2.0*a);
+		y1 = t * (x1 - leaderPos.X) + leaderPos.Y;
+		y2 = t * (x2 - leaderPos.X) + leaderPos.Y;
+		return FVector4(x1, y1, x2, y2);
 	}
 
 	//temp 
-	void LeaderFormation( EBoatFormation ebf) {
-		for (auto itmeGroup: m_TTMapBoatFormationInfo) {
-			int location = 0;
-			for(auto item : itmeGroup.Value)
+	void LeaderFormation( FVector4 leaderPos) {
+		auto& TTMapBoatFormationInfo =USimOceanSceneManager_Singleton::GetInstance()->m_TTMapBoatFormationInfo;
+		for (auto itmeGroup: TTMapBoatFormationInfo) {
+
+			for(int32 location =0; location < itmeGroup.Value.Num()/2; location++)
 			{
-				float followDis = ( location / 2) * formationLength;
-				if (location % 2 == 0) {
-
+				float followDis = location * formationLength;
+				float nextAngle = baseFormationAngle + (formationAngle * location) / 2.0f;
+				FVector4 doublePoints = CaculateNextFormationLocate(leaderPos, followDis, nextAngle);
+				if (!itmeGroup.Value[location].IsLeader)
+				{
+					itmeGroup.Value[location].BoatLocate = FVector(doublePoints.X, doublePoints.Y, leaderPos.Z);
+					itmeGroup.Value[location].BoatLocate = FVector(doublePoints.Z, doublePoints.W, leaderPos.Z);
+					//itmeGroup.Value[location].ForwardVector
 				}
-				else {
 
-				}
-				location++;
 			}
 		}
 	}
 
-
-	
 
 	void update( SimEcs_Registry &registry, float dt ) override
 	{
 		assert( OwnerActor );
 		SCOPE_CYCLE_COUNTER( STAT_BoatFormation );
 
-		auto AllExplosionsView = registry.view<FExplosion>( );
-		for (auto e : AllExplosionsView) {
-			FExplosion & ex = AllExplosionsView.get( e );
+		registry.view<FOceanShip, FFormation,FPosition>( ).each( [&, dt]( auto entity, FOceanShip & ex, FFormation & formation, FPosition& pos) {
+			if (formation.GroupName.IsEmpty())return;
+			auto boatFormationInfo = USimOceanSceneManager_Singleton::GetInstance()->m_TTMapBoatFormationInfo.Find(formation.GroupName);
+			if (boatFormationInfo)
+			{
+				USimOceanSceneManager_Singleton::BoatFormationStruct* itemLafe = boatFormationInfo->Find(entity);
+				if (itemLafe->IsLeader)return;
 
-			ex.LiveTime += dt;
-			if (ex.LiveTime > ex.Duration) {
-				registry.assign<FDestroy>( e );
+				USimOceanSceneManager_Singleton::GetInstance()->MoveEntity(entity,FVector(itemLafe->BoatLocate));
 			}
-		}
-
-
-		registry.view<FExplosion, FScale>( ).each( [&, dt]( auto entity, FExplosion & ex, FScale & scale ) {
-
-
-			scale.scale = FVector( (ex.LiveTime / ex.Duration)*ex.MaxScale );
-
 		} );
-
-
 	}
 };
 
