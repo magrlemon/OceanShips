@@ -13,6 +13,18 @@ ASimEcs_Archetype::ASimEcs_Archetype( /*const FObjectInitializer& ObjectInitiali
 
 }
 
+void ASimEcs_Archetype::BeginPlay()
+{
+	Super::BeginPlay();
+
+	InitWeapons();
+}
+
+void ASimEcs_Archetype::InitWeapons_Implementation()
+{
+
+}
+
 void ASimEcs_Archetype::GrapMesh(UStaticMeshComponent* mainMesh) {
 
 }

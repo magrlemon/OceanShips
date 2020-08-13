@@ -26,6 +26,7 @@ class ENTITASFRAME_API ASimEcs_Archetype :  public AActor
 	GENERATED_BODY()
 public:	
 	ASimEcs_Archetype();
+	virtual void BeginPlay();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OceanShip")
 		FVector ForceLocation;
@@ -45,6 +46,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void StartFire();
 	virtual void StartFire_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void InitWeapons();
+	virtual void InitWeapons_Implementation();
 
 public:
 	uint64 EntId;

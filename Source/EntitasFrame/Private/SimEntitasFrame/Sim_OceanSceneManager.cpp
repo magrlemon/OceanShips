@@ -288,6 +288,19 @@ void  USimOceanSceneManager_Singleton::MoveEntity( const FString& strName, const
 	}
 }
 
+void  USimOceanSceneManager_Singleton::MoveEntity(EntityHandleId ehandleID, const FVector& posRef) {
+	if (ehandleID<=0)return;
+
+	if ( GetSimRegistry()->get<FOceanShip>(ehandleID).MoveMode != BoatMoveMode::EBoatMoveMode_On) {
+		FVector relativePos = GetCovertScenePosition(posRef, ESceneRelevantConv::E_SENERAIO_POINT);
+		GetSimRegistry()->get<FOceanShip>(ehandleID).MoveOnPos = relativePos;
+		GetSimRegistry()->get<FOceanShip>(ehandleID).MoveMode = BoatMoveMode::EBoatMoveMode_On;
+		GetSimRegistry()->get<FOceanShip>(ehandleID).ExpectSpeed = 1.0f;
+		GetSimRegistry()->get<FOceanShip>(ehandleID).MainMeshComponent->SetSimulatePhysics(true);
+
+	}
+}
+
 void  USimOceanSceneManager_Singleton::MoveBackEntity( const FString& strName, const FVector& posRef ) {
 	if (strName.IsEmpty( ))return;
 	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
@@ -295,7 +308,7 @@ void  USimOceanSceneManager_Singleton::MoveBackEntity( const FString& strName, c
 		FVector relativePos = GetCovertScenePosition( posRef, ESceneRelevantConv::E_SENERAIO_POINT );
 		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveOnPos = relativePos;
 		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode = BoatMoveMode::EBoatMoveMode_Back;
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).ExpectSpeed = 1.0f;
+		GetSimRegistry( )->get<FOceanShip>( ehandleID ).ExpectSpeed = -1.0f;
 		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MainMeshComponent->SetSimulatePhysics( true );
 
 	}

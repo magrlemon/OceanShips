@@ -471,5 +471,8 @@ struct FFormation {
 
 	UPROPERTY( EditAnywhere )
 		int32 FormationValue;
+	UPROPERTY(EditAnywhere)
+		FString GroupName;
+
 };
 
