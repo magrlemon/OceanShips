@@ -121,8 +121,14 @@ RetVar AOceanBoatsGameMode::MoveBackEntity(int argc, void ** argv)
 		double PosX = *((double*)(argv[1]));
 		double PosY = *((double*)(argv[2]));
 		double dir = *((double*)(argv[3]));
-		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "MoveBackEntity");
-		return MoveEntity(name, PosX, PosY, dir);
+		//GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "MoveBackEntity");
+		USimOceanSceneManager_Singleton::GetInstance()->MoveBackEntity(name, FVector(PosX, PosY, 0));
+		bool isArrived = USimOceanSceneManager_Singleton::GetInstance()->IsArriving(name, FVector(PosX, PosY, 0));
+		if (isArrived) {
+			ret.iRet = behaviac::BT_SUCCESS;
+			return ret;
+		}
+		//return MoveEntity(name, PosX, PosY, dir);
 	}
 	ret.iRet = behaviac::BT_RUNNING;
 	return ret;
@@ -134,7 +140,7 @@ RetVar AOceanBoatsGameMode::Fire(int argc, void ** argv) {
 		FString name;
 		name += FString(UTF8_TO_TCHAR((char *)argv[0]));
 		bool bFire = *((bool*)(argv[1]));
-		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "Fire");
+		//GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "Fire");
 		USimOceanSceneManager_Singleton::GetInstance( )->Firing( name, bFire );
 	}
 	ret.iRet = behaviac::BT_SUCCESS;

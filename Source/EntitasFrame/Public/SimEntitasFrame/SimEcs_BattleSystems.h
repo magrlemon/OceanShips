@@ -76,14 +76,15 @@ struct OceanShipSystem :public SystemT {
 		return MakeRotFromX(fValue);
 	}
 
-	//void TickMove(FOceanShip& ship, FVector loc, UPrimitiveComponent* root)
-	//{
-	//	if (ship.MoveMode == EBoatMoveMode_Idle)
-	//		return;
+	void AddForce(FOceanShip& ship, FVector forceLocation, UStaticMeshComponent* root)
+	{
+		if (ship.MoveMode == EBoatMoveMode_Idle)
+			return;
 
-	//	root->AddForceAtLocation(root->GetRightVector() * ship.RightAxisValue * root->GetMass() * ship.SteeringSpeed, loc);
-	//	root->AddForce(root->GetForwardVector() * root->GetMass() * ship.ForwardAxisValue * ship.ForwardSpeed);
-	//}
+		ship.MainMeshComponent = root;
+		root->AddForceAtLocation(root->GetRightVector() * ship.RightAxisValue * root->GetMass() * ship.SteeringSpeed, forceLocation);
+		root->AddForce(root->GetForwardVector() * root->GetMass() * ship.ForwardAxisValue * ship.ForwardSpeed);
+	}
 
 	void CheckSpeedUp(FOceanShip& ship)
 	{
@@ -102,26 +103,47 @@ struct OceanShipSystem :public SystemT {
 					ship.CurrentSpeed = (ship.CurrentSpeed + ship.StepSpeed) < ship.ExpectSpeed ? (ship.CurrentSpeed + ship.StepSpeed) : ship.ExpectSpeed;
 				}
 			}
-			//else//fire
-			//{
-			//	//if (MoveMode == EMoveMode_On && (abs(CurrentSpeed) < StepSpeed*0.99))
-			//	//{
-			//	//	SetMoveMode(EMoveMode_Idle);
-			//	//}
-			//}
+		}
+	}
+
+	void FaceRotate(FOceanShip& ship)
+	{
+		if (!ship.MainMeshComponent)
+			return;
+
+		FRotator rot;
+		FVector currentPos = ship.MainMeshComponent->GetComponentLocation();
+		ship.MoveOnPos.Z = currentPos.Z;
+
+		if (ship.MoveMode == EBoatMoveMode_On)
+		{
+			ship.bRollBack = false;
+			rot.Yaw = FindLookAtRotation(currentPos, ship.MoveOnPos).Yaw;
+		}
+		else if(ship.MoveMode == EBoatMoveMode_Back)
+		{
+			ship.bRollBack = true;
+			ship.ForwardAxisValue = -ship.CurrentSpeed;
+			//rot = FindLookAtRotation(ship.MoveOnPos, currentPos);
+			rot.Yaw = FindLookAtRotation(ship.MoveOnPos, currentPos).Yaw;
+		}
+
+		if (ship.MainMeshComponent != NULL)
+		{
+			ship.MainMeshComponent->SetWorldRotation(rot);
 		}
 	}
 
 	void MainLoopLogic(FOceanShip& ship, FVector forceLocation, UStaticMeshComponent* root)
 	{
-		ship.MainMeshComponent = root;
+		AddForce(ship, forceLocation, root);
+		/*ship.MainMeshComponent = root;
 		root->AddForceAtLocation(root->GetRightVector() * ship.RightAxisValue * root->GetMass() * ship.SteeringSpeed, forceLocation);
-		root->AddForce(root->GetForwardVector() * root->GetMass() * ship.ForwardAxisValue * ship.ForwardSpeed);
+		root->AddForce(root->GetForwardVector() * root->GetMass() * ship.ForwardAxisValue * ship.ForwardSpeed);*/		
+		
+		ship.ForwardAxisValue = ship.CurrentSpeed;		
 
-		if (ship.MoveMode == EBoatMoveMode_Idle)
-			return;
-
-		ship.ForwardAxisValue = ship.CurrentSpeed;
+		//check data
 		if (ship.StepSpeed <= 0)
 			ship.StepSpeed = 0.01;
 		if (ship.ForwardSpeed <= 0)
@@ -131,8 +153,8 @@ struct OceanShipSystem :public SystemT {
 		if (ship.ProjectileVelocity <= 0)
 			ship.ProjectileVelocity = 1200;
 
-		//CheckSpeedUp(ship);
-		if (ship.MoveMode == EBoatMoveMode_On || ship.MoveMode == EBoatMoveMode_Back)
+		CheckSpeedUp(ship);
+		/*if (ship.MoveMode == EBoatMoveMode_On || ship.MoveMode == EBoatMoveMode_Back)
 		{
 			if (abs(ship.CurrentSpeed - ship.ExpectSpeed) > ship.StepSpeed*0.99)
 			{
@@ -147,9 +169,9 @@ struct OceanShipSystem :public SystemT {
 					ship.CurrentSpeed = (ship.CurrentSpeed + ship.StepSpeed) < ship.ExpectSpeed ? (ship.CurrentSpeed + ship.StepSpeed) : ship.ExpectSpeed;
 				}
 			}
-		}
-
-		if (ship.MoveMode == EBoatMoveMode_On)
+		}*/
+		FaceRotate(ship);
+		/*if (ship.MoveMode == EBoatMoveMode_On)
 		{
 			ship.bRollBack = false;
 			FRotator rot;
@@ -162,6 +184,20 @@ struct OceanShipSystem :public SystemT {
 				ship.MainMeshComponent->SetWorldRotation(rot);
 			}
 		}
+		else if (ship.MoveMode == EBoatMoveMode_Back)
+		{
+			ship.ForwardAxisValue = -ship.CurrentSpeed;
+			ship.bRollBack = true;
+			FRotator rot;
+			FVector currentPos = ship.MainMeshComponent->GetComponentLocation();
+			ship.MoveOnPos.Z = currentPos.Z;
+			rot.Yaw = FindLookAtRotation(ship.MoveOnPos,currentPos).Yaw;
+
+			if (ship.MainMeshComponent != NULL)
+			{
+				ship.MainMeshComponent->SetWorldRotation(rot);
+			}
+		}*/
 	}
 
 	void RecordBoatDetail(FOceanShip& ship, ASimEcs_Archetype* boat)
@@ -187,6 +223,29 @@ struct OceanShipSystem :public SystemT {
 		}
 	}
 
+	void CheckState(FOceanShip& ship, ASimEcs_Archetype* boat)
+	{
+		if (ship.MoveMode == EBoatMoveMode_On || ship.MoveMode == EBoatMoveMode_Back)
+		{
+			boat->EnableWaveForce(true);
+			boat->EnableBoatEffect(true);
+			if(ship.MainMeshComponent)
+				ship.MainMeshComponent->SetSimulatePhysics(true);
+		}
+		else if (ship.MoveMode == EBoatMoveMode_Idle) {
+			boat->EnableBoatEffect(false);
+			boat->EnableWaveForce(false);
+		}
+		else if (ship.MoveMode == EBoatMoveMode_Fire)
+		{
+			ship.ExpectSpeed = 0;
+			boat->StartFire();
+			ship.MoveMode = EBoatMoveMode_Idle;
+			boat->EnableWaveForce(false);
+			boat->EnableBoatEffect(false);
+		}
+	}
+
 	void HoldOn(FVector nextTargetPos = FVector::ZeroVector)
 	{
 
@@ -198,9 +257,7 @@ struct OceanShipSystem :public SystemT {
 		SCOPE_CYCLE_COUNTER( STAT_OceanShip );
 
 		registry.view<FOceanShip, FRotationComponent,FVelocity>().each([&, dt](auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel) {
-			//ArchetypeSpawnerSystem* SpawnerSystem= static_cast<ArchetypeSpawnerSystem*>( World->GetArchetypeSpawnerSystem( ) );
-		//FVector moveOnPos(-180180 + 5000, -370000 + 5000, -6600);
-		//rotation.rot = vel.vel.Rotation().Quaternion();
+			
 		TSharedPtr<ASimEcs_Archetype>* boat = USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Find(entity);
 		if (boat)
 		{	
@@ -208,24 +265,27 @@ struct OceanShipSystem :public SystemT {
 
 			MainLoopLogic(ship, boat->Get()->ForceLocation, Cast<UStaticMeshComponent>(boat->Get()->GetRootComponent()));
 			
-			if(ship.MoveMode == EBoatMoveMode_On)
+			CheckState(ship, boat->Get());
+			/*if(ship.MoveMode == EBoatMoveMode_On || ship.MoveMode == EBoatMoveMode_Back)
 			{
 				boat->Get()->EnableWaveForce(true);
 				boat->Get()->EnableBoatEffect(true);
+				ship.MainMeshComponent->SetSimulatePhysics(true);
 			}
 			else if (ship.MoveMode == EBoatMoveMode_Idle) {
-				boat->Get( )->EnableBoatEffect( false );
+				boat->Get()->EnableBoatEffect(false);
+				boat->Get()->EnableWaveForce(false);
+				ship.MainMeshComponent->SetSimulatePhysics(false);
 			}
 
 			if (ship.MoveMode == EBoatMoveMode_Fire)
 			{
-				//if (!ship.FireEnd) {
 				ship.ExpectSpeed = 0;
-					boat->Get( )->StartFire( );
-					GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "boat->Get( )->StartFire( );" );
+				boat->Get( )->StartFire( );				
 				ship.MoveMode = EBoatMoveMode_Idle;
-				//}
-			}
+				boat->Get()->EnableWaveForce(false);
+				boat->Get()->EnableBoatEffect(false);				
+			}*/
 						
 		}
 			

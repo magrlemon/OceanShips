@@ -280,11 +280,19 @@ void  USimOceanSceneManager_Singleton::MoveEntity( const FString& strName, const
 	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
 	if (ehandleID > 0 && GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode != BoatMoveMode::EBoatMoveMode_On) {
 		FVector relativePos = GetCovertScenePosition(posRef, ESceneRelevantConv::E_SENERAIO_POINT);
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveOnPos = relativePos;
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode = BoatMoveMode::EBoatMoveMode_On;
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).ExpectSpeed = 1.0f;
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MainMeshComponent->SetSimulatePhysics( true );
+		auto& ship = GetSimRegistry()->get<FOceanShip>(ehandleID);
+		ship.MoveOnPos = relativePos;
+		ship.MoveMode = BoatMoveMode::EBoatMoveMode_On;
+		ship.ExpectSpeed = 1.0f;		
 
+		//DrawDebugSphere(GetWorld(), relativePos, 1000, 60, FColor::Red);
+		FString str = "boat->MoveOn------";
+		str = str.Append(FString::FromInt(relativePos.X));
+		str = str.Append(", ");
+		str = str.Append(FString::FromInt(relativePos.Y));
+		str = str.Append(", ");
+		str = str.Append(FString::FromInt(relativePos.Z));
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, str);
 	}
 }
 
@@ -293,11 +301,19 @@ void  USimOceanSceneManager_Singleton::MoveBackEntity( const FString& strName, c
 	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
 	if (ehandleID > 0 && GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode != BoatMoveMode::EBoatMoveMode_Back) {
 		FVector relativePos = GetCovertScenePosition( posRef, ESceneRelevantConv::E_SENERAIO_POINT );
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveOnPos = relativePos;
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode = BoatMoveMode::EBoatMoveMode_Back;
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).ExpectSpeed = 1.0f;
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MainMeshComponent->SetSimulatePhysics( true );
+		auto& ship = GetSimRegistry()->get<FOceanShip>(ehandleID);
+		ship.MoveOnPos = relativePos;
+		ship.MoveMode = BoatMoveMode::EBoatMoveMode_Back;
+		ship.ExpectSpeed = 1.0f;		
 
+		//DrawDebugSphere(GetWorld(), relativePos, 1000, 60, FColor::Green);
+		FString str = "boat->MoveBack------";
+		str = str.Append(FString::FromInt(relativePos.X));
+		str = str.Append(", ");
+		str = str.Append(FString::FromInt(relativePos.Y));
+		str = str.Append(", ");
+		str = str.Append(FString::FromInt(relativePos.Z));
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, str);
 	}
 }
 
@@ -305,7 +321,10 @@ void USimOceanSceneManager_Singleton::Firing( const FString& strName, const bool
 	if (strName.IsEmpty( ))return;
 	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
 	if (ehandleID > 0) {
-		GetSimRegistry()->get<FOceanShip>(ehandleID).MoveMode = EBoatMoveMode_Fire;
+		auto& ship = GetSimRegistry()->get<FOceanShip>(ehandleID);
+		ship.MoveMode = EBoatMoveMode_Fire;
+
+		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "boat->Get( )->StartFire( );");
 	}
 }
 
