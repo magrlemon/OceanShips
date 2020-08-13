@@ -124,7 +124,6 @@ struct OceanShipSystem :public SystemT {
 		{
 			ship.bRollBack = true;
 			ship.ForwardAxisValue = -ship.CurrentSpeed;
-			//rot = FindLookAtRotation(ship.MoveOnPos, currentPos);
 			rot.Yaw = FindLookAtRotation(ship.MoveOnPos, currentPos).Yaw;
 		}
 
@@ -208,7 +207,7 @@ struct OceanShipSystem :public SystemT {
 		//record move distance		
 		if (ship.LastPos.Equals(FVector::ZeroVector))
 			ship.LastPos = boat->GetActorLocation();
-		else if (boat->MainStaticMesh)
+		else if(boat->MainStaticMesh)
 		{
 			float move = (ship.LastPos - boat->MainStaticMesh->GetComponentLocation()).Size2D();
 
@@ -254,7 +253,7 @@ struct OceanShipSystem :public SystemT {
 	void update(SimEcs_Registry &registry, float dt) override
 	{
 		assert(OwnerActor);
-		SCOPE_CYCLE_COUNTER(STAT_OceanShip);
+		SCOPE_CYCLE_COUNTER( STAT_OceanShip );
 
 		registry.view<FOceanShip, FRotationComponent,FVelocity>().each([&, dt](auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel) {
 			
@@ -286,6 +285,9 @@ struct OceanShipSystem :public SystemT {
 				boat->Get()->EnableWaveForce(false);
 				boat->Get()->EnableBoatEffect(false);				
 			}*/
+						
+		}
+			
 		});
 
 
@@ -320,6 +322,7 @@ struct BoidSystem :public SystemT {
 		FOceanShip ship;
 		FPosition pos;
 		FFaction  faction;
+
 		//velocity is a pointer so it can be modified
 		FVelocity * vel;
 	};
@@ -332,6 +335,7 @@ struct BoidSystem :public SystemT {
 	{
 		const FIntVector GridLoc = FIntVector(pos.pos / GRID_DIMENSION);
 		auto SearchGrid = GridMap.Find(GridLoc);
+
 		GridItem item;
 		item.ID = ent;
 		item.Position = pos.pos;
@@ -345,13 +349,16 @@ struct BoidSystem :public SystemT {
 			item.Faction = EFaction::Neutral;
 		}
 
+
 		if (!SearchGrid)
 		{
 			TArray<GridItem> NewGrid;
+
 			NewGrid.Reserve(10);
 			NewGrid.Add(item);
 
 			GridMap.Emplace(GridLoc, std::move(NewGrid));
+
 		}
 		else
 		{
@@ -660,6 +667,10 @@ struct BoatFormationSystem :public SystemT {
 		y1 = t * (x1 - leaderPos.X) + leaderPos.Y;
 		y2 = t * (x2 - leaderPos.X) + leaderPos.Y;
 		return FVector4(x1, y1, x2, y2);
+	}
+
+	FVector4 CaculateNextFormationLocate( float fNextDistance, float formationAngle) {
+
 	}
 
 	//temp 
