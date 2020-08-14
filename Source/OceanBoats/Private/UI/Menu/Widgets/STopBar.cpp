@@ -8,7 +8,7 @@ void STopBar::Construct(const FArguments& InArgs)
 	//PlayerOwner = InArgs._PlayerOwner;
 	TSharedRef<SWrapBox> ButtonBox = SNew(SWrapBox).UseAllottedWidth(true);
 	const float MinButtonSize = 120.0f;
-	const FMargin ButtonPadding(400.0f, 30.0f, 2.0f, 0.0f);
+	const FMargin ButtonPadding(100.0f, 30.0f, 2.0f, 0.0f);
 	ScoreboardStyle = &FArmySimStyle::Get().GetWidgetStyle<FSoldierScoreboardStyle>("DefaultSoldierScoreboardStyle");
 	const FButtonStyle* PlayButtonStyle = &FArmySimStyle::Get().GetWidgetStyle<FButtonStyle>("PlayButtonStyle");
 	const FButtonStyle* PauseButtonStyle = &FArmySimStyle::Get().GetWidgetStyle<FButtonStyle>("PauseButtonStyle");

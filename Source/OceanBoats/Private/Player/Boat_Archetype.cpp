@@ -86,7 +86,6 @@ void ABoat_Archetype::TickMove(FVector loc, UPrimitiveComponent* root)
 				id = 5;
 			}
 			
-		//	GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, vecLatLon.ToString() );
 			time_t now = FDateTime::Now().GetTicks() / ETimespan::TicksPerMillisecond;
 			static time_t _last_beat = 0;
 			static time_t run_time = 0;

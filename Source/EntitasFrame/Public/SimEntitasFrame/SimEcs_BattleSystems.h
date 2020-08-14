@@ -124,7 +124,7 @@ struct OceanShipSystem :public SystemT {
 		{
 			ship.bRollBack = true;
 			ship.ForwardAxisValue = -ship.CurrentSpeed;
-			rot.Yaw = FindLookAtRotation(currentPos, ship.MoveOnPos).Yaw;
+			rot.Yaw = FindLookAtRotation( currentPos,ship.MoveOnPos ).Yaw;
 		}
 
 		if (ship.MainMeshComponent != NULL)
@@ -257,9 +257,12 @@ struct OceanShipSystem :public SystemT {
 
 		registry.view<FOceanShip, FRotationComponent,FVelocity>().each([&, dt](auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel) {
 			
-		TSharedPtr<ASimEcs_Archetype>* boat = USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes.Find(entity);
-		if (boat)
+		auto SimInstance = USimOceanSceneManager_Singleton::GetInstance( );
+
+		TSharedPtr<ASimEcs_Archetype>* boat = SimInstance->m_MapArchetypes.Find(entity);
+		if (boat && SimInstance->IsLeader( entity ))
 		{	
+			SimInstance->UpdateLeader( entity );
 			RecordBoatDetail(ship, boat->Get());
 
 			MainLoopLogic(ship, boat->Get()->ForceLocation, Cast<UStaticMeshComponent>(boat->Get()->GetRootComponent()));
@@ -284,8 +287,7 @@ struct OceanShipSystem :public SystemT {
 				ship.MoveMode = EBoatMoveMode_Idle;
 				boat->Get()->EnableWaveForce(false);
 				boat->Get()->EnableBoatEffect(false);				
-			}*/
-						
+			}*/		
 		}
 			
 		});
@@ -669,10 +671,6 @@ struct BoatFormationSystem :public SystemT {
 		return FVector4(x1, y1, x2, y2);
 	}
 
-	FVector4 CaculateNextFormationLocate( float fNextDistance, float formationAngle) {
-
-	}
-
 	//temp 
 	void LeaderFormation( FVector4 leaderPos) {
 		auto& TTMapBoatFormationInfo =USimOceanSceneManager_Singleton::GetInstance()->m_TTMapBoatFormationInfo;
@@ -706,8 +704,13 @@ struct BoatFormationSystem :public SystemT {
 			if (boatFormationInfo)
 			{
 				USimOceanSceneManager_Singleton::BoatFormationStruct* itemLafe = boatFormationInfo->Find(entity);
-				if (itemLafe->IsLeader)return;
-
+				if (itemLafe->IsLeader) {
+					LeaderFormation( itemLafe->BoatLocate);
+					return;
+				}
+				UWorld* pWorld = GEngine->GameViewport->GetWorld( );
+				if (!pWorld)return;
+				DrawDebugLine( pWorld, pos.pos, itemLafe->BoatLocate, FColor::Red, true, 5.0f );
 				USimOceanSceneManager_Singleton::GetInstance()->MoveEntity(entity,FVector(itemLafe->BoatLocate));
 			}
 		} );

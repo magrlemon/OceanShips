@@ -45,6 +45,8 @@ public:
 	using EntityHandleId = uint64_t;
 	TMap<EntityHandleId, TSharedPtr<ASimEcs_Archetype>> m_MapArchetypes;
 
+    /* per group'leader*/
+	TMap<FString, EntityHandleId> m_MapLeaderArchetypes;
 
 	struct BoatFormationStruct {
 		BoatFormationStruct( ) {
@@ -63,7 +65,9 @@ public:
 
 
 	using EntityHandleId = uint64_t;
-	TMap<FString, TMap<EntityHandleId, BoatFormationStruct>> m_TTMapBoatFormationInfo; //FVector4(pos3,dir)
+	typedef TMap<FString, TMap<EntityHandleId, BoatFormationStruct>>   TTMapFormation;
+	typedef  TMap<EntityHandleId, BoatFormationStruct> TMapFormation;
+	TTMapFormation m_TTMapBoatFormationInfo; //FVector4(pos3,dir)
 
 	/* save boat'name for scenario'file */
 	TMap<EntityHandleId, FName> m_MapArchetypesName;
@@ -129,6 +133,12 @@ public:
 
 	SimEcs_Registry * GetSimRegistry() ;
 
+
+	/* is leader*/
+	bool IsLeader( const EntityHandleId eID );
+
+	/* update leader'position && direction*/
+	void UpdateLeader( const EntityHandleId eID );
 
 protected:
 	/* initialize Scenario xml data */

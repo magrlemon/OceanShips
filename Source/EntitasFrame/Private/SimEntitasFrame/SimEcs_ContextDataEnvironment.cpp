@@ -311,7 +311,6 @@ void ASimContextDataDroneBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> 
 		if (entType < 0)
 			return;
 		FString entName = m_STPropData.entName;
-		GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Black, m_STPropData.entName );
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSDroneBoatPropertyData>, int32, FVector, float, FString, bool, FString>(
 			std::move( entType ), std::move( m_STPropData.entPos ), std::move( m_STPropData.entDirection ), std::move(entName)
 			, std::move( m_STPropData.entLader ), std::move( m_STPropData.entGroupName ) );
@@ -351,7 +350,6 @@ void ASimContextDataDroneBoatEnvironment::SerializeStructure( TMapScenario & ref
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "name:", *(key.Value) );
-			GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Green, m_STPropData.entName );
 
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
