@@ -124,7 +124,7 @@ struct OceanShipSystem :public SystemT {
 		{
 			ship.bRollBack = true;
 			ship.ForwardAxisValue = -ship.CurrentSpeed;
-			rot.Yaw = FindLookAtRotation(ship.MoveOnPos, currentPos).Yaw;
+			rot.Yaw = FindLookAtRotation(currentPos, ship.MoveOnPos).Yaw;
 		}
 
 		if (ship.MainMeshComponent != NULL)
