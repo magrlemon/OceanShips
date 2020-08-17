@@ -20,7 +20,7 @@
 #include "Engine/Console.h"
 #include "LinearMemory.h"
 
-DECLARE_CYCLE_STAT(TEXT("SimEcs: Explosion System"), STAT_Explosion, STATGROUP_ECS);
+DECLARE_CYCLE_STAT( TEXT( "SimEcs: Explosion System" ), STAT_Explosion, STATGROUP_ECS );
 
 struct ExplosionSystem :public SystemT {
 
@@ -28,52 +28,54 @@ struct ExplosionSystem :public SystemT {
 
 	float elapsed = 0;
 
-	void update(SimEcs_Registry &registry, float dt) override
+	void update( SimEcs_Registry &registry, float dt ) override
 	{
-		assert(OwnerActor);
-		SCOPE_CYCLE_COUNTER(STAT_Explosion);
+		assert( OwnerActor );
+		SCOPE_CYCLE_COUNTER( STAT_Explosion );
 
-		auto AllExplosionsView = registry.view<FExplosion>();
+		auto AllExplosionsView = registry.view<FExplosion>( );
 		for (auto e : AllExplosionsView) {
-			FExplosion & ex = AllExplosionsView.get(e);
+			FExplosion & ex = AllExplosionsView.get( e );
 
 			ex.LiveTime += dt;
-			if (ex.LiveTime > ex.Duration)
-			{
-				registry.assign<FDestroy>(e);
+			if (ex.LiveTime > ex.Duration) {
+				registry.assign<FDestroy>( e );
 			}
 		}
 
 
-		registry.view<FExplosion, FScale>().each([&, dt](auto entity, FExplosion & ex, FScale & scale) {
-			
+		registry.view<FExplosion, FScale>( ).each( [&, dt]( auto entity, FExplosion & ex, FScale & scale ) {
 
-			scale.scale = FVector( (ex.LiveTime / ex.Duration)*ex.MaxScale);		
-			
-		});
+
+			scale.scale = FVector( (ex.LiveTime / ex.Duration)*ex.MaxScale );
+
+		} );
 
 
 	}
 };
 
-DECLARE_CYCLE_STAT(TEXT("SimEcs: OceanShip System"), STAT_OceanShip, STATGROUP_ECS);
+DECLARE_CYCLE_STAT( TEXT( "SimEcs: OceanShip System" ), STAT_OceanShip, STATGROUP_ECS );
 struct OceanShipSystem :public SystemT {
 
-	FRotator MakeRotFromX(const FVector& X)
+	int CoolDownTime = 5;
+	int LastTime = 0;
+
+	FRotator MakeRotFromX( const FVector& X )
 	{
-		return FRotationMatrix::MakeFromX(X).Rotator();
+		return FRotationMatrix::MakeFromX( X ).Rotator( );
 	}
 
-	FRotator FindLookAtRotation(const FVector& Start, const FVector& Target)
+	FRotator FindLookAtRotation( const FVector& Start, const FVector& Target )
 	{
-		const FVector fLerpValue = FMath::Lerp(Target, Start, 0.001);
+		const FVector fLerpValue = FMath::Lerp( Target, Start, 0.001 );
 		FVector fValue = Target - fLerpValue;
 		fValue.Z = 0.0;
-		float dist = FVector::Dist(Target, Start);
+		float dist = FVector::Dist( Target, Start );
 		if (dist < 5000.0f) {
-			MakeRotFromX(fValue);
+			MakeRotFromX( fValue );
 		}
-		return MakeRotFromX(fValue);
+		return MakeRotFromX( fValue );
 	}
 
 	void AddForce(FOceanShip& ship, FVector forceLocation, UStaticMeshComponent* root)
@@ -86,19 +88,15 @@ struct OceanShipSystem :public SystemT {
 		root->AddForce(root->GetForwardVector() * root->GetMass() * ship.ForwardAxisValue * ship.ForwardSpeed);
 	}
 
-	void CheckSpeedUp(FOceanShip& ship)
+	void CheckSpeedUp( FOceanShip& ship )
 	{
-		if (ship.MoveMode == EBoatMoveMode_On || ship.MoveMode == EBoatMoveMode_Back)
-		{
-			if (abs(ship.CurrentSpeed - ship.ExpectSpeed) > ship.StepSpeed*0.99)
-			{
-				if (ship.CurrentSpeed > ship.ExpectSpeed)
-				{
+		if (ship.MoveMode == EBoatMoveMode_On || ship.MoveMode == EBoatMoveMode_Back) {
+			if (abs( ship.CurrentSpeed - ship.ExpectSpeed ) > ship.StepSpeed*0.99) {
+				if (ship.CurrentSpeed > ship.ExpectSpeed) {
 					ship.bSpeedDown = true;
 					ship.CurrentSpeed = (ship.CurrentSpeed - ship.StepSpeed) > 0 ? (ship.CurrentSpeed - ship.StepSpeed) : 0;
 				}
-				else
-				{
+				else {
 					ship.bSpeedDown = false;
 					ship.CurrentSpeed = (ship.CurrentSpeed + ship.StepSpeed) < ship.ExpectSpeed ? (ship.CurrentSpeed + ship.StepSpeed) : ship.ExpectSpeed;
 				}
@@ -136,10 +134,9 @@ struct OceanShipSystem :public SystemT {
 	void MainLoopLogic(FOceanShip& ship, FVector forceLocation, UStaticMeshComponent* root)
 	{
 		AddForce(ship, forceLocation, root);
-		/*ship.MainMeshComponent = root;
-		root->AddForceAtLocation(root->GetRightVector() * ship.RightAxisValue * root->GetMass() * ship.SteeringSpeed, forceLocation);
-		root->AddForce(root->GetForwardVector() * root->GetMass() * ship.ForwardAxisValue * ship.ForwardSpeed);*/		
-		
+
+		root->AddForce(root->GetForwardVector() * root->GetMass() * ship.ForwardAxisValue * ship.ForwardSpeed);	
+
 		ship.ForwardAxisValue = ship.CurrentSpeed;		
 
 		//check data
@@ -199,10 +196,10 @@ struct OceanShipSystem :public SystemT {
 		}*/
 	}
 
-	void RecordBoatDetail(FOceanShip& ship, ASimEcs_Archetype* boat)
+	void RecordBoatDetail( FOceanShip& ship, ASimEcs_Archetype* boat )
 	{
 		//record Move Speed
-		boat->Speed = boat->MainStaticMesh ? boat->MainStaticMesh->GetPhysicsLinearVelocity().Size() : 0.0f;
+		boat->Speed = boat->MainStaticMesh ? boat->MainStaticMesh->GetPhysicsLinearVelocity( ).Size( ) : 0.0f;
 
 		//record move distance		
 		if (ship.LastPos.Equals(FVector::ZeroVector))
@@ -218,7 +215,7 @@ struct OceanShipSystem :public SystemT {
 			if (ship.bRollBack)
 				boat->RollbackDistance += move;
 
-			ship.LastPos = boat->MainStaticMesh->GetComponentLocation();
+			ship.LastPos = boat->MainStaticMesh->GetComponentLocation( );
 		}
 	}
 
@@ -248,57 +245,44 @@ struct OceanShipSystem :public SystemT {
 	void HoldOn(FVector nextTargetPos = FVector::ZeroVector)
 	{
 
+	
 	}
 
-	void update(SimEcs_Registry &registry, float dt) override
+	void update( SimEcs_Registry &registry, float dt ) override
 	{
-		assert(OwnerActor);
+		assert( OwnerActor );
 		SCOPE_CYCLE_COUNTER( STAT_OceanShip );
+		int NowPlatformTime = FPlatformTime::Seconds( );
+		registry.view<FOceanShip, FRotationComponent, FVelocity>( ).each( [&, dt]( auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel ) {
 
-		registry.view<FOceanShip, FRotationComponent,FVelocity>().each([&, dt](auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel) {
-			
-		auto SimInstance = USimOceanSceneManager_Singleton::GetInstance( );
+			auto SimInstance = USimOceanSceneManager_Singleton::GetInstance( );
 
-		TSharedPtr<ASimEcs_Archetype>* boat = SimInstance->m_MapArchetypes.Find(entity);
-		if (boat && SimInstance->IsLeader( entity ))
-		{	
-			SimInstance->UpdateLeader( entity );
-			RecordBoatDetail(ship, boat->Get());
+			TSharedPtr<ASimEcs_Archetype>* boat = SimInstance->m_MapArchetypes.Find( entity );
+			if (boat) {
+				if (SimInstance->IsLeader( entity )) {
+					if (!NowPlatformTime - LastTime > CoolDownTime) {
+						FVector leaderPos = (ship.MoveMode == EBoatMoveMode_On) ? ship.MoveOnPos : (ship.MoveMode ==
+							EBoatMoveMode_Back ? ship.MoveBackPos : boat->Get( )->GetTransform( ).GetLocation( ));
+						SimInstance->UpdateLeader( entity , leaderPos );
+						LastTime = NowPlatformTime;
+					}
+				}
+				RecordBoatDetail( ship, boat->Get( ) );
 
-			MainLoopLogic(ship, boat->Get()->ForceLocation, Cast<UStaticMeshComponent>(boat->Get()->GetRootComponent()));
-			
-			CheckState(ship, boat->Get());
-			/*if(ship.MoveMode == EBoatMoveMode_On || ship.MoveMode == EBoatMoveMode_Back)
-			{
-				boat->Get()->EnableWaveForce(true);
-				boat->Get()->EnableBoatEffect(true);
-				ship.MainMeshComponent->SetSimulatePhysics(true);
-			}
-			else if (ship.MoveMode == EBoatMoveMode_Idle) {
-				boat->Get()->EnableBoatEffect(false);
-				boat->Get()->EnableWaveForce(false);
-				ship.MainMeshComponent->SetSimulatePhysics(false);
+				MainLoopLogic( ship, boat->Get( )->ForceLocation, Cast<UStaticMeshComponent>( boat->Get( )->GetRootComponent( ) ) );
+
+				CheckState( ship, boat->Get( ) );
 			}
 
-			if (ship.MoveMode == EBoatMoveMode_Fire)
-			{
-				ship.ExpectSpeed = 0;
-				boat->Get( )->StartFire( );				
-				ship.MoveMode = EBoatMoveMode_Idle;
-				boat->Get()->EnableWaveForce(false);
-				boat->Get()->EnableBoatEffect(false);				
-			}*/		
-		}
-			
-		});
+		} );
 
 
 	}
 };
 
 
-DECLARE_CYCLE_STAT(TEXT("SimEcs: Boids Update"), STAT_Boids, STATGROUP_ECS);
-DECLARE_CYCLE_STAT(TEXT("SimEcs: Gridmap Update"), STAT_GridmapUpdate, STATGROUP_ECS);
+DECLARE_CYCLE_STAT( TEXT( "SimEcs: Boids Update" ), STAT_Boids, STATGROUP_ECS );
+DECLARE_CYCLE_STAT( TEXT( "SimEcs: Gridmap Update" ), STAT_GridmapUpdate, STATGROUP_ECS );
 
 struct BoidSystem :public SystemT {
 
@@ -333,61 +317,56 @@ struct BoidSystem :public SystemT {
 	TArray<SpaceshipData> SpaceshipArray;
 	TMap<FIntVector, TArray<GridItem>> GridMap;
 
-	void AddToGridmap(EntityHandle ent, FPosition&pos)
+	void AddToGridmap( EntityHandle ent, FPosition&pos )
 	{
-		const FIntVector GridLoc = FIntVector(pos.pos / GRID_DIMENSION);
-		auto SearchGrid = GridMap.Find(GridLoc);
+		const FIntVector GridLoc = FIntVector( pos.pos / GRID_DIMENSION );
+		auto SearchGrid = GridMap.Find( GridLoc );
+
 
 		GridItem item;
 		item.ID = ent;
 		item.Position = pos.pos;
 
-		if (World->GetRegistry()->has<FFaction>(ent.handle))
-		{
-			item.Faction = World->GetRegistry()->get<FFaction>(ent.handle).faction;
+		if (World->GetRegistry( )->has<FFaction>( ent.handle )) {
+			item.Faction = World->GetRegistry( )->get<FFaction>( ent.handle ).faction;
 		}
-		else
-		{
+		else {
 			item.Faction = EFaction::Neutral;
 		}
 
 
-		if (!SearchGrid)
-		{
+		if (!SearchGrid) {
 			TArray<GridItem> NewGrid;
 
-			NewGrid.Reserve(10);
-			NewGrid.Add(item);
+			NewGrid.Reserve( 10 );
+			NewGrid.Add( item );
 
-			GridMap.Emplace(GridLoc, std::move(NewGrid));
+			GridMap.Emplace( GridLoc, std::move( NewGrid ) );
+
 
 		}
-		else
-		{
-			SearchGrid->Add(item);
+		else {
+			SearchGrid->Add( item );
 		}
 	}
-	void Foreach_EntitiesInRadius(float radius, FVector origin, TFunctionRef<void(GridItem&)> Body)
+	void Foreach_EntitiesInRadius( float radius, FVector origin, TFunctionRef<void( GridItem& )> Body )
 	{
 		const float radSquared = radius * radius;
-		const FVector RadVector(radius, radius, radius);
-		const FIntVector GridLoc = FIntVector(origin / GRID_DIMENSION);
-		const FIntVector MinGrid = FIntVector((origin - RadVector) / GRID_DIMENSION);
-		const FIntVector MaxGrid = FIntVector((origin + RadVector) / GRID_DIMENSION);
+		const FVector RadVector( radius, radius, radius );
+		const FIntVector GridLoc = FIntVector( origin / GRID_DIMENSION );
+		const FIntVector MinGrid = FIntVector( (origin - RadVector) / GRID_DIMENSION );
+		const FIntVector MaxGrid = FIntVector( (origin + RadVector) / GRID_DIMENSION );
 
 
 		for (int x = MinGrid.X; x <= MaxGrid.X; x++) {
 			for (int y = MinGrid.Y; y <= MaxGrid.Y; y++) {
 				for (int z = MinGrid.Z; z <= MaxGrid.Z; z++) {
-					const FIntVector SearchLoc(x, y, z);
-					const auto SearchGrid = GridMap.Find(SearchLoc);
-					if (SearchGrid)
-					{
-						for (auto e : *SearchGrid)
-						{
-							if (FVector::DistSquared(e.Position, origin) < radSquared)
-							{
-								Body(e);
+					const FIntVector SearchLoc( x, y, z );
+					const auto SearchGrid = GridMap.Find( SearchLoc );
+					if (SearchGrid) {
+						for (auto e : *SearchGrid) {
+							if (FVector::DistSquared( e.Position, origin ) < radSquared) {
+								Body( e );
 
 							}
 						}
@@ -397,50 +376,47 @@ struct BoidSystem :public SystemT {
 		}
 	}
 
-	void update(SimEcs_Registry &registry, float dt) override
+	void update( SimEcs_Registry &registry, float dt ) override
 	{
 
 		//add everything to the gridmap
-		GridMap.Empty(50);
+		GridMap.Empty( 50 );
 
-		auto GridView = registry.view<FGridMap, FPosition>();
+		auto GridView = registry.view<FGridMap, FPosition>( );
 
 		{
-			SCOPE_CYCLE_COUNTER(STAT_GridmapUpdate);
-			for (auto e : GridView)
-			{
-				EntityHandle handle(e);
+			SCOPE_CYCLE_COUNTER( STAT_GridmapUpdate );
+			for (auto e : GridView) {
+				EntityHandle handle( e );
 
-				AddToGridmap(handle, GridView.get<FPosition>(e));
+				AddToGridmap( handle, GridView.get<FPosition>( e ) );
 			}
 		}
-		
+
 
 		{
-			SCOPE_CYCLE_COUNTER(STAT_Boids);
+			SCOPE_CYCLE_COUNTER( STAT_Boids );
 
-			TypedLinearMemory<ProjectileData> ProjArray(World->ScratchPad);
+			TypedLinearMemory<ProjectileData> ProjArray( World->ScratchPad );
 
-			auto ProjectileView = registry.view<FProjectile, FPosition, FVelocity, FFaction>(entt::persistent_t{});
+			auto ProjectileView = registry.view<FProjectile, FPosition, FVelocity, FFaction>( entt::persistent_t{} );
 			//ProjArray.Reset();
 			unsigned int NumProjectiles = 0;
 			//copy projectile data into array so we can do a parallel update later
-			for (auto e : ProjectileView)
-			{
+			for (auto e : ProjectileView) {
 				ProjectileData Projectile;
-				Projectile.faction = ProjectileView.get<FFaction>(e);
-				Projectile.pos = ProjectileView.get<FPosition>(e);
-				Projectile.proj = ProjectileView.get<FProjectile>(e);
+				Projectile.faction = ProjectileView.get<FFaction>( e );
+				Projectile.pos = ProjectileView.get<FPosition>( e );
+				Projectile.proj = ProjectileView.get<FProjectile>( e );
 
-				Projectile.vel = &ProjectileView.get<FVelocity>(e);
-				ProjArray.push_back(Projectile);
+				Projectile.vel = &ProjectileView.get<FVelocity>( e );
+				ProjArray.push_back( Projectile );
 				NumProjectiles++;
 				//ProjArray.Add(Projectile);
 			}
 
 
-			ParallelFor(NumProjectiles, [&](int32 Index)
-			{
+			ParallelFor( NumProjectiles, [&]( int32 Index ) {
 				ProjectileData data = ProjArray[Index];
 
 				//unpack projectile data
@@ -452,55 +428,52 @@ struct BoidSystem :public SystemT {
 
 
 				const float ProjCheckRadius = 1000;
-				Foreach_EntitiesInRadius(ProjCheckRadius, ProjPosition, [&](GridItem &item) {
+				Foreach_EntitiesInRadius( ProjCheckRadius, ProjPosition, [&]( GridItem &item ) {
 
-					if (item.Faction != ProjFaction)
-					{
+					if (item.Faction != ProjFaction) {
 						const FVector TestPosition = item.Position;
 
-						const float DistSquared = FVector::DistSquared(TestPosition, ProjPosition);
+						const float DistSquared = FVector::DistSquared( TestPosition, ProjPosition );
 
 						const float AvoidanceDistance = ProjCheckRadius * ProjCheckRadius;
-						const float DistStrenght = FMath::Clamp(1.0 - (DistSquared / (AvoidanceDistance)), 0.1, 1.0) * dt;
+						const float DistStrenght = FMath::Clamp( 1.0 - (DistSquared / (AvoidanceDistance)), 0.1, 1.0 ) * dt;
 						const FVector AvoidanceDirection = TestPosition - ProjPosition;
 
-						ProjVelocity += (AvoidanceDirection.GetSafeNormal() * ProjSeekStrenght*DistStrenght);
+						ProjVelocity += (AvoidanceDirection.GetSafeNormal( ) * ProjSeekStrenght*DistStrenght);
 					}
-				});
+				} );
 
-				ProjVelocity = ProjVelocity.GetClampedToMaxSize(ProjMaxVelocity);
-			});
+				ProjVelocity = ProjVelocity.GetClampedToMaxSize( ProjMaxVelocity );
+			} );
 
 		}
 		//its not good to have both spaceship and projectile logic here, they should be on their own systems
 		{
-			SCOPE_CYCLE_COUNTER(STAT_Boids);
+			SCOPE_CYCLE_COUNTER( STAT_Boids );
 
 
 			//auto spaceshipEnd = SpaceshipView.size()
-			
-			//int nShips = registry.view<FOceanShip>().size();
-			auto SpaceshipView = registry.view<FOceanShip, FPosition, FVelocity, FFaction>(entt::persistent_t{});
 
-			TypedLinearMemory<SpaceshipData> SpaceshipArray(World->ScratchPad);
+			//int nShips = registry.view<FOceanShip>().size();
+			auto SpaceshipView = registry.view<FOceanShip, FPosition, FVelocity, FFaction>( entt::persistent_t{} );
+
+			TypedLinearMemory<SpaceshipData> SpaceshipArray( World->ScratchPad );
 			unsigned int NumShips = 0;
 			//SpaceshipArray.Reset();// Spaces//nShips);
 			//copy spaceship data into array so we can do a paralle update later
-			for (auto e : SpaceshipView)
-			{
+			for (auto e : SpaceshipView) {
 				SpaceshipData Ship;
-				Ship.faction = SpaceshipView.get<FFaction>(e);
-				Ship.pos = SpaceshipView.get<FPosition>(e);
-				Ship.ship = SpaceshipView.get<FOceanShip>(e);
+				Ship.faction = SpaceshipView.get<FFaction>( e );
+				Ship.pos = SpaceshipView.get<FPosition>( e );
+				Ship.ship = SpaceshipView.get<FOceanShip>( e );
 
-				Ship.vel = &SpaceshipView.get<FVelocity>(e);
+				Ship.vel = &SpaceshipView.get<FVelocity>( e );
 				NumShips++;
-				SpaceshipArray.push_back(Ship);
+				SpaceshipArray.push_back( Ship );
 				//SpaceshipArray.Add(Ship);
 			}
 
-			ParallelFor(NumShips, [&](int32 Index)
-			{
+			ParallelFor( NumShips, [&]( int32 Index ) {
 				SpaceshipData data = SpaceshipArray[Index];
 
 				//unpack ship variables from the array
@@ -512,30 +485,29 @@ struct BoidSystem :public SystemT {
 				const FVector ShipTarget = data.ship.TargetMoveLocation;
 
 				const float shipCheckRadius = 1000;
-				Foreach_EntitiesInRadius(shipCheckRadius, ShipPosition, [&](GridItem& item) {
+				Foreach_EntitiesInRadius( shipCheckRadius, ShipPosition, [&]( GridItem& item ) {
 
-					if (item.Faction == ShipFaction)
-					{
+					if (item.Faction == ShipFaction) {
 						const FVector TestPosition = item.Position;
 
-						const float DistSquared = FVector::DistSquared(TestPosition, ShipPosition);
+						const float DistSquared = FVector::DistSquared( TestPosition, ShipPosition );
 
 						const float AvoidanceDistance = shipCheckRadius * shipCheckRadius;
-						const float DistStrenght = FMath::Clamp(1.0 - (DistSquared / (AvoidanceDistance)), 0.1, 1.0) * dt;
+						const float DistStrenght = FMath::Clamp( 1.0 - (DistSquared / (AvoidanceDistance)), 0.1, 1.0 ) * dt;
 						const FVector AvoidanceDirection = ShipPosition - TestPosition;
 
-						ShipVelocity += AvoidanceDirection.GetSafeNormal() * ShipAvoidanceStrenght*DistStrenght;
+						ShipVelocity += AvoidanceDirection.GetSafeNormal( ) * ShipAvoidanceStrenght*DistStrenght;
 					}
-				});
+				} );
 
 				FVector ToTarget = ShipTarget - ShipPosition;
-				ToTarget.Normalize();
+				ToTarget.Normalize( );
 
 				ShipVelocity += (ToTarget * 500 * dt);
-				ShipVelocity = ShipVelocity.GetClampedToMaxSize(ShipMaxVelocity);
-			});
+				ShipVelocity = ShipVelocity.GetClampedToMaxSize( ShipMaxVelocity );
+			} );
 
-			
+
 		}
 
 		//int nProjectiles = registry.view<FProjectile>().size();
@@ -559,7 +531,7 @@ struct BoidSystem :public SystemT {
 			//copy projectile data into array so we can do a parallel update later
 			//for (auto e : ProjectileView)
 			//{
-				
+
 
 				//ProjArray.Add(Projectile);
 			//}
@@ -569,62 +541,60 @@ struct BoidSystem :public SystemT {
 			{
 				auto e = ProjectileView.data()[Index];
 				//ProjectileData data = ProjArray[Index];
-			
+
 				ProjectileData data;
 				data.faction = ProjectileView.get<FFaction>(e);
 				data.pos = ProjectileView.get<FPosition>(e);
 				data.proj = ProjectileView.get<FProjectile>(e);
-			
+
 				data.vel = &ProjectileView.get<FVelocity>(e);
-			
+
 				//unpack projectile data
 				const FVector ProjPosition = data.pos.pos;
 				const EFaction ProjFaction = data.faction.faction;
 				const float ProjSeekStrenght = 10000;//data.proj.HeatSeekStrenght;
 				const float ProjMaxVelocity = data.proj.MaxVelocity;
 				FVector & ProjVelocity = data.vel->vel;
-			
-			
+
+
 				const float ProjCheckRadius = 10000;
 				Foreach_EntitiesInRadius(ProjCheckRadius, ProjPosition, [&](GridItem &item) {
-			
+
 					if (item.Faction != ProjFaction)
 					{
 						const FVector TestPosition = item.Position;
-			
+
 						const float DistSquared = FVector::DistSquared(TestPosition, ProjPosition);
-			
+
 						const float AvoidanceDistance = ProjCheckRadius * ProjCheckRadius;
 						const float DistStrenght = FMath::Clamp(1.0 - (DistSquared / (AvoidanceDistance)), 0.1, 1.0) * dt;
 						const FVector AvoidanceDirection = TestPosition - ProjPosition;
-			
+
 						ProjVelocity += (AvoidanceDirection.GetSafeNormal() * ProjSeekStrenght*DistStrenght);
 					}
 				});
-			
+
 				ProjVelocity = ProjVelocity.GetClampedToMaxSize(ProjMaxVelocity);
 			});
 
 		}
 		*/
-		
-		
 
 
 
-		
+
+
+
 		//Draw gridmap
 		const bool bDebugGridMap = false;
-		if (bDebugGridMap)
-		{
+		if (bDebugGridMap) {
 			const float MaxUnits = 5.0;
-			for (auto& g : GridMap)
-			{
-				const FVector BoxMin = FVector(g.Key) * GRID_DIMENSION;
-				const FVector BoxMax = BoxMin + FVector(GRID_DIMENSION, GRID_DIMENSION, GRID_DIMENSION);
-				const FVector BoxCenter = BoxMin + FVector(GRID_DIMENSION, GRID_DIMENSION, GRID_DIMENSION) / 2.0;
-				const FColor BoxColor = FColor::MakeRedToGreenColorFromScalar(g.Value.Num() / MaxUnits);
-				DrawDebugBox(OwnerActor->GetWorld(), BoxCenter, FVector(GRID_DIMENSION, GRID_DIMENSION, GRID_DIMENSION) / 2.0, BoxColor);
+			for (auto& g : GridMap) {
+				const FVector BoxMin = FVector( g.Key ) * GRID_DIMENSION;
+				const FVector BoxMax = BoxMin + FVector( GRID_DIMENSION, GRID_DIMENSION, GRID_DIMENSION );
+				const FVector BoxCenter = BoxMin + FVector( GRID_DIMENSION, GRID_DIMENSION, GRID_DIMENSION ) / 2.0;
+				const FColor BoxColor = FColor::MakeRedToGreenColorFromScalar( g.Value.Num( ) / MaxUnits );
+				DrawDebugBox( OwnerActor->GetWorld( ), BoxCenter, FVector( GRID_DIMENSION, GRID_DIMENSION, GRID_DIMENSION ) / 2.0, BoxColor );
 			}
 		}
 
@@ -642,52 +612,91 @@ DECLARE_CYCLE_STAT( TEXT( "SimEcs: BoatFormation System" ), STAT_BoatFormation, 
 struct BoatFormationSystem :public SystemT {
 
 	const float UpdateRate = 0.1;
-
+	FVector SamplePoint = FVector::ZeroVector;
+	FVector NextLeaderTargetPoint = FVector::ZeroVector;
 	float elapsed = 0;
 	struct BoatFormationStruct {
-		BoatFormationStruct( FVector4 locate, bool isLeader ) : BoatLocate( locate ), IsLeader( isLeader ){};
-		
-		FVector4 BoatLocate = FVector4( 0.0f, 0.0f, 0.0f, 0.0f );
+		BoatFormationStruct( FVector4 locate, bool isLeader ) : BoatTargetPosition( locate ), IsLeader( isLeader ) {};
+
+		FVector4 BoatTargetPosition = FVector4( 0.0f, 0.0f, 0.0f, 0.0f );
 		bool IsLeader = false;
 	};
 
 	float baseFormationAngle = 40.0f;
 	float formationAngle = 10.0f;
-	float formationLength = 30000.0f;
+	float formationLength = 5000.0f;
+	float thresholdValue = 100.0f;
 	using EntityHandleId = uint64_t;
+	int   FormationCoolDownTime = 3.0f;
+	int   FormationLastTime = 0.0f;
 
-
-	FVector4 CaculateNextFormationLocate(FVector4 leaderPos,  float  fNextDistance, float formationAngle) {
+	FVector4 CaculateNextFormationLocate( FVector4 leaderPos, float  fNextDistance, float formationAngle ) {
 		float a, b, c, t, sqrt_part;
 		float x1, x2, y1, y2;
-		t = FMath::Tan(formationAngle);
+		t = FMath::Tan( formationAngle );
 		a = t * t + 1; b = -2.0f* leaderPos.X - 4.0* t * t *  leaderPos.X;
-		c = t * t * leaderPos.X* leaderPos.X + leaderPos.X* leaderPos.X - fNextDistance* fNextDistance;
-		sqrt_part = FMath::Sqrt(b * b - 4.0f* a * c);
+		c = t * t * leaderPos.X* leaderPos.X + leaderPos.X* leaderPos.X - fNextDistance * fNextDistance;
+		sqrt_part = FMath::Sqrt( b * b - 4.0f* a * c );
 		x1 = (-1.0f* b + sqrt_part) / (2.0*a);
 		x2 = (-1.0f* b - sqrt_part) / (2.0*a);
 		y1 = t * (x1 - leaderPos.X) + leaderPos.Y;
 		y2 = t * (x2 - leaderPos.X) + leaderPos.Y;
-		return FVector4(x1, y1, x2, y2);
+		return FVector4( x1, y1, x2, y2 );
+	}
+
+
+	FVector4 CaculateNextFormationLocate(const FTransform& leaderTrans, float  fNextDistance, float formationAngle ) {
+
+		float bastAngle = 180.0f; float l, r;
+		l = bastAngle - formationAngle; r = bastAngle + formationAngle;
+
+		FVector ForwardVector = leaderTrans.GetRotation( ).GetForwardVector( );
+		const FVector LAxisDirection = ForwardVector.RotateAngleAxis( l, FVector::UpVector );
+		FVector leftPosition = LAxisDirection.GetSafeNormal() * fNextDistance + leaderTrans.GetTranslation();
+
+
+		const FVector RAxisDirection = ForwardVector.RotateAngleAxis( r, FVector::UpVector );
+		FVector rightPosition = RAxisDirection.GetSafeNormal( ) * fNextDistance + leaderTrans.GetTranslation( );
+
+		GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, leftPosition.ToString( ) );
+
+		GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, rightPosition.ToString() );
+		return FVector4( leftPosition.X, leftPosition.Y, rightPosition.X, rightPosition.Y);
+	}
+	void SampleLeaderPoints( const  FVector& fLeaderPos, const FVector& fMoveTargetPos ) {
+		FVector fSameplePos = (fMoveTargetPos - fLeaderPos) * 0.2f + SamplePoint;
+		SamplePoint = FVector( fSameplePos.X, fSameplePos.Y, fLeaderPos.Z );
+	}
+
+	bool IsArrivingSampleLeaderPoints( FVector fPos ) {
+		if (SamplePoint.Equals( FVector::ZeroVector ) == 0) {
+			SamplePoint = fPos;
+			return true;
+		}
+		return FVector::DistSquared( fPos, SamplePoint ) > thresholdValue ? false : true;
 	}
 
 	//temp 
-	void LeaderFormation( FVector4 leaderPos) {
-		auto& TTMapBoatFormationInfo =USimOceanSceneManager_Singleton::GetInstance()->m_TTMapBoatFormationInfo;
-		for (auto itmeGroup: TTMapBoatFormationInfo) {
+	void LeaderFormation( const FTransform& leaderSampleTrans ) {
 
-			for(int32 location =0; location < itmeGroup.Value.Num()/2; location++)
-			{
-				float followDis = location * formationLength;
+		auto& TTMapBoatFormationInfo = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo;
+		for (auto& itemGroup : TTMapBoatFormationInfo) {
+			//sub leader id -1
+			for (int32 location = 0; location < (itemGroup.Value.Num( )) / 2; location++) {   
+				float followDis = formationLength + location * formationLength;
 				float nextAngle = baseFormationAngle + (formationAngle * location) / 2.0f;
-				FVector4 doublePoints = CaculateNextFormationLocate(leaderPos, followDis, nextAngle);
-				if (!itmeGroup.Value[location].IsLeader)
-				{
-					itmeGroup.Value[location].BoatLocate = FVector(doublePoints.X, doublePoints.Y, leaderPos.Z);
-					itmeGroup.Value[location].BoatLocate = FVector(doublePoints.Z, doublePoints.W, leaderPos.Z);
-					//itmeGroup.Value[location].ForwardVector
+				FVector4 doublePoints = CaculateNextFormationLocate( leaderSampleTrans, followDis, nextAngle );
+				TArray<EntityHandleId> handleIDs;
+				int32 flag = itemGroup.Value.GetKeys( handleIDs );
+	
+				if (!itemGroup.Value[handleIDs[ location * 2 ]].IsLeader) {
+					itemGroup.Value[handleIDs[location * 2]].BoatTargetPosition = FVector( doublePoints.X, doublePoints.Y, leaderSampleTrans.GetTranslation( ).Z );
 				}
-
+				if (location * 2 + 1 >= itemGroup.Value.Num( ))
+					return;
+				if (!itemGroup.Value[handleIDs[location * 2 + 1]].IsLeader) {
+					itemGroup.Value[handleIDs[location * 2 + 1]].BoatTargetPosition = FVector( doublePoints.Z, doublePoints.W, leaderSampleTrans.GetTranslation( ).Z );
+				}
 			}
 		}
 	}
@@ -697,21 +706,28 @@ struct BoatFormationSystem :public SystemT {
 	{
 		assert( OwnerActor );
 		SCOPE_CYCLE_COUNTER( STAT_BoatFormation );
+		int NowPlatformTime = FPlatformTime::Seconds( );
+		registry.view<FOceanShip, FFormation, FPosition>( ).each( [&, dt]( auto entity, FOceanShip & ex, FFormation & formation, FPosition& pos ) {
+			if (formation.GroupName.IsEmpty( ))return;
+			auto boatFormationInfo = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo.Find( formation.GroupName );
+			if (boatFormationInfo) {
+				USimOceanSceneManager_Singleton::BoatFormationStruct* itemLafe = boatFormationInfo->Find( entity );
+				if (itemLafe->IsLeader ) {
+					NextLeaderTargetPoint = ex.MoveOnPos;
 
-		registry.view<FOceanShip, FFormation,FPosition>( ).each( [&, dt]( auto entity, FOceanShip & ex, FFormation & formation, FPosition& pos) {
-			if (formation.GroupName.IsEmpty())return;
-			auto boatFormationInfo = USimOceanSceneManager_Singleton::GetInstance()->m_TTMapBoatFormationInfo.Find(formation.GroupName);
-			if (boatFormationInfo)
-			{
-				USimOceanSceneManager_Singleton::BoatFormationStruct* itemLafe = boatFormationInfo->Find(entity);
-				if (itemLafe->IsLeader) {
-					LeaderFormation( itemLafe->BoatLocate);
+					if (NowPlatformTime - FormationLastTime > FormationCoolDownTime) {
+						SampleLeaderPoints( pos.pos, NextLeaderTargetPoint );
+						FTransform leaderTrans( FQuat::MakeFromEuler( itemLafe->ForwardVector ), SamplePoint );
+						LeaderFormation( leaderTrans );
+						FormationLastTime = NowPlatformTime;
+					}
+					
 					return;
 				}
 				UWorld* pWorld = GEngine->GameViewport->GetWorld( );
 				if (!pWorld)return;
-				DrawDebugLine( pWorld, pos.pos, itemLafe->BoatLocate, FColor::Red, true, 5.0f );
-				USimOceanSceneManager_Singleton::GetInstance()->MoveEntity(entity,FVector(itemLafe->BoatLocate));
+				DrawDebugLine( pWorld, pos.pos, itemLafe->BoatTargetPosition, FColor::Red, true, 5.0f );
+				USimOceanSceneManager_Singleton::GetInstance( )->MoveEntity( formation.GroupName, entity, FVector( itemLafe->BoatTargetPosition ) );
 			}
 		} );
 	}

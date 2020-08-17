@@ -79,6 +79,8 @@ void ASoldierPlayerController::SetupInputComponent( )
 	InputComponent->BindAction( "ConditionalCloseScoreboard", IE_Pressed, this, &ASoldierPlayerController::OnConditionalCloseScoreboard );
 	InputComponent->BindAction( "ToggleScoreboard", IE_Pressed, this, &ASoldierPlayerController::OnToggleScoreboard );
 
+	InputComponent->BindAxis( "MoveForwardAxisName", this, &ASoldierPlayerController::MoveForward );
+
 	// voice chat
 	InputComponent->BindAction( "PushToTalk", IE_Pressed, this, &APlayerController::StartTalking );
 	InputComponent->BindAction( "PushToTalk", IE_Released, this, &APlayerController::StopTalking );
@@ -86,7 +88,7 @@ void ASoldierPlayerController::SetupInputComponent( )
 	InputComponent->BindAction( "ToggleChat", IE_Pressed, this, &ASoldierPlayerController::ToggleChatWindow );
 	InputComponent->BindAction( "LoadSce", IE_Pressed, this, &ASoldierPlayerController::LoadScenario );
 	InputComponent->BindAction( "LoadBarrier", IE_Pressed, this, &ASoldierPlayerController::LoadOceanBarrierScenario);
-	
+
 	InputComponent->BindAction( "BoatDetail", IE_Pressed, this, &ASoldierPlayerController::BoatDetails );
 	InputComponent->BindAction( "ViewBoat", IE_Pressed, this, &ASoldierPlayerController::ViewBoat);
 	InputComponent->BindAction("StartSimulate", IE_Pressed, this, &ASoldierPlayerController::StartSimulate);
@@ -98,8 +100,6 @@ void ASoldierPlayerController::PostInitializeComponents( )
 	Super::PostInitializeComponents( );
 	FArmySimStyle::Initialize( );
 	SoldierFriendUpdateTimer = 0;
-
-
 }
 
 void ASoldierPlayerController::ClearLeaderboardDelegate( )
@@ -117,7 +117,7 @@ void ASoldierPlayerController::TickActor( float DeltaTime, enum ELevelTick TickT
 {
 	Super::TickActor( DeltaTime, TickType, ThisTickFunction );
 	USimOceanSceneManager_Singleton::GetInstance( )->Update( DeltaTime );
-	//return;
+
 	if (IsGameMenuVisible( )) {
 		if (SoldierFriendUpdateTimer > 0) {
 			SoldierFriendUpdateTimer -= DeltaTime;
@@ -359,8 +359,11 @@ void ASoldierPlayerController::FailedToSpawnPawn( )
 void ASoldierPlayerController::PawnPendingDestroy( APawn* P )
 {
 	LastDeathLocation = P->GetActorLocation( );
+
 	FVector CameraLocation = LastDeathLocation + FVector( 0, 0, 300.0f );
+
 	FRotator CameraRotation( -90.0f, 0.0f, 0.0f );
+
 	FindDeathCameraSpot( CameraLocation, CameraRotation );
 
 	Super::PawnPendingDestroy( P );
@@ -513,6 +516,7 @@ void ASoldierPlayerController::OnToggleGameMainMenu( ) {
 
 void ASoldierPlayerController::OnToggleInGameMenu( )
 {
+	
 	if (GEngine->GameViewport == nullptr) {
 		return;
 	}
@@ -539,6 +543,18 @@ void ASoldierPlayerController::OnConditionalCloseScoreboard( )
 	if (SoldierHUD && (SoldierHUD->IsMatchOver( ) == false)) {
 		SoldierHUD->ConditionalCloseScoreboard( );
 	}
+}
+
+void ASoldierPlayerController::MoveForward( float Val ) {
+
+		//const USceneComponent* const pComp = (TranslationDirection ? TranslationDirection : RootComponent);
+		//AddMovementInput( FVector::RightVector, Val*10.0f );
+		// const AOceanBoatsGameMode* DefGame = GetWorld( )->GetGameState( )->GetDefaultGameMode<AOceanBoatsGameMode>( );
+
+		 /*	UClass* PawnClass = DefGame->GetDefaultPawnClassForController(  this );
+				 APawn* PawnToFit = PawnClass ? PawnClass->GetDefaultObject<APawn>( ) : nullptr;
+				 PawnToFit->AddMovementInput( FVector::RightVector, 10.0f );*/
+	
 }
 
 void ASoldierPlayerController::OnToggleScoreboard( )
@@ -818,6 +834,7 @@ bool ASoldierPlayerController::IsGameInputAllowed( ) const
 
 void ASoldierPlayerController::ToggleChatWindow( )
 {
+
 	ASoldierHUD* SoldierHUD = Cast<ASoldierHUD>( GetHUD( ) );
 	if (SoldierHUD) {
 		SoldierHUD->ToggleChat( );

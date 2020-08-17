@@ -182,7 +182,10 @@ void USimEcs_FormationComponentWrapper::ParseJson( FString& jsonValue ) {
 	TSharedPtr<FJsonObject> JsonObject;
 	const TSharedRef< TJsonReader<> >& Reader = TJsonReaderFactory<>::Create( jsonValue );
 	if (FJsonSerializer::Deserialize( Reader, JsonObject )) {
+		
 		Value.FormationValue = JsonObject->GetIntegerField( "FormationValue:" );
+		Value.GroupName = JsonObject->GetStringField( "FormationGroup:" );
+		GEngine->AddOnScreenDebugMessage( -1, 3.f, FColor::Red, *Value.GroupName );
 	}
 }
 

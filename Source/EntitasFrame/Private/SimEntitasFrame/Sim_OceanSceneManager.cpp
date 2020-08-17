@@ -17,7 +17,7 @@ USimOceanSceneManager_Singleton::USimOceanSceneManager_Singleton( const FObjectI
 
 void USimOceanSceneManager_Singleton::Initialize( ) {
 	MakeRoot( );
-
+	m_PlayerCameraManager = Cast<ASimEcs_PlayerCameraManager>( GetWorld( )->GetFirstPlayerController( )->PlayerCameraManager);
 }
 
 void USimOceanSceneManager_Singleton::GenOceanScenarioActor( ) {
@@ -48,7 +48,6 @@ void USimOceanSceneManager_Singleton::MakeRoot( ) {
 	/* Barrier Area Region A */
 	m_ScenarioBarrierMeshTransform.SetRotation( FQuat::MakeFromEuler( FVector( 0.0f, 0.0f, 180.0f ) ) );
 	m_ScenarioBarrierMeshTransform.SetLocation( m_vecScenarioBarrierMesh );
-
 }
 
 
@@ -79,6 +78,9 @@ TSharedPtr<AActor> USimOceanSceneManager_Singleton::GetSimActorWithTag( const FS
 }
 
 
+ASimEcs_PlayerCameraManager* USimOceanSceneManager_Singleton::GetSimPlayerCamera( ) {
+	return nullptr;
+}
 
 AActor* USimOceanSceneManager_Singleton::GetOceanActor( ) {
 	if (!m_oceanActor)
@@ -183,11 +185,17 @@ bool USimOceanSceneManager_Singleton::IsLeader( const EntityHandleId eID ) {
 	return false;
 }
 
-void USimOceanSceneManager_Singleton::UpdateLeader(const EntityHandleId eID ) {
-	if (eID <= 0)return;
+void USimOceanSceneManager_Singleton::UpdateLeader(const EntityHandleId eID ,FVector& posRef) {
 	const FString* grouName = m_MapLeaderArchetypes.FindKey( eID );
 	if ((*grouName).IsEmpty( ))return;
+	if (eID <= 0)return;
 
+	FVector leaderPosition = m_MapArchetypes[eID]->GetTransform( ).GetTranslation( );
+	TMapFormation& mapFormationRef = m_TTMapBoatFormationInfo[*grouName];
+	mapFormationRef[eID].ForwardVector = mapFormationRef[eID].BoatTargetPosition - leaderPosition;
+	mapFormationRef[eID].ForwardVector.Z = 0.0f;
+	mapFormationRef[eID].ForwardVector.Normalize( );
+	mapFormationRef[eID].BoatTargetPosition = posRef;
 
 }
 
@@ -279,9 +287,30 @@ bool  USimOceanSceneManager_Singleton::IsArriving( const FString& strName, const
 	return false;
 }
 
+bool  USimOceanSceneManager_Singleton::IsArriving( const EntityHandleId ehandleID, const FVector& posRef ) {
+
+	if (ehandleID > 0) {
+		auto archeType = USimOceanSceneManager_Singleton::GetInstance( )->FindArchetype( ehandleID );
+		FVector arcPos = archeType->GetTransform( ).GetLocation( );
+		if (FVector::Distance( arcPos, posRef ) < 300.0f) {
+			SetIdle( ehandleID, posRef );
+			return true;
+		}
+	}
+	return false;
+}
+
 void  USimOceanSceneManager_Singleton::SetIdle( const FString& strName, const FVector& posRef ) {
 	if (strName.IsEmpty( ))return;
 	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
+	if (ehandleID > 0) {
+		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode = BoatMoveMode::EBoatMoveMode_Idle;
+		GetSimRegistry( )->get<FOceanShip>( ehandleID ).ExpectSpeed = 0.0f;
+	}
+}
+
+void  USimOceanSceneManager_Singleton::SetIdle( const EntityHandleId ehandleID, const FVector& posRef ) {
+
 	if (ehandleID > 0) {
 		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode = BoatMoveMode::EBoatMoveMode_Idle;
 		GetSimRegistry( )->get<FOceanShip>( ehandleID ).ExpectSpeed = 0.0f;
@@ -297,28 +326,42 @@ void  USimOceanSceneManager_Singleton::MoveEntity( const FString& strName, const
 		ship.MoveOnPos = relativePos;
 		ship.MoveMode = BoatMoveMode::EBoatMoveMode_On;
 		ship.ExpectSpeed = 1.0f;
+	
+		if(ship.MainMeshComponent)
+			ship.MainMeshComponent->SetSimulatePhysics( true );
 
-		//DrawDebugSphere(GetWorld(), relativePos, 1000, 60, FColor::Red);
-		FString str = "boat->MoveOn------";
-		str = str.Append( FString::FromInt( relativePos.X ) );
-		str = str.Append( ", " );
-		str = str.Append( FString::FromInt( relativePos.Y ) );
-		str = str.Append( ", " );
-		str = str.Append( FString::FromInt( relativePos.Z ) );
-		GEngine->AddOnScreenDebugMessage( -1, 3.f, FColor::Red, str );
+		UpdateLeader( ehandleID , relativePos );
+
+		FString simMsg = FString::Printf( TEXT( " DroneBoat MoveOn : %s" ), *relativePos.ToString( ) );
+		GEngine->AddOnScreenDebugMessage( -1, 3.f, FColor::Red, *simMsg );
 	}
 }
 
-void  USimOceanSceneManager_Singleton::MoveEntity( EntityHandleId ehandleID, const FVector& posRef ) {
-	if (ehandleID <= 0)return;
-
+void  USimOceanSceneManager_Singleton::MoveEntity( const FString& GroupName, EntityHandleId ehandleID, const FVector& posRef ) {
+	if (ehandleID <= 0 || GroupName.IsEmpty())return;
+	EntityHandleId leaderID = m_MapLeaderArchetypes[GroupName];
+	if (leaderID <= 0) return;
+	
+	if (GetSimRegistry( )->get<FOceanShip>( leaderID ).MoveMode != BoatMoveMode::EBoatMoveMode_On ) {
+		return;
+	}
+	 
 	if (GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode != BoatMoveMode::EBoatMoveMode_On) {
-		FVector relativePos = GetCovertScenePosition( posRef, ESceneRelevantConv::E_SENERAIO_POINT );
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveOnPos = relativePos;
+
+		auto& simRegistryActor = GetSimRegistry( )->get<FOceanShip>( ehandleID );
+		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveOnPos = posRef;
 		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode = BoatMoveMode::EBoatMoveMode_On;
 		GetSimRegistry( )->get<FOceanShip>( ehandleID ).ExpectSpeed = 1.0f;
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MainMeshComponent->SetSimulatePhysics( true );
+		if(GetSimRegistry( )->get<FOceanShip>( ehandleID ).MainMeshComponent)
+			GetSimRegistry( )->get<FOceanShip>( ehandleID ).MainMeshComponent->SetSimulatePhysics( true );
+		  
+	}
 
+	bool isArrived =IsArriving( ehandleID, posRef );
+	if (isArrived)
+	{
+		FString simMsg = FString::Printf( TEXT( "Actor's  : %s have arrived the positon " ), *(m_MapArchetypesName[ehandleID].ToString()));
+		USimOceanSceneManager_Singleton::GetInstance( )->PushSimMessage( simMsg );
 	}
 }
 
@@ -332,14 +375,8 @@ void  USimOceanSceneManager_Singleton::MoveBackEntity( const FString& strName, c
 		ship.MoveMode = BoatMoveMode::EBoatMoveMode_Back;
 		ship.ExpectSpeed = 1.0f;
 
-		//DrawDebugSphere(GetWorld(), relativePos, 1000, 60, FColor::Green);
-		FString str = "boat->MoveBack------";
-		str = str.Append( FString::FromInt( relativePos.X ) );
-		str = str.Append( ", " );
-		str = str.Append( FString::FromInt( relativePos.Y ) );
-		str = str.Append( ", " );
-		str = str.Append( FString::FromInt( relativePos.Z ) );
-		GEngine->AddOnScreenDebugMessage( -1, 3.f, FColor::Green, str );
+		FString simMsg = FString::Printf( TEXT( " DroneBoat MoveBack : %s" ), *relativePos.ToString( ) );
+		GEngine->AddOnScreenDebugMessage( -1, 3.f, FColor::Red, *simMsg );
 	}
 }
 

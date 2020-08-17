@@ -227,6 +227,8 @@ struct ArchetypeSpawnerSystem :public SystemT {
 		TSharedPtr<ASimEcs_Archetype> FoundArchetype = nullptr;
 		if (!Found) {
 			FActorSpawnParameters SpawnInfo;
+			SpawnInfo.Template = nullptr;
+			SpawnInfo.Instigator = nullptr;
 			SpawnInfo.Name = spawner.Name;
 			GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, spawner.Name.ToString() );
 			SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -240,10 +242,11 @@ struct ArchetypeSpawnerSystem :public SystemT {
 			}
 			else {
 				GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, FoundArchetype.Get( )->GetName( ));
+				FoundArchetype->ArchType = spawner.ActorType;
 				if (spawner.ActorType < BP_ACTOR_TYPE_SPLIT) {
 					USimOceanSceneManager_Singleton::BoatFormationStruct boatFormate;
 					boatFormate.Name = spawner.Name;
-					boatFormate.BoatLocate = SpawnPosition;
+					boatFormate.BoatTargetPosition = SpawnPosition;
 					boatFormate.ForwardVector = quatRot.GetForwardVector( );
 					boatFormate.IsLeader = spawner.isLeader;
 				

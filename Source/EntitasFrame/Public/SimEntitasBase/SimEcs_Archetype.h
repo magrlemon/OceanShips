@@ -47,6 +47,7 @@ public:
 	virtual void StartFire_Implementation();
 
 public:
+	int32 ArchType;
 	uint64 EntId;
 	float Speed;
 	float SailDistance;

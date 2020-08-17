@@ -24,9 +24,10 @@ void ASimEcs_WorldActor::BeginPlay()
 		ECSWorld->CreateAndRegisterSystem<CopyTransformToECSSystem>();
 		ECSWorld->CreateAndRegisterSystem<BoidSystem>();
 		ECSWorld->CreateAndRegisterSystem<MovementSystem>();
-		ECSWorld->CreateAndRegisterSystem <BoatsMovementSystem>( );
+		ECSWorld->CreateAndRegisterSystem<BoatsMovementSystem>( );
 		ECSWorld->CreateAndRegisterSystem<ExplosionSystem>();
 		ECSWorld->CreateAndRegisterSystem<OceanShipSystem>();
+		ECSWorld->CreateAndRegisterSystem<BoatFormationSystem>( );
 		ECSWorld->CreateAndRegisterSystem<RaycastSystem>();
 		ECSWorld->CreateAndRegisterSystem<BarrierFixedRaycastSystem>();
 		ECSWorld->CreateAndRegisterSystem<LifetimeSystem>();

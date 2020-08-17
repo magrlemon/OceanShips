@@ -327,6 +327,7 @@ void ASimContextDataDroneBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> 
 			_GEN_COMPONENT_( Force )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( Velocity )
+			_GEN_COMPONENT_( Formation )
 			_GEN_COMPONENT_( MovementRaycast )
 			_GEN_COMPONENT_( Faction )
 			_GEN_COMPONENT_( Projectile )
@@ -478,11 +479,7 @@ void ASimContextDataNavalCraftEnvironment::SerializeStructure( TMapScenario & re
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
 			Writer->WriteValue( "type:", *(key.Value) );
-		}
-		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
-			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
-			Writer->WriteValue( "heading:", *(key.Value) );
-		}
+		} 
 		else if (key.Key.Compare( TEXT( "x" ) ) == 0) {
 			m_STPropData.entPos.X = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "x:", *(key.Value) );

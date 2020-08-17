@@ -16,6 +16,7 @@
 #include "UObject/NoExportTypes.h"
 #include "SimEcs_EntitasFrameData.h"
 #include "util/GpsDataTransfer.h"
+#include "SimEcs_CameraManager.h"
 #include "Sim_OceanSceneManager.generated.h"
 
 
@@ -51,14 +52,14 @@ public:
 	struct BoatFormationStruct {
 		BoatFormationStruct( ) {
 			Name = "";
-			BoatLocate = FVector( 0.0f, 0.0f, 0.0f );
+			BoatTargetPosition = FVector( 0.0f, 0.0f, 0.0f );
 			ForwardVector = FVector( 0.0f, 0.0f, 0.0f );
 			IsLeader = false;
 		}
 		BoatFormationStruct( FName name, FVector locate, FVector forwardVector ,bool isLeader ) : Name( name ), 
-			BoatLocate( locate ), ForwardVector(forwardVector), IsLeader( isLeader ) {};
+			BoatTargetPosition( locate ), ForwardVector(forwardVector), IsLeader( isLeader ) {};
 		FName Name= "";
-		FVector BoatLocate = FVector( 0.0f, 0.0f, 0.0f );
+		FVector BoatTargetPosition = FVector( 0.0f, 0.0f, 0.0f );
 		FVector ForwardVector = FVector( 0.0f, 0.0f, 0.0f );
 		bool IsLeader = false;
 	};
@@ -74,6 +75,8 @@ public:
 private:
 	static USimOceanSceneManager_Singleton* gSingletonScene;
 	TArray<FString> BrocastMessages;
+
+	ASimEcs_PlayerCameraManager* m_PlayerCameraManager = nullptr;
 public:
 
 	void MakeRoot( );
@@ -102,11 +105,13 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 
 	void  SetIdle( const FString& strName, const FVector& posRef );
+	void  SetIdle( const EntityHandleId ehandleID, const FVector& posRef );
 	bool  IsArriving( const FString& strName, const FVector& posRef );
+	bool  IsArriving( const EntityHandleId ehandleID, const FVector& posRef );
 	void  MoveEntity( const FString& strName, const FVector& posRef );
-	void  MoveEntity(EntityHandleId ehandleID, const FVector& posRef);
+	void  MoveEntity(const FString& GroupName,EntityHandleId ehandleID, const FVector& posRef);
 	void  MoveBackEntity( const FString& strName, const FVector& posRef );
-	void Firing( const FString& strName, const bool bFire );
+	void  Firing( const FString& strName, const bool bFire );
 	//////////////////////////////////////////////////////////////////////////
 	//get tag
 	TSharedPtr<AActor> GetSimActorWithTag( const  FString& strTag );
@@ -115,6 +120,8 @@ public:
 	EntityHandleId GetSimHandleIDWithName( const FString& strName );
 
 	AActor* GetOceanActor( );
+
+	ASimEcs_PlayerCameraManager* GetSimPlayerCamera( );
 
 	//get leader position
 	FVector GetSimLeaderPosition( const FString& strGroup );
@@ -138,7 +145,7 @@ public:
 	bool IsLeader( const EntityHandleId eID );
 
 	/* update leader'position && direction*/
-	void UpdateLeader( const EntityHandleId eID );
+	void UpdateLeader( const EntityHandleId eID, FVector& posRef  );
 
 protected:
 	/* initialize Scenario xml data */

@@ -90,6 +90,10 @@ public:
 	/** Hides scoreboard if currently diplayed */
 	void OnConditionalCloseScoreboard();
 
+
+	/**  MoveForward */
+	void MoveForward( float Val );
+
 	/** Toggles scoreboard */
 	void OnToggleScoreboard();
 
