@@ -15,6 +15,7 @@
 #include "SimDataStructure.h"
 #include "SimEcs_EntityManager.h"
 #include "Boat_Archetype.h"
+#include "SoldierPawn.h"
 //#include "ObstacleInterface.h"
 
 AOceanBoatsGameMode::AOceanBoatsGameMode( /*const FObjectInitializer& ObjectInitializer*/ ) //: Super( ObjectInitializer )
@@ -36,6 +37,7 @@ AOceanBoatsGameMode::AOceanBoatsGameMode( /*const FObjectInitializer& ObjectInit
 	ReplaySpectatorPlayerControllerClass = ASoldierDemoSpectator::StaticClass( );
 	PlayerStateClass = ASoldierPlayerState::StaticClass();
 	MinRespawnDelay = 5.0f;
+	DefaultPawnClass = ASoldierPawn::StaticClass();
 
 	bAllowBots = true;
 	bNeedsBotCreation = true;
@@ -239,9 +241,8 @@ void AOceanBoatsGameMode::PreInitializeComponents( )
 {
 	Super::PreInitializeComponents( );
 
+	
 }
-
-
 
 float AOceanBoatsGameMode::ModifyDamage( float Damage, AActor* DamagedActor, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser ) const
 {
@@ -618,4 +619,8 @@ int AOceanBoatsGameMode::GetKilledNumByKiller_Implementation(int uid)
 		}
 	}
 	return 0;
+}
+void AOceanBoatsGameMode::Killed_Implementation(AActor* Killer, AActor* Victim)
+{
+
 }

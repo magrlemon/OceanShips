@@ -57,4 +57,6 @@ public:
 	float RollbackDistance;
 	float RollbackAngle;
 	UStaticMeshComponent* MainStaticMesh;
+
+	AActor* KilledBy;
 };

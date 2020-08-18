@@ -17,6 +17,7 @@ enum ObstacleType
 	Obstacle_GTZ,
 	Obstacle_STZ,
 	Obstacle_HLS,
+	Obstacle_SJZ,
 	Obstacle_Invalid
 };
 

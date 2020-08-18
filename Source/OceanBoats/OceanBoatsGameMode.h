@@ -59,7 +59,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		int GetKilledNumByKiller(int uid);
 	virtual int GetKilledNumByKiller_Implementation(int uid);
-
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void Killed(AActor* Killer, AActor* Victim);
+	virtual void Killed_Implementation(AActor* Killer, AActor* Victim);
 	UFUNCTION( exec )
 	void SetAllowBots( bool bInAllowBots, int32 InMaxBots = 8 );
 

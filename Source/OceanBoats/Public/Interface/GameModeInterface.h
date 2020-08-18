@@ -42,4 +42,6 @@ public:
 		AActor* GetBoat(int index);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		int GetKilledNumByKiller(int uid);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void Killed(AActor* Killer, AActor* Victim);
 };
