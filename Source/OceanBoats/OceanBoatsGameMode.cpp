@@ -620,7 +620,9 @@ int AOceanBoatsGameMode::GetKilledNumByKiller_Implementation(int uid)
 	}
 	return 0;
 }
+
 void AOceanBoatsGameMode::Killed_Implementation(AActor* Killer, AActor* Victim)
 {
-
+	if(Killer && Victim)
+		Cast<ASimEcs_Archetype>(Killer)->AddResult(Cast<ASimEcs_Archetype>(Victim)->ArchType);
 }

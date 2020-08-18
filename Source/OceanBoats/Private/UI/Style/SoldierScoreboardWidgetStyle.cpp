@@ -27,6 +27,7 @@ void FSoldierScoreboardStyle::GetResources(TArray<const FSlateBrush*>& OutBrushe
 	OutBrushes.Add(&ItemBeginButton);
 	OutBrushes.Add(&ItemPauseButton);
 	OutBrushes.Add(&ItemEndButton);
+	OutBrushes.Add(&ItemHeaderBrush);
 }
 
 

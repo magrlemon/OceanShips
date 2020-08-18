@@ -4,8 +4,9 @@
 
 #include "SlateBasics.h"
 #include "SlateExtras.h"
+#include "Sim_OceanSceneManager.h"
 
-DECLARE_DELEGATE_RetVal_OneParam(int32, FOnGetPlayerStateAttribute, ASoldierPlayerState*);
+DECLARE_DELEGATE_RetVal_OneParam(int32, FOnGetArchetypeAttribute, ASimEcs_Archetype*);
 
 namespace SpecialBoatsIndex
 {
@@ -21,7 +22,7 @@ struct FBoatsColumnData
 	FSlateColor Color;
 
 	/** Stat value getter delegate */
-	FOnGetPlayerStateAttribute AttributeGetter;
+	FOnGetArchetypeAttribute AttributeGetter;
 
 	/** defaults */
 	FBoatsColumnData()
@@ -29,7 +30,7 @@ struct FBoatsColumnData
 		Color = FLinearColor::White;
 	}
 
-	FBoatsColumnData(FText InName, FSlateColor InColor, FOnGetPlayerStateAttribute InAtrGetter)
+	FBoatsColumnData(FText InName, FSlateColor InColor, FOnGetArchetypeAttribute InAtrGetter)
 		: Name(InName)
 		, Color(InColor)
 		, AttributeGetter(InAtrGetter)
@@ -109,13 +110,15 @@ protected:
 	void UpdateScoreboardGrid();
 
 	/** makes total row widget */
-	TSharedRef<SWidget> MakeTotalsRow(uint8 TeamNum) const;
+	TSharedRef<SWidget> MakeTotalsRow(/*uint8 TeamNum*/) const;
 
 	/** makes player rows */
-	TSharedRef<SWidget> MakePlayerRows(uint8 TeamNum) const;
+	TSharedRef<SWidget> MakePlayerRows(/*uint8 TeamNum*/) const;
 
 	/** makes player row */
-	TSharedRef<SWidget> MakePlayerRow(const FTeamBoats& TeamPlayer) const;
+	TSharedRef<SWidget> MakePlayerRow(ASimEcs_Archetype* boat) const;
+
+	FText GetObstacleDetail(ASimEcs_Archetype* boat, int archetype) const;
 
 	/** updates PlayerState maps to display accurate scores */
 	void UpdatePlayerStateMaps();
@@ -133,16 +136,18 @@ protected:
 	EVisibility SpeakerIconVisibility(const FTeamBoats TeamPlayer) const;
 
 	/** get scoreboard border color */
-	FSlateColor GetScoreboardBorderColor(const FTeamBoats TeamPlayer) const;
+	FSlateColor GetScoreboardBorderColor(int index) const;
 
 	/** get player name */
 	FText GetPlayerName(const FTeamBoats TeamPlayer) const;
 
+	//FText GetBoatName(int index) const;
+	
 	/** get whether or not the player should be displayed on the scoreboard */
 	bool ShouldPlayerBeDisplayed(const FTeamBoats TeamPlayer) const;
 
 	/** get player color */
-	FSlateColor GetPlayerColor(const FTeamBoats TeamPlayer) const;
+	FSlateColor GetPlayerColor(/*const FTeamBoats TeamPlayer*/) const;
 
 	/** get the column color */
 	FSlateColor GetColumnColor(const FTeamBoats TeamPlayer, uint8 ColIdx) const;
@@ -151,38 +156,42 @@ protected:
 	bool IsOwnerPlayer(const FTeamBoats& TeamPlayer) const;
 
 	/** get specific stat for team number and optionally player */
-	FText GetStat(FOnGetPlayerStateAttribute Getter, const FTeamBoats TeamPlayer) const;
+	FText GetStat() const;
 
 	/** linear interpolated score for match outcome animation */
 	int32 LerpForCountup(int32 ScoreValue) const;
 
-	/** get match outcome text */
-	FText GetMatchOutcomeText() const;
+	int GetColumnType(int col) const;
 
-	/** Get text for match-restart notification. */
-	FText GetMatchRestartText() const;
+	///** get match outcome text */
+	//FText GetMatchOutcomeText() const;
 
-	/** get attribute value for kills */
-	int32 GetAttributeValue_Kills(class ASoldierPlayerState* PlayerState) const;
+	///** Get text for match-restart notification. */
+	//FText GetMatchRestartText() const;
 
-	/** get attribute value for deaths */
-	int32 GetAttributeValue_Deaths(class ASoldierPlayerState* PlayerState) const;
+	///** get attribute value for kills */
+	//int32 GetAttributeValue_Kills(class ASoldierPlayerState* PlayerState) const;
 
-	/** get attribute value for score */
-	int32 GetAttributeValue_Score(class ASoldierPlayerState* PlayerState) const;
+	///** get attribute value for deaths */
+	//int32 GetAttributeValue_Deaths(class ASoldierPlayerState* PlayerState) const;
+
+	///** get attribute value for score */
+	//int32 GetAttributeValue_Score(class ASoldierPlayerState* PlayerState) const;
 
 	// 轨条砦
 	/** get attribute value for Barrier */
-	int32 GetAttributeValue_Barrier_GTZ( class ASoldierPlayerState* PlayerState ) const;
+	int32 GetAttributeValue_Barrier_GTZ( class ASimEcs_Archetype* killer ) const;
 
 	// 三角锥
 	/** get attribute value for Barrier */
-	int32 GetAttributeValue_Barrier_SJZ( class ASoldierPlayerState* PlayerState ) const;
+	int32 GetAttributeValue_Barrier_SJZ( class ASimEcs_Archetype* killer) const;
 
 	// 海立石
 	/** get attribute value for Barrier */
-	int32 GetAttributeValue_Barrier_HLS( class ASoldierPlayerState* PlayerState ) const;
+	int32 GetAttributeValue_Barrier_HLS( class ASimEcs_Archetype* killer) const;
 
+	// 钢刺猬
+	int32 GetAttributeValue_Barrier_GCW(class ASimEcs_Archetype* killer) const;
 	/** triggers a sound effect to play */
 	void PlaySound(const FSlateSound& SoundToPlay) const;
 

@@ -673,7 +673,7 @@ FText SSoldierScoreboardWidget::GetStat(FOnGetPlayerStateAttribute Getter, const
 		{
 			StatTotal = Getter.Execute(PlayerState);
 		}
-	} 
+	}
 	else
 	{
 		for (RankedPlayerMap::TConstIterator PlayerIt(PlayerStateMaps[TeamPlayer.TeamNum]); PlayerIt; ++PlayerIt)

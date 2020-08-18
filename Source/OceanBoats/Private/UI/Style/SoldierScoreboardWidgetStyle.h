@@ -28,6 +28,9 @@ struct FSoldierScoreboardStyle : public FSlateWidgetStyle
 	UPROPERTY(EditAnywhere, Category=Appearance)
 	FSlateBrush ItemBorderBrush;
 	FSoldierScoreboardStyle& SetItemBorderBrush(const FSlateBrush& InItemBorderBrush) { ItemBorderBrush = InItemBorderBrush; return *this; }
+	UPROPERTY(EditAnywhere, Category = Appearance)
+		FSlateBrush ItemHeaderBrush;
+	FSoldierScoreboardStyle& SetItemHeaderBrush(const FSlateBrush& InItemBorderBrush) { ItemBorderBrush = InItemBorderBrush; return *this; }
 	/**
 	 * The brush used for the item border
 	 */

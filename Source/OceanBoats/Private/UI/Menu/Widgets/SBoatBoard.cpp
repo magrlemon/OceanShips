@@ -9,6 +9,7 @@
 #include "SoldierPlayerState.h"
 #include "Interface/BoatInterface.h"
 #include "SimEcs_Archetype.h"
+#include "Sim_OceanSceneManager.h"
 
 //FBoatboardRow::FBoatboardRow(const FOnlineStatsRow& Row)
 //	: Rank(FString::FromInt(Row.Rank))
@@ -191,9 +192,17 @@ void SBoatBoard::OnStatsRead(bool bWasSuccessful)
 	UWorld* gWorld = GetWorld();
 	ASoldierPlayerState* playerState = Cast<ASoldierPlayerState>(gWorld->GetPlayerControllerIterator()->Get()->PlayerState);
 	int num = playerState->GetBoats();
-	for (int i = 0; i < num; ++i)
+
+	for(auto boatInstance : USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes)
 	{
-		ASimEcs_Archetype* boat = Cast<ASimEcs_Archetype>(playerState->GetBoat(i));
+		ASimEcs_Archetype* boat = boatInstance.Value.Get();
+		if (boat == NULL || boat->ArchType >= EEE_COASTDEF_TYPE)
+			continue;
+	//}
+	
+	/*for (int i = 0; i < num; ++i)
+	{*/
+		//ASimEcs_Archetype* boat = Cast<ASimEcs_Archetype>(playerState->GetBoat(i));
 		TSharedPtr<FBoatboardRow> NewRow = MakeShareable(new FBoatboardRow(boat->GetName()));
 		//NewRow->Kills = FString::FromInt(playerState->GetKilledBy(boat->GetUniqueID()));
 

@@ -7,6 +7,8 @@
 #include "SoldierUIHelpers.h"
 #include "OceanCommonTypes.h"
 #include "SoldierPlayerState.h"
+#include "SimEcs_Archetype.h"
+#include "SimEcs_EntityManager.h"
 
 #define LOCTEXT_NAMESPACE "SoldierScoreboard"
 
@@ -25,7 +27,7 @@ void SOceanBoatsScoreboardWidget::Construct(const FArguments& InArgs)
 
 	PCOwner = InArgs._PCOwner;
 	ScoreboardTint = FLinearColor(0.0f,0.0f,0.0f,0.4f);
-	ScoreBoxWidth = 140.0f;
+	ScoreBoxWidth = 120.0f;
 	ScoreCountUpTime = 2.0f;
 
 	ScoreboardStartTime = FPlatformTime::Seconds();
@@ -33,34 +35,25 @@ void SOceanBoatsScoreboardWidget::Construct(const FArguments& InArgs)
 
 	UpdatePlayerStateMaps();
 	
-	/*Columns.Add(FBoatsColumnData(LOCTEXT("KillsColumn", "Kills"),
-		ScoreboardStyle->KillStatColor,
-		FOnGetPlayerStateAttribute::CreateSP(this, &SOceanBoatsScoreboardWidget::GetAttributeValue_Kills)));
-
-	Columns.Add(FBoatsColumnData(LOCTEXT("DeathsColumn", "Deaths"),
-		ScoreboardStyle->DeathStatColor,
-		FOnGetPlayerStateAttribute::CreateSP(this, &SOceanBoatsScoreboardWidget::GetAttributeValue_Deaths)));
-
-	Columns.Add(FBoatsColumnData(LOCTEXT("ScoreColumn", "Score"),
-		ScoreboardStyle->ScoreStatColor,
-		FOnGetPlayerStateAttribute::CreateSP(this, &SOceanBoatsScoreboardWidget::GetAttributeValue_Score)));*/
-
 	//轨条砦
 	Columns.Add( FBoatsColumnData( LOCTEXT( "BarrierGtzColumn", "GTZ" ),
-		ScoreboardStyle->ScoreStatColor,
-		FOnGetPlayerStateAttribute::CreateSP( this, &SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_GTZ ) ) );
+		ScoreboardStyle->KillStatColor,
+		FOnGetArchetypeAttribute::CreateSP( this, &SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_GTZ ) ) );
 
 	//三角锥
 	Columns.Add( FBoatsColumnData( LOCTEXT( "BarrierSjzColumn", "SJZ" ),
 		ScoreboardStyle->DeathStatColor,
-		FOnGetPlayerStateAttribute::CreateSP( this, &SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_SJZ ) ) );
+		FOnGetArchetypeAttribute::CreateSP( this, &SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_SJZ ) ) );
 
 	//海立石
 	Columns.Add( FBoatsColumnData( LOCTEXT( "BarrierHlsColumn", "HLS" ),
 		ScoreboardStyle->ScoreStatColor,
-		FOnGetPlayerStateAttribute::CreateSP( this, &SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_HLS ) ) );
+		FOnGetArchetypeAttribute::CreateSP( this, &SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_HLS ) ) );
 
-
+	//钢刺猬
+	Columns.Add(FBoatsColumnData(LOCTEXT("BarrierGCWColumn", "GCW"),
+		ScoreboardStyle->ScoreStatColor,
+		FOnGetArchetypeAttribute::CreateSP(this, &SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_GCW)));
 	
 	TSharedPtr<SHorizontalBox> HeaderCols;
 
@@ -73,7 +66,7 @@ void SOceanBoatsScoreboardWidget::Construct(const FArguments& InArgs)
 		+ SHorizontalBox::Slot().Padding(NORM_PADDING+FMargin(2,0,0,0)).AutoWidth()
 		[
 			SNew(SImage)
-			.Image(FArmySimStyle::Get().GetBrush("OceanBoats.Speaker"))
+			.Image(&ScoreboardStyle->ItemHeaderBrush/*FArmySimStyle::Get().GetBrush("OceanBoats.Speaker")*/)
 			.Visibility(EVisibility::Hidden)
 		]
 
@@ -83,13 +76,18 @@ void SOceanBoatsScoreboardWidget::Construct(const FArguments& InArgs)
 			SNew(SBorder)
 			.Padding(NORM_PADDING)
 			.VAlign(VAlign_Center)	
-			.HAlign(HAlign_Center)
+			.HAlign(HAlign_Center)			
 			.BorderImage(&ScoreboardStyle->ItemBorderBrush)
 			.BorderBackgroundColor(ScoreboardTint)
 			[
-				SNew(STextBlock)
-				.Text(LOCTEXT("PlayerNameColumn", "BoatName"))
-				.TextStyle(FArmySimStyle::Get(), "OceanBoats.DefaultScoreboard.Row.HeaderTextStyle")
+				SNew(SBox)
+				.WidthOverride(ScoreBoxWidth  * 2)
+				[
+					SNew(STextBlock)
+					.Text(LOCTEXT("PlayerNameColumn", "BoatName"))
+					.TextStyle(FArmySimStyle::Get(), "OceanBoats.DefaultScoreboard.Row.HeaderTextStyle")
+					
+				]
 			]
 		]
 	];
@@ -111,10 +109,10 @@ void SOceanBoatsScoreboardWidget::Construct(const FArguments& InArgs)
 				.HAlign(HAlign_Center)
 				[
 					SNew(SHorizontalBox)
-					+SHorizontalBox::Slot() .AutoWidth() .VAlign(VAlign_Center)
+					+SHorizontalBox::Slot() .AutoWidth() .VAlign(VAlign_Center) .HAlign(HAlign_Center)
 					[
 						SNew(STextBlock)
-						.Text(Columns[ColIdx].Name)
+						.Text(Columns[ColIdx].Name)						
 						.TextStyle(FArmySimStyle::Get(), "OceanBoats.DefaultScoreboard.Row.HeaderTextStyle")
 						.ColorAndOpacity(Columns[ColIdx].Color)
 					]
@@ -138,7 +136,18 @@ void SOceanBoatsScoreboardWidget::Construct(const FArguments& InArgs)
 		]			
 	);
 }
-
+int SOceanBoatsScoreboardWidget::GetColumnType(int col) const
+{
+	if (col == 0)
+		return EEE_COASTDEF_GTZ_TYPE;
+	if (col == 1)
+		return EEE_COASTDEF_SJZ_TYPE;
+	if (col == 2)
+		return EEE_COASTDEF_HLS_TYPE;
+	if (col == 3)
+		return EEE_COASTDEF_GCW_TYPE;
+	return EEE_ENTITYEQUIPS_NUM;
+}
 void SOceanBoatsScoreboardWidget::StoreTalkingPlayerData(const FUniqueNetId& PlayerId, bool bIsTalking)
 {
 	static TMap<FString, double> LastTimeSpoken;
@@ -182,69 +191,69 @@ void SOceanBoatsScoreboardWidget::StoreTalkingPlayerData(const FUniqueNetId& Pla
 	}
 }
 
-FText SOceanBoatsScoreboardWidget::GetMatchRestartText() const
-{
-	if (PCOwner.IsValid() && (PCOwner->GetWorld() != NULL ))
-	{
-		ASoldierGameState* const GameState = PCOwner->GetWorld()->GetGameState<ASoldierGameState>();
-		if (GameState)
-		{
-			if (GameState->RemainingTime > 0)
-			{
-				return FText::Format(LOCTEXT("MatchRestartTimeString", "New match begins in: {0}"), FText::AsNumber(GameState->RemainingTime));
-			}
-			else
-			{
-				return LOCTEXT("MatchRestartingString", "Starting new match...");
-			}
-		}
-	}
+//FText SOceanBoatsScoreboardWidget::GetMatchRestartText() const
+//{
+//	if (PCOwner.IsValid() && (PCOwner->GetWorld() != NULL ))
+//	{
+//		ASoldierGameState* const GameState = PCOwner->GetWorld()->GetGameState<ASoldierGameState>();
+//		if (GameState)
+//		{
+//			if (GameState->RemainingTime > 0)
+//			{
+//				return FText::Format(LOCTEXT("MatchRestartTimeString", "New match begins in: {0}"), FText::AsNumber(GameState->RemainingTime));
+//			}
+//			else
+//			{
+//				return LOCTEXT("MatchRestartingString", "Starting new match...");
+//			}
+//		}
+//	}
+//
+//	return FText::GetEmpty();
+//}
 
-	return FText::GetEmpty();
-}
-
-FText SOceanBoatsScoreboardWidget::GetMatchOutcomeText() const
-{
-	FText OutcomeText = FText::GetEmpty();
-
-	if (MatchState == ESimMatchState::Won)
-	{
-		OutcomeText = LOCTEXT("Winner", "YOU ARE THE WINNER!");
-	} 
-	else if (MatchState == ESimMatchState::Lost)
-	{
-		OutcomeText = LOCTEXT("Loser", "Match has finished");
-	}
-
-	return OutcomeText;
-}
+//FText SOceanBoatsScoreboardWidget::GetMatchOutcomeText() const
+//{
+//	FText OutcomeText = FText::GetEmpty();
+//	OutcomeText = LOCTEXT("DamageStates", "Damage States");
+//	/*if (MatchState == ESimMatchState::Won)
+//	{
+//		OutcomeText = LOCTEXT("Winner", "YOU ARE THE WINNER!");
+//	}
+//	else if (MatchState == ESimMatchState::Lost)
+//	{
+//		OutcomeText = LOCTEXT("Loser", "Match has finished");
+//	}*/
+//
+//	return OutcomeText;
+//}
 
 void SOceanBoatsScoreboardWidget::UpdateScoreboardGrid()
 {
 	if (!ScoreboardData.IsValid())
 		return;
 	ScoreboardData->ClearChildren();
-	for (uint8 TeamNum = 0; TeamNum < PlayerStateMaps.Num(); TeamNum++)
+	//for (uint8 TeamNum = 0; TeamNum < PlayerStateMaps.Num(); TeamNum++)
 	{
 		//Player rows from each team
 		ScoreboardData->AddSlot() .AutoHeight()
 			[
-				MakePlayerRows(TeamNum)
+				MakePlayerRows(/*TeamNum*/)
 			];
 		////If we have more than one team, we are playing team based game mode, add totals
 		//if (PlayerStateMaps.Num() > 1 && PlayerStateMaps[TeamNum].Num() > 0)
 		//{
-		//	// Horizontal Ruler
-		//	ScoreboardData->AddSlot() .AutoHeight() .Padding(NORM_PADDING)
-		//		[
-		//			SNew(SBorder)
-		//			.Padding(1)
-		//			.BorderImage(&ScoreboardStyle->ItemBorderBrush)
-		//		];
-		//	ScoreboardData->AddSlot() .AutoHeight()
-		//		[
-		//			MakeTotalsRow(TeamNum)
-		//		];
+			// Horizontal Ruler
+			ScoreboardData->AddSlot() .AutoHeight() .Padding(NORM_PADDING)
+				[
+					SNew(SBorder)
+					.Padding(1)
+					.BorderImage(&ScoreboardStyle->ItemBorderBrush)
+				];
+			ScoreboardData->AddSlot() .AutoHeight()
+				[
+					MakeTotalsRow(/*TeamNum*/)
+				];
 		//}
 	}
 
@@ -627,15 +636,15 @@ EVisibility SOceanBoatsScoreboardWidget::SpeakerIconVisibility(const FTeamBoats 
 	return EVisibility::Hidden;
 }
 
-FSlateColor SOceanBoatsScoreboardWidget::GetScoreboardBorderColor(const FTeamBoats TeamPlayer) const
+FSlateColor SOceanBoatsScoreboardWidget::GetScoreboardBorderColor(int index) const
 {
-	const bool bIsSelected = IsSelectedPlayer(TeamPlayer);
+	const bool bIsSelected = false;// IsSelectedPlayer(TeamPlayer);
 	const int32 RedTeam = 0;
 	const float BaseValue = bIsSelected == true ? 0.15f : 0.0f;
 	const float AlphaValue = bIsSelected == true ? 1.0f : 0.3f;
-	float RedValue = TeamPlayer.TeamNum == RedTeam ? 0.25f : 0.0f;
-	float BlueValue = TeamPlayer.TeamNum != RedTeam ? 0.25f : 0.0f;
-	return FLinearColor(BaseValue + RedValue, BaseValue, BaseValue + BlueValue, AlphaValue);
+	/*float RedValue = TeamPlayer.TeamNum == RedTeam ? 0.25f : 0.0f;
+	float BlueValue = TeamPlayer.TeamNum != RedTeam ? 0.25f : 0.0f;*/
+	return FLinearColor(BaseValue, BaseValue, BaseValue , AlphaValue);
 }
 
 FText SOceanBoatsScoreboardWidget::GetPlayerName(const FTeamBoats TeamPlayer) const
@@ -649,6 +658,26 @@ FText SOceanBoatsScoreboardWidget::GetPlayerName(const FTeamBoats TeamPlayer) co
 	return FText::GetEmpty();
 }
 
+//FText SOceanBoatsScoreboardWidget::GetBoatName(int index) const
+//{
+//	AActor* boat = IGameModeInterface::Execute_GetBoat(UGameplayStatics::GetGameMode(PCOwner->GetWorld()), index);
+//	if(boat)
+//	{
+//		TSharedPtr<ASimEcs_Archetype> boatInstance = USimOceanSceneManager_Singleton::GetInstance()->FindArchetype(Cast<ASimEcs_Archetype>(boat)->EntId);
+//		return FText::FromString(boatInstance->GetName());
+//	}
+//
+//	return FText::GetEmpty();
+//}
+FText SOceanBoatsScoreboardWidget::GetObstacleDetail(ASimEcs_Archetype* boat, int archetype) const
+{
+	if (boat)
+	{
+		return FText::FromString(FString::FromInt(boat->GetDamageResult(archetype)));
+	}
+
+	return FText::GetEmpty();
+}
 bool SOceanBoatsScoreboardWidget::ShouldPlayerBeDisplayed(const FTeamBoats TeamPlayer) const
 {
 	const ASoldierPlayerState* PlayerState = GetSortedPlayerState(TeamPlayer);
@@ -656,13 +685,13 @@ bool SOceanBoatsScoreboardWidget::ShouldPlayerBeDisplayed(const FTeamBoats TeamP
 	return PlayerState != nullptr && !PlayerState->bOnlySpectator;
 }
 
-FSlateColor SOceanBoatsScoreboardWidget::GetPlayerColor(const FTeamBoats TeamPlayer) const
+FSlateColor SOceanBoatsScoreboardWidget::GetPlayerColor(/*const FTeamBoats TeamPlayer*/) const
 {
-	// If this is the owner players row, tint the text color to show ourselves more clearly
-	if( IsOwnerPlayer(TeamPlayer) )
-	{
-		return FSlateColor(FLinearColor::Yellow);
-	}
+	//// If this is the owner players row, tint the text color to show ourselves more clearly
+	//if( IsOwnerPlayer(TeamPlayer) )
+	//{
+	//	return FSlateColor(FLinearColor::Yellow);
+	//}
 
 	const FTextBlockStyle& TextStyle = FArmySimStyle::Get().GetWidgetStyle<FTextBlockStyle>("OceanBoats.DefaultScoreboard.Row.StatTextStyle");
 	return TextStyle.ColorAndOpacity;
@@ -670,14 +699,15 @@ FSlateColor SOceanBoatsScoreboardWidget::GetPlayerColor(const FTeamBoats TeamPla
 
 FSlateColor SOceanBoatsScoreboardWidget::GetColumnColor(const FTeamBoats TeamPlayer, uint8 ColIdx) const
 {
-	// If this is the owner players row, tint the text color to show ourselves more clearly
-	if( IsOwnerPlayer(TeamPlayer) )
-	{
-		return FSlateColor(FLinearColor::Yellow);
-	}
+	return FSlateColor(FLinearColor::White);
+	//// If this is the owner players row, tint the text color to show ourselves more clearly
+	//if( IsOwnerPlayer(TeamPlayer) )
+	//{
+	//	return FSlateColor(FLinearColor::Yellow);
+	//}
 
-	check(Columns.IsValidIndex(ColIdx));
-	return Columns[ColIdx].Color;
+	//check(Columns.IsValidIndex(ColIdx));
+	//return Columns[ColIdx].Color;
 }
 
 bool SOceanBoatsScoreboardWidget::IsOwnerPlayer(const FTeamBoats& TeamPlayer) const
@@ -685,27 +715,15 @@ bool SOceanBoatsScoreboardWidget::IsOwnerPlayer(const FTeamBoats& TeamPlayer) co
 	return ( PCOwner.IsValid() && PCOwner->PlayerState && PCOwner->PlayerState == GetSortedPlayerState(TeamPlayer) );
 }
 
-FText SOceanBoatsScoreboardWidget::GetStat(FOnGetPlayerStateAttribute Getter, const FTeamBoats TeamPlayer) const
+FText SOceanBoatsScoreboardWidget::GetStat() const
 {
 	int32 StatTotal = 0;
-	if (TeamPlayer.PlayerId != SpecialBoatsIndex::All)
+	for (auto boatInstance : USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes)
 	{
-		ASoldierPlayerState* PlayerState = GetSortedPlayerState(TeamPlayer);
-		if (PlayerState)
-		{
-			StatTotal = Getter.Execute(PlayerState);
-		}
-	} 
-	else
-	{
-		for (RankedPlayerMap::TConstIterator PlayerIt(PlayerStateMaps[TeamPlayer.TeamNum]); PlayerIt; ++PlayerIt)
-		{
-			ASoldierPlayerState* PlayerState = PlayerIt.Value().Get();
-			if (PlayerState)
-			{
-				StatTotal += Getter.Execute(PlayerState);
-			}
-		}
+		ASimEcs_Archetype* boat = boatInstance.Value.Get();
+		if (boat == NULL || boat->ArchType >= EEE_COASTDEF_TYPE)
+			continue;
+		StatTotal += boat->GetTotalDamage();
 	}
 
 	return FText::AsNumber(LerpForCountup(StatTotal));
@@ -724,7 +742,7 @@ int32 SOceanBoatsScoreboardWidget::LerpForCountup(int32 ScoreValue) const
 	}
 }
 
-TSharedRef<SWidget> SOceanBoatsScoreboardWidget::MakeTotalsRow(uint8 TeamNum) const
+TSharedRef<SWidget> SOceanBoatsScoreboardWidget::MakeTotalsRow() const
 {
 	TSharedPtr<SHorizontalBox> TotalsRow;
 
@@ -739,29 +757,29 @@ TSharedRef<SWidget> SOceanBoatsScoreboardWidget::MakeTotalsRow(uint8 TeamNum) co
 		.BorderBackgroundColor(ScoreboardTint)
 		[
 			SNew(STextBlock)
-			.Text(LOCTEXT("ScoreTotal", "Team Score"))
-			.TextStyle(FArmySimStyle::Get(), "OceanBoats.DefaultScoreboard.Row.FTextBlockStyle") 
+			.Text(LOCTEXT("ScoreTotal", "Total Damage"))
+			.TextStyle(FArmySimStyle::Get(), "OceanBoats.DefaultScoreboard.Row.HeaderTextStyle") 
 		]
 	];
 
-	//Leave two columns empty
-	for (uint8 i = 0; i < 2; i++)
-	{
-		TotalsRow->AddSlot() .Padding(NORM_PADDING) .AutoWidth() .HAlign(HAlign_Center) .VAlign(VAlign_Center)
-		[
-			SNew(SBorder)
-			.Padding(NORM_PADDING)
-			.VAlign(VAlign_Center)
-			.HAlign(HAlign_Center)
-			.BorderImage(FStyleDefaults::GetNoBrush())
-			.BorderBackgroundColor(ScoreboardTint)
-			[
-				SNew(SBox)
-				.WidthOverride(ScoreBoxWidth)
-				.HAlign(HAlign_Center)
-			]
-		];
-	}
+	////Leave two columns empty
+	//for (uint8 i = 0; i < 2; i++)
+	//{
+	//	TotalsRow->AddSlot() .Padding(NORM_PADDING) .AutoWidth() .HAlign(HAlign_Center) .VAlign(VAlign_Center)
+	//	[
+	//		SNew(SBorder)
+	//		.Padding(NORM_PADDING)
+	//		.VAlign(VAlign_Center)
+	//		.HAlign(HAlign_Center)
+	//		.BorderImage(FStyleDefaults::GetNoBrush())
+	//		.BorderBackgroundColor(ScoreboardTint)
+	//		[
+	//			SNew(SBox)
+	//			.WidthOverride(ScoreBoxWidth)
+	//			.HAlign(HAlign_Center)
+	//		]
+	//	];
+	//}
 	//Total team score / captures in CTF mode
 	TotalsRow->AddSlot() .Padding(NORM_PADDING) .AutoWidth() .HAlign(HAlign_Center) .VAlign(VAlign_Center)
 	[
@@ -773,11 +791,11 @@ TSharedRef<SWidget> SOceanBoatsScoreboardWidget::MakeTotalsRow(uint8 TeamNum) co
 		.BorderBackgroundColor(ScoreboardTint)
 		[
 			SNew(SBox)
-			.WidthOverride(ScoreBoxWidth)
+			.WidthOverride(ScoreBoxWidth*2)
 			.HAlign(HAlign_Center)
 			[
 				SNew(STextBlock)
-				.Text(this, &SOceanBoatsScoreboardWidget::GetStat, Columns.Last().AttributeGetter, FTeamBoats(TeamNum, SpecialBoatsIndex::All))
+				.Text(this, &SOceanBoatsScoreboardWidget::GetStat)
 				.TextStyle(FArmySimStyle::Get(), "OceanBoats.DefaultScoreboard.Row.HeaderTextStyle")
 			]
 		]
@@ -786,11 +804,11 @@ TSharedRef<SWidget> SOceanBoatsScoreboardWidget::MakeTotalsRow(uint8 TeamNum) co
 	return TotalsRow.ToSharedRef();
 }
 
-TSharedRef<SWidget> SOceanBoatsScoreboardWidget::MakePlayerRows(uint8 TeamNum) const
+TSharedRef<SWidget> SOceanBoatsScoreboardWidget::MakePlayerRows(/*uint8 TeamNum*/) const
 {
 	TSharedRef<SVerticalBox> PlayerRows = SNew(SVerticalBox);
 
-	for (int32 PlayerIndex=0; PlayerIndex < PlayerStateMaps[TeamNum].Num(); PlayerIndex++ )
+	/*for (int32 PlayerIndex=0; PlayerIndex < PlayerStateMaps[TeamNum].Num(); PlayerIndex++ )
 	{
 		FTeamBoats TeamPlayer(TeamNum, PlayerIndex);
 
@@ -801,12 +819,25 @@ TSharedRef<SWidget> SOceanBoatsScoreboardWidget::MakePlayerRows(uint8 TeamNum) c
 					MakePlayerRow(TeamPlayer)
 				];
 		}
-	}
+	}*/
+			
+	for (auto boatInformation : USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes)
+	{
+		ASimEcs_Archetype* boat = boatInformation.Value.Get();
+		if (boat && boat->ArchType < EEE_COASTDEF_TYPE)
+		{
+			PlayerRows->AddSlot().AutoHeight()
+				[
+					MakePlayerRow(boat)
+				];
+		}
+
+	}	
 
 	return PlayerRows;
 }
 
-TSharedRef<SWidget> SOceanBoatsScoreboardWidget::MakePlayerRow(const FTeamBoats& TeamPlayer) const
+TSharedRef<SWidget> SOceanBoatsScoreboardWidget::MakePlayerRow(ASimEcs_Archetype* boat) const
 {
 	// Make the padding here slightly smaller than NORM_PADDING, to fit in more players
 	const FMargin Pad = FMargin(5,1);
@@ -814,34 +845,40 @@ TSharedRef<SWidget> SOceanBoatsScoreboardWidget::MakePlayerRow(const FTeamBoats&
 	TSharedPtr<SHorizontalBox> PlayerRow;
 	//Speaker Icon display
 	SAssignNew(PlayerRow, SHorizontalBox)
-	+ SHorizontalBox::Slot().Padding(Pad+FMargin(2,0,0,0)).AutoWidth()
-	[
-		SNew(SImage)
-		.Image(FArmySimStyle::Get().GetBrush("OceanBoats.Speaker"))
-		.Visibility(this, &SOceanBoatsScoreboardWidget::SpeakerIconVisibility, TeamPlayer)
-	];
+		+ SHorizontalBox::Slot().Padding(Pad + FMargin(2, 0, 0, 0)).AutoWidth()
+		[
+			SNew(SImage)
+			.Image(&ScoreboardStyle->ItemHeaderBrush)
+		//.Visibility(this, &SOceanBoatsScoreboardWidget::SpeakerIconVisibility, TeamPlayer)
+		];
 
 	//first autosized row with player name
-	PlayerRow->AddSlot() .Padding(Pad)
-	[
-		SNew(SBorder)
-		.Padding(Pad)
+	PlayerRow->AddSlot().Padding(Pad).AutoWidth()
+		[
+			SNew(SBorder)
+			.Padding(Pad)
 		.HAlign(HAlign_Right)
 		.VAlign(VAlign_Center)
-		.Visibility(this, &SOceanBoatsScoreboardWidget::PlayerPresenceToItemVisibility, TeamPlayer)
-		.OnMouseMove(const_cast<SOceanBoatsScoreboardWidget*>(this), &SOceanBoatsScoreboardWidget::OnMouseOverPlayer, TeamPlayer)
-		.BorderBackgroundColor(const_cast<SOceanBoatsScoreboardWidget*>(this), &SOceanBoatsScoreboardWidget::GetScoreboardBorderColor, TeamPlayer)
+		//.Visibility(this, &SOceanBoatsScoreboardWidget::PlayerPresenceToItemVisibility, TeamPlayer)
+		//.OnMouseMove(const_cast<SOceanBoatsScoreboardWidget*>(this), &SOceanBoatsScoreboardWidget::OnMouseOverPlayer, TeamPlayer)
+		.BorderBackgroundColor(FLinearColor(0.35, 0.35, 0.65, 0.5))
 		.BorderImage(&ScoreboardStyle->ItemBorderBrush)
 		[
+			SNew(SBox)
+			.WidthOverride(ScoreBoxWidth * 2)
+		[
 			SNew(STextBlock)
-			.Text(this, &SOceanBoatsScoreboardWidget::GetPlayerName, TeamPlayer)
-			.TextStyle(FArmySimStyle::Get(), "OceanBoats.DefaultScoreboard.Row.StatTextStyle")
-			.ColorAndOpacity(this, &SOceanBoatsScoreboardWidget::GetPlayerColor, TeamPlayer)
+			.Text(FText::FromString(boat->GetName()))
+				.TextStyle(FArmySimStyle::Get(), "OceanBoats.DefaultScoreboard.Row.StatTextStyle")
+				.ColorAndOpacity(this, &SOceanBoatsScoreboardWidget::GetPlayerColor)
+			]			
 		]
 	];
-	//attributes rows (kills, deaths, score/captures)
+	//attributes rows (Obstacles)
 	for (uint8 ColIdx = 0; ColIdx < Columns.Num(); ColIdx++)
 	{
+		int type = GetColumnType(int(ColIdx));
+
 		PlayerRow->AddSlot()
 		.Padding(Pad) .AutoWidth() .HAlign(HAlign_Center) .VAlign(VAlign_Center)
 		[
@@ -849,19 +886,19 @@ TSharedRef<SWidget> SOceanBoatsScoreboardWidget::MakePlayerRow(const FTeamBoats&
 			.Padding(Pad)
 			.VAlign(VAlign_Center)
 			.HAlign(HAlign_Center)
-			.Visibility(this, &SOceanBoatsScoreboardWidget::PlayerPresenceToItemVisibility, TeamPlayer)
-			.OnMouseMove(const_cast<SOceanBoatsScoreboardWidget*>(this), &SOceanBoatsScoreboardWidget::OnMouseOverPlayer, TeamPlayer)
-			.BorderBackgroundColor(this, &SOceanBoatsScoreboardWidget::GetScoreboardBorderColor, TeamPlayer)
+			//.Visibility(this, &SOceanBoatsScoreboardWidget::PlayerPresenceToItemVisibility, TeamPlayer)
+			//.OnMouseMove(const_cast<SOceanBoatsScoreboardWidget*>(this), &SOceanBoatsScoreboardWidget::OnMouseOverPlayer, TeamPlayer)
+			.BorderBackgroundColor(FLinearColor(0.35, 0.35, 0.65, 0.5))
 			.BorderImage(&ScoreboardStyle->ItemBorderBrush)
 			[
 				SNew(SBox)
-				.WidthOverride(ScoreBoxWidth)
+				.WidthOverride(ScoreBoxWidth * 2)
 				.HAlign(HAlign_Center)
 				[
 					SNew(STextBlock)
-					.Text(this, &SOceanBoatsScoreboardWidget::GetStat, Columns[ColIdx].AttributeGetter, TeamPlayer)
+					.Text(this, &SOceanBoatsScoreboardWidget::GetObstacleDetail,boat, type)
 					.TextStyle(FArmySimStyle::Get(), "OceanBoats.DefaultScoreboard.Row.StatTextStyle")
-					.ColorAndOpacity(this, &SOceanBoatsScoreboardWidget::GetColumnColor, TeamPlayer, ColIdx)
+					.ColorAndOpacity(FSlateColor(FLinearColor::White))
 				]
 			]
 		];
@@ -879,39 +916,58 @@ ASoldierPlayerState* SOceanBoatsScoreboardWidget::GetSortedPlayerState(const FTe
 	return NULL;
 }
 
-int32 SOceanBoatsScoreboardWidget::GetAttributeValue_Kills(ASoldierPlayerState* PlayerState) const
-{
-	return PlayerState->GetKills();
-}
-
-int32 SOceanBoatsScoreboardWidget::GetAttributeValue_Deaths(ASoldierPlayerState* PlayerState) const
-{
-	return PlayerState->GetDeaths();
-}
-
-int32 SOceanBoatsScoreboardWidget::GetAttributeValue_Score(ASoldierPlayerState* PlayerState) const
-{
-	return FMath::TruncToInt(PlayerState->Score);
-}
+//int32 SOceanBoatsScoreboardWidget::GetAttributeValue_Kills(ASoldierPlayerState* PlayerState) const
+//{
+//	return PlayerState->GetKills();
+//}
+//
+//int32 SOceanBoatsScoreboardWidget::GetAttributeValue_Deaths(ASoldierPlayerState* PlayerState) const
+//{
+//	return PlayerState->GetDeaths();
+//}
+//
+//int32 SOceanBoatsScoreboardWidget::GetAttributeValue_Score(ASoldierPlayerState* PlayerState) const
+//{
+//	return FMath::TruncToInt(PlayerState->Score);
+//}
 
 //轨条砦
-int32 SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_GTZ( ASoldierPlayerState* PlayerState ) const
+int32 SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_GTZ(class ASimEcs_Archetype* killer) const
 {	
-	return PlayerState->GetKills(Obstacle_GTZ); //FMath::TruncToInt(1);
+	//return PlayerState->GetKills(Obstacle_GTZ); //FMath::TruncToInt(1);
+	if (killer)
+		return killer->GetDamageResult(EEE_COASTDEF_GTZ_TYPE);
+	return 0;
 }
 
 // 三角锥
 /** get attribute value for Barrier */
-int32 SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_SJZ( class ASoldierPlayerState* PlayerState ) const {
+int32 SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_SJZ( class ASimEcs_Archetype* killer) const {
 	
-	return PlayerState->GetKills(Obstacle_STZ);// FMath::TruncToInt(1);
+	//return PlayerState->GetKills(Obstacle_STZ);// FMath::TruncToInt(1);
+	if (killer)
+		return killer->GetDamageResult(EEE_COASTDEF_SJZ_TYPE);
+	return 0;
 }
 
 // 海立石
 /** get attribute value for Barrier */
-int32 SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_HLS( class ASoldierPlayerState* PlayerState ) const {
-	//return GetWorld()->GetAuthGameMode<AOceanBoatsGameMode>()->GetDestroyNum(Obstacle_HLS);
-	return PlayerState->GetKills(Obstacle_HLS); //FMath::TruncToInt(1);
+int32 SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_HLS( class ASimEcs_Archetype* killer) const {
+	////return GetWorld()->GetAuthGameMode<AOceanBoatsGameMode>()->GetDestroyNum(Obstacle_HLS);
+	//return PlayerState->GetKills(Obstacle_HLS); //FMath::TruncToInt(1);
+	if (killer)
+		return killer->GetDamageResult(EEE_COASTDEF_HLS_TYPE);
+	return 0;
+}
+
+// 钢刺猬
+/** get attribute value for Barrier */
+int32 SOceanBoatsScoreboardWidget::GetAttributeValue_Barrier_GCW(class ASimEcs_Archetype* killer) const {
+	////return GetWorld()->GetAuthGameMode<AOceanBoatsGameMode>()->GetDestroyNum(Obstacle_HLS);
+	//return PlayerState->GetKills(Obstacle_GCW); //FMath::TruncToInt(1);
+	if (killer)
+		return killer->GetDamageResult(EEE_COASTDEF_GCW_TYPE);
+	return 0;
 }
 
 #undef LOCTEXT_NAMESPACE

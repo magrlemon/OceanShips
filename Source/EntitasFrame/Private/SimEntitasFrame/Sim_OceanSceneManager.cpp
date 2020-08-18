@@ -332,8 +332,8 @@ void  USimOceanSceneManager_Singleton::MoveEntity( const FString& strName, const
 
 		UpdateLeader( ehandleID , relativePos );
 
-		FString simMsg = FString::Printf( TEXT( " DroneBoat MoveOn : %s" ), *relativePos.ToString( ) );
-		GEngine->AddOnScreenDebugMessage( -1, 3.f, FColor::Red, *simMsg );
+		//FString simMsg = FString::Printf( TEXT( " DroneBoat MoveOn : %s" ), *relativePos.ToString( ) );
+		//GEngine->AddOnScreenDebugMessage( -1, 3.f, FColor::Red, *simMsg );
 	}
 }
 

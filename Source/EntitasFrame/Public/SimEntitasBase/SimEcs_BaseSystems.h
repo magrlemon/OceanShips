@@ -243,6 +243,8 @@ struct ArchetypeSpawnerSystem :public SystemT {
 			else {
 				GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, FoundArchetype.Get( )->GetName( ));
 				FoundArchetype->ArchType = spawner.ActorType;
+				FoundArchetype->GrapMesh(Cast<UStaticMeshComponent>(FoundArchetype->GetRootComponent()));
+
 				if (spawner.ActorType < BP_ACTOR_TYPE_SPLIT) {
 					USimOceanSceneManager_Singleton::BoatFormationStruct boatFormate;
 					boatFormate.Name = spawner.Name;

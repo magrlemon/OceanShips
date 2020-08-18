@@ -14,7 +14,7 @@ ASimEcs_Archetype::ASimEcs_Archetype( /*const FObjectInitializer& ObjectInitiali
 }
 
 void ASimEcs_Archetype::GrapMesh(UStaticMeshComponent* mainMesh) {
-
+	MainStaticMesh = mainMesh;
 }
 
 void ASimEcs_Archetype::CreateNewEntityFromThis( uint64  handleID)
@@ -25,6 +25,29 @@ void ASimEcs_Archetype::CreateNewEntityFromThis( uint64  handleID)
 		//	wr->AddToEntity( handleID );
 		}
 	}
+}
+
+int ASimEcs_Archetype::GetDamageResult(int type)
+{
+	int* result = DamageResults.Find(type);
+	if (result)
+	{
+		return *result;
+	}
+	return 0;
+}
+int ASimEcs_Archetype::GetTotalDamage()
+{
+	int total = 0;
+	for (auto result : DamageResults)
+	{
+		total += result.Value;
+	}
+	return total;
+}
+void ASimEcs_Archetype::AddResult(int type)
+{
+	DamageResults.FindOrAdd(type)++;
 }
 
 void ASimEcs_Archetype::EnableWaveForce_Implementation(bool enable)

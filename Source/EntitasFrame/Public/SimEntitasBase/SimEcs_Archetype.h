@@ -14,6 +14,7 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/Info.h"
 #include "SimEcs_Core.h"
+#include "SimApi.h"
 #include "SimEcs_Archetype.generated.h"
 
 
@@ -47,6 +48,11 @@ public:
 	virtual void StartFire_Implementation();
 
 public:
+	int GetDamageResult(int type);
+	int GetTotalDamage();
+	void AddResult(int type);
+	
+public:
 	int32 ArchType;
 	uint64 EntId;
 	float Speed;
@@ -57,6 +63,7 @@ public:
 	float RollbackDistance;
 	float RollbackAngle;
 	UStaticMeshComponent* MainStaticMesh;
+	TMap<int, int> DamageResults;
 
 	AActor* KilledBy;
 };
