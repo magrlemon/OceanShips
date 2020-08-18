@@ -323,14 +323,12 @@ void ASimContextDataDroneBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> 
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId(),m_JsonValue );\
 
 		_GEN_COMPONENT_( OceanShip )
-			_GEN_COMPONENT_( Movement )
+			_GEN_COMPONENT_( BoatsMovement )
 			_GEN_COMPONENT_( Force )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( Velocity )
 			_GEN_COMPONENT_( Formation )
-			_GEN_COMPONENT_( MovementRaycast )
 			_GEN_COMPONENT_( Faction )
-			_GEN_COMPONENT_( Projectile )
 			_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_( DebugSphere )
 

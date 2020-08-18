@@ -210,7 +210,7 @@ void RaycastSystem::update( SimEcs_Registry &registry, float dt )
 		if (pos.pos != lastPos.pos) {
 			FTraceHandle hit = GameWorld->AsyncLineTraceByChannel( EAsyncTraceType::Single, lastPos.pos, pos.pos, ray.RayChannel );
 
-			registry.accommodate<FRaycastResult>( entity, hit );
+			//registry.accommodate<FRaycastResult>( entity, hit );
 
 
 		}

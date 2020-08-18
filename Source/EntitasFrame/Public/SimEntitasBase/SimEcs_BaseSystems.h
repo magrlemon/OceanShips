@@ -53,11 +53,6 @@ struct MovementSystem :public SystemT {
 		//add gravity and basic movement from velocity
 		registry.view<FMovement, FPosition, FVelocity>().each([&, dt](auto entity, FMovement & m, FPosition & pos, FVelocity & vel) {
 
-			//gravity
-			const FVector gravity = FVector(0.f, 0.f, -980) * m.GravityStrenght;
-			vel.Add(gravity*dt);
-
-			pos.Add( vel.vel * dt);			
 		});
 	}
 };
@@ -72,17 +67,17 @@ struct BoatsMovementSystem :public SystemT {
 	{
 		SCOPE_CYCLE_COUNTER( STAT_Movement );
 
-		//movement raycast gets a "last position" component
-		//registry.view<FMovementRaycast, FPosition, FEntForce>( ).each( [&, dt]( auto entity, FMovementRaycast & ray, FPosition & pos, FEntForce & entForce ) {
-		//	//registry.accommodate<FLastPosition>( entity, pos.pos );
-		//	FString strInfor = TEXT( "FMovementRaycast");
-		//	USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
-		//} );
-
 		////add gravity and basic movement from velocity
-		registry.view<FMovement, FPosition, FEntForce>( ).each( [&, dt]( auto entity, FMovement & m, FPosition & pos, FEntForce & entForce ) {
+		registry.view< FOceanShip,FMovement, FPosition, FEntForce>( ).each( [&, dt]( auto entity, FOceanShip& os, FMovement & m, FPosition & pos, FEntForce & entForce ) {
 
+			auto SimInstance = USimOceanSceneManager_Singleton::GetInstance( );
 
+			TSharedPtr<ASimEcs_Archetype> boatPtr = SimInstance->m_MapArchetypes[entity];
+			if (boatPtr.IsValid( )) {
+				if (SimInstance->IsLeader( entity )) {
+					pos.pos = boatPtr.Get( )->GetTransform( ).GetLocation( );
+				}
+			}
 		} );
 	}
 };

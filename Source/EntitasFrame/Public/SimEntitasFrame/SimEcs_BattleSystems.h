@@ -19,6 +19,7 @@
 #include "SimEcs_BattleComponents.h"
 #include "Engine/Console.h"
 #include "LinearMemory.h"
+#include "SimEcs_FormationArithmetic.h"
 
 DECLARE_CYCLE_STAT( TEXT( "SimEcs: Explosion System" ), STAT_Explosion, STATGROUP_ECS );
 
@@ -45,7 +46,6 @@ struct ExplosionSystem :public SystemT {
 
 
 		registry.view<FExplosion, FScale>( ).each( [&, dt]( auto entity, FExplosion & ex, FScale & scale ) {
-
 
 			scale.scale = FVector( (ex.LiveTime / ex.Duration)*ex.MaxScale );
 
@@ -150,50 +150,9 @@ struct OceanShipSystem :public SystemT {
 			ship.ProjectileVelocity = 1200;
 
 		CheckSpeedUp(ship);
-		/*if (ship.MoveMode == EBoatMoveMode_On || ship.MoveMode == EBoatMoveMode_Back)
-		{
-			if (abs(ship.CurrentSpeed - ship.ExpectSpeed) > ship.StepSpeed*0.99)
-			{
-				if (ship.CurrentSpeed > ship.ExpectSpeed)
-				{
-					ship.bSpeedDown = true;
-					ship.CurrentSpeed = (ship.CurrentSpeed - ship.StepSpeed) > 0 ? (ship.CurrentSpeed - ship.StepSpeed) : 0;
-				}
-				else
-				{
-					ship.bSpeedDown = false;
-					ship.CurrentSpeed = (ship.CurrentSpeed + ship.StepSpeed) < ship.ExpectSpeed ? (ship.CurrentSpeed + ship.StepSpeed) : ship.ExpectSpeed;
-				}
-			}
-		}*/
+
 		FaceRotate(ship);
-		/*if (ship.MoveMode == EBoatMoveMode_On)
-		{
-			ship.bRollBack = false;
-			FRotator rot;
-			FVector currentPos = ship.MainMeshComponent->GetComponentLocation();
-			ship.MoveOnPos.Z = currentPos.Z;
-			rot.Yaw = FindLookAtRotation(currentPos, ship.MoveOnPos).Yaw;
-
-			if (ship.MainMeshComponent != NULL)
-			{
-				ship.MainMeshComponent->SetWorldRotation(rot);
-			}
-		}
-		else if (ship.MoveMode == EBoatMoveMode_Back)
-		{
-			ship.ForwardAxisValue = -ship.CurrentSpeed;
-			ship.bRollBack = true;
-			FRotator rot;
-			FVector currentPos = ship.MainMeshComponent->GetComponentLocation();
-			ship.MoveOnPos.Z = currentPos.Z;
-			rot.Yaw = FindLookAtRotation(ship.MoveOnPos,currentPos).Yaw;
-
-			if (ship.MainMeshComponent != NULL)
-			{
-				ship.MainMeshComponent->SetWorldRotation(rot);
-			}
-		}*/
+		
 	}
 
 	void RecordBoatDetail( FOceanShip& ship, ASimEcs_Archetype* boat )
@@ -253,7 +212,8 @@ struct OceanShipSystem :public SystemT {
 		assert( OwnerActor );
 		SCOPE_CYCLE_COUNTER( STAT_OceanShip );
 		int NowPlatformTime = FPlatformTime::Seconds( );
-		registry.view<FOceanShip, FRotationComponent, FVelocity>( ).each( [&, dt]( auto entity, FOceanShip & ship, FRotationComponent & rotation, FVelocity&vel ) {
+		registry.view<FOceanShip, FRotationComponent, FFormation, FVelocity>( ).each( [&, dt]( auto entity, 
+			FOceanShip & ship, FRotationComponent & rotation, FFormation& formation, FVelocity&vel ) {
 
 			auto SimInstance = USimOceanSceneManager_Singleton::GetInstance( );
 
@@ -615,6 +575,7 @@ struct BoatFormationSystem :public SystemT {
 	FVector SamplePoint = FVector::ZeroVector;
 	FVector NextLeaderTargetPoint = FVector::ZeroVector;
 	float elapsed = 0;
+	SimEcs_DelegateFormation m_SimDelegateFormation;
 	struct BoatFormationStruct {
 		BoatFormationStruct( FVector4 locate, bool isLeader ) : BoatTargetPosition( locate ), IsLeader( isLeader ) {};
 
@@ -622,15 +583,15 @@ struct BoatFormationSystem :public SystemT {
 		bool IsLeader = false;
 	};
 
-	float baseFormationAngle = 40.0f;
-	float formationAngle = 10.0f;
-	float formationLength = 5000.0f;
+	/*float baseFormationAngle = 30.0f;
+	float formationAngle = 5.0f;
+	float formationLength = 5000.0f;*/
 	float thresholdValue = 100.0f;
 	using EntityHandleId = uint64_t;
 	int   FormationCoolDownTime = 3.0f;
 	int   FormationLastTime = 0.0f;
-
-	FVector4 CaculateNextFormationLocate( FVector4 leaderPos, float  fNextDistance, float formationAngle ) {
+	int   FormationChildLastTime = 0.0f;
+	/*FVector4 CaculateNextFormationLocate( FVector4 leaderPos, float  fNextDistance, float formationAngle ) {
 		float a, b, c, t, sqrt_part;
 		float x1, x2, y1, y2;
 		t = FMath::Tan( formationAngle );
@@ -642,30 +603,28 @@ struct BoatFormationSystem :public SystemT {
 		y1 = t * (x1 - leaderPos.X) + leaderPos.Y;
 		y2 = t * (x2 - leaderPos.X) + leaderPos.Y;
 		return FVector4( x1, y1, x2, y2 );
-	}
+	}*/
 
 
-	FVector4 CaculateNextFormationLocate(const FTransform& leaderTrans, float  fNextDistance, float formationAngle ) {
+	/*FVector4 CaculateNextFormationLocate(const FTransform& leaderTrans, float  fNextDistance, float formationAngle ) {
 
 		float bastAngle = 180.0f; float l, r;
 		l = bastAngle - formationAngle; r = bastAngle + formationAngle;
 
 		FVector ForwardVector = leaderTrans.GetRotation( ).GetForwardVector( );
-		const FVector LAxisDirection = ForwardVector.RotateAngleAxis( l, FVector::UpVector );
+		const FVector LAxisDirection = ForwardVector.RotateAngleAxis( l , FVector::UpVector );
 		FVector leftPosition = LAxisDirection.GetSafeNormal() * fNextDistance + leaderTrans.GetTranslation();
 
-
-		const FVector RAxisDirection = ForwardVector.RotateAngleAxis( r, FVector::UpVector );
+		const FVector RAxisDirection = ForwardVector.RotateAngleAxis( r , FVector::UpVector );
 		FVector rightPosition = RAxisDirection.GetSafeNormal( ) * fNextDistance + leaderTrans.GetTranslation( );
-
-		GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, leftPosition.ToString( ) );
-
-		GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, rightPosition.ToString() );
 		return FVector4( leftPosition.X, leftPosition.Y, rightPosition.X, rightPosition.Y);
-	}
+	}*/
 	void SampleLeaderPoints( const  FVector& fLeaderPos, const FVector& fMoveTargetPos ) {
-		FVector fSameplePos = (fMoveTargetPos - fLeaderPos) * 0.2f + SamplePoint;
-		SamplePoint = FVector( fSameplePos.X, fSameplePos.Y, fLeaderPos.Z );
+		FVector fSameplePos = (fMoveTargetPos - fLeaderPos) * 0.05f + fLeaderPos;
+		SamplePoint = FVector( fSameplePos.X, fSameplePos.Y, fLeaderPos.Z +100.0f );
+		UWorld* pWorld = GEngine->GameViewport->GetWorld( );
+		if (!pWorld)return;
+		DrawDebugLine( pWorld, fLeaderPos, SamplePoint, FColor::Red, true, 5.0f );
 	}
 
 	bool IsArrivingSampleLeaderPoints( FVector fPos ) {
@@ -676,30 +635,56 @@ struct BoatFormationSystem :public SystemT {
 		return FVector::DistSquared( fPos, SamplePoint ) > thresholdValue ? false : true;
 	}
 
-	//temp 
-	void LeaderFormation( const FTransform& leaderSampleTrans ) {
+	////temp 
+	//void LeaderFormation( const FTransform& leaderSampleTrans ) {
 
-		auto& TTMapBoatFormationInfo = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo;
-		for (auto& itemGroup : TTMapBoatFormationInfo) {
-			//sub leader id -1
-			for (int32 location = 0; location < (itemGroup.Value.Num( )) / 2; location++) {   
-				float followDis = formationLength + location * formationLength;
-				float nextAngle = baseFormationAngle + (formationAngle * location) / 2.0f;
-				FVector4 doublePoints = CaculateNextFormationLocate( leaderSampleTrans, followDis, nextAngle );
-				TArray<EntityHandleId> handleIDs;
-				int32 flag = itemGroup.Value.GetKeys( handleIDs );
-	
-				if (!itemGroup.Value[handleIDs[ location * 2 ]].IsLeader) {
-					itemGroup.Value[handleIDs[location * 2]].BoatTargetPosition = FVector( doublePoints.X, doublePoints.Y, leaderSampleTrans.GetTranslation( ).Z );
-				}
-				if (location * 2 + 1 >= itemGroup.Value.Num( ))
-					return;
-				if (!itemGroup.Value[handleIDs[location * 2 + 1]].IsLeader) {
-					itemGroup.Value[handleIDs[location * 2 + 1]].BoatTargetPosition = FVector( doublePoints.Z, doublePoints.W, leaderSampleTrans.GetTranslation( ).Z );
-				}
-			}
-		}
-	}
+	//	auto& TTMapBoatFormationInfo = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo;
+	//	for (auto& itemGroup : TTMapBoatFormationInfo) {
+	//		//sub leader id -1
+	//		for (int32 location = 0; location <= (itemGroup.Value.Num( )) / 2; location++) {   
+	//			float followDis = formationLength + location * formationLength;
+	//			float nextAngle = baseFormationAngle + (formationAngle * location) / 2.0f;
+	//			FVector4 doublePoints = CaculateNextFormationLocate( leaderSampleTrans, followDis, nextAngle );
+	//			TArray<EntityHandleId> handleIDs;
+	//			int32 flag = itemGroup.Value.GetKeys( handleIDs );
+	//
+	//			FVector posLeft = FVector( doublePoints.X, doublePoints.Y, leaderSampleTrans.GetTranslation( ).Z );
+	//			FVector posRight = FVector( doublePoints.Z, doublePoints.W, leaderSampleTrans.GetTranslation( ).Z );
+	//			bool bSawpPositionL = false;	bool bSawpPositionR = false;
+	//			if (location * 2  >= itemGroup.Value.Num( ))
+	//				return;
+	//			else if (!itemGroup.Value[handleIDs[ location * 2 ]].IsLeader) {
+	//				FVector btp = itemGroup.Value[handleIDs[location * 2]].BoatTargetPosition;
+	//				if (FVector::DistSquared2D( btp, posLeft ) + baseFormationAngle * 0.5 > FVector::DistSquared2D( btp, posRight ))
+	//					bSawpPositionL = true;
+	//				
+	//			}
+	//			if (location * 2 + 1 >= itemGroup.Value.Num( )) {
+	//				if (bSawpPositionL && bSawpPositionR) {
+	//					itemGroup.Value[handleIDs[location * 2]].BoatTargetPosition = posRight;
+	//				}
+	//				else {
+	//					itemGroup.Value[handleIDs[location * 2]].BoatTargetPosition = posLeft;
+	//				}
+	//				return;
+	//			}
+	//			else if (!itemGroup.Value[handleIDs[location * 2 + 1]].IsLeader) {
+	//				FVector btp = itemGroup.Value[handleIDs[location * 2 + 1]].BoatTargetPosition;
+	//				if (FVector::DistSquared2D( btp, posRight ) + baseFormationAngle * 0.5 > FVector::DistSquared2D( btp, posLeft ))
+	//					bSawpPositionR = true;
+	//				
+	//			}
+	//			if (bSawpPositionL && bSawpPositionR) {
+	//				itemGroup.Value[handleIDs[location * 2]].BoatTargetPosition = posRight;
+	//				itemGroup.Value[handleIDs[location * 2 + 1]].BoatTargetPosition = posLeft;
+	//			}
+	//			else {
+	//				itemGroup.Value[handleIDs[location * 2]].BoatTargetPosition = posLeft;
+	//				itemGroup.Value[handleIDs[location * 2 + 1]].BoatTargetPosition = posRight;
+	//			}
+	//		}
+	//	}
+	//}
 
 
 	void update( SimEcs_Registry &registry, float dt ) override
@@ -707,29 +692,36 @@ struct BoatFormationSystem :public SystemT {
 		assert( OwnerActor );
 		SCOPE_CYCLE_COUNTER( STAT_BoatFormation );
 		int NowPlatformTime = FPlatformTime::Seconds( );
+		bool bRewriteTime = false;
 		registry.view<FOceanShip, FFormation, FPosition>( ).each( [&, dt]( auto entity, FOceanShip & ex, FFormation & formation, FPosition& pos ) {
 			if (formation.GroupName.IsEmpty( ))return;
 			auto boatFormationInfo = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo.Find( formation.GroupName );
 			if (boatFormationInfo) {
 				USimOceanSceneManager_Singleton::BoatFormationStruct* itemLafe = boatFormationInfo->Find( entity );
-				if (itemLafe->IsLeader ) {
+				if (itemLafe->IsLeader && ex.MoveMode<= BoatMoveMode::EBoatMoveMode_Back) {
 					NextLeaderTargetPoint = ex.MoveOnPos;
-
 					if (NowPlatformTime - FormationLastTime > FormationCoolDownTime) {
 						SampleLeaderPoints( pos.pos, NextLeaderTargetPoint );
-						FTransform leaderTrans( FQuat::MakeFromEuler( itemLafe->ForwardVector ), SamplePoint );
-						LeaderFormation( leaderTrans );
+						float fLeaderHeadingDegrees =FMath::RadiansToDegrees( itemLafe->ForwardVector.HeadingAngle( ) ) ;
+						FTransform leaderTrans( FQuat::MakeFromEuler( FVector(0.0,0.0, fLeaderHeadingDegrees ) ), SamplePoint );
+						//LeaderFormation( leaderTrans );
+						m_SimDelegateFormation.RunFormation(leaderTrans, EBoatFormation(formation.FormationValue));
 						FormationLastTime = NowPlatformTime;
 					}
-					
 					return;
 				}
-				UWorld* pWorld = GEngine->GameViewport->GetWorld( );
-				if (!pWorld)return;
-				DrawDebugLine( pWorld, pos.pos, itemLafe->BoatTargetPosition, FColor::Red, true, 5.0f );
-				USimOceanSceneManager_Singleton::GetInstance( )->MoveEntity( formation.GroupName, entity, FVector( itemLafe->BoatTargetPosition ) );
+
+				if (NowPlatformTime - FormationChildLastTime > FormationCoolDownTime) {
+					bRewriteTime = true;
+					if (FVector::DistSquared2D( pos.pos, itemLafe->BoatTargetPosition ) < 15.0f)return;
+					USimOceanSceneManager_Singleton::GetInstance( )->MoveEntity( formation.GroupName, entity, FVector( itemLafe->BoatTargetPosition ) );
+
+				}
 			}
 		} );
+		if (bRewriteTime) {
+			FormationChildLastTime = NowPlatformTime;
+		}
 	}
 };
 

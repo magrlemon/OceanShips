@@ -82,8 +82,12 @@ enum   ESceneRelevantConv {
 
 
 enum   EBoatFormation {
-	E_LEADER_FORMATION,
-	E_TWOLINE_FORMATION
+	E_LEADER_FORMATION,			//人字形
+	E_SINGLE_COLUMN_FORMATION,	//单纵队
+	E_SINGLE_ROW_FORMATION,		//单横队
+	E_DOUBLE_ROW_FORMATION,		//双横队
+	E_ECHELON_FORMATION,		//梯阶队
+	E_BEARING_FORMATION,		//方位队
 };
 
 

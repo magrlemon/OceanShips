@@ -190,12 +190,15 @@ void USimOceanSceneManager_Singleton::UpdateLeader(const EntityHandleId eID ,FVe
 	if ((*grouName).IsEmpty( ))return;
 	if (eID <= 0)return;
 
+	FVector location = m_MapArchetypes[eID]->GetTransform( ).GetLocation( );
+	FVector transPos  = m_MapArchetypes[eID]->GetTransform( ).GetTranslation( );
 	FVector leaderPosition = m_MapArchetypes[eID]->GetTransform( ).GetTranslation( );
 	TMapFormation& mapFormationRef = m_TTMapBoatFormationInfo[*grouName];
+	mapFormationRef[eID].BoatTargetPosition = posRef;
 	mapFormationRef[eID].ForwardVector = mapFormationRef[eID].BoatTargetPosition - leaderPosition;
 	mapFormationRef[eID].ForwardVector.Z = 0.0f;
 	mapFormationRef[eID].ForwardVector.Normalize( );
-	mapFormationRef[eID].BoatTargetPosition = posRef;
+
 
 }
 
@@ -342,20 +345,18 @@ void  USimOceanSceneManager_Singleton::MoveEntity( const FString& GroupName, Ent
 	EntityHandleId leaderID = m_MapLeaderArchetypes[GroupName];
 	if (leaderID <= 0) return;
 	
-	if (GetSimRegistry( )->get<FOceanShip>( leaderID ).MoveMode != BoatMoveMode::EBoatMoveMode_On ) {
+	if (GetSimRegistry( )->get<FOceanShip>( leaderID ).MoveMode > BoatMoveMode::EBoatMoveMode_On ) {
 		return;
 	}
-	 
-	if (GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode != BoatMoveMode::EBoatMoveMode_On) {
 
-		auto& simRegistryActor = GetSimRegistry( )->get<FOceanShip>( ehandleID );
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveOnPos = posRef;
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode = BoatMoveMode::EBoatMoveMode_On;
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).ExpectSpeed = 1.0f;
-		if(GetSimRegistry( )->get<FOceanShip>( ehandleID ).MainMeshComponent)
-			GetSimRegistry( )->get<FOceanShip>( ehandleID ).MainMeshComponent->SetSimulatePhysics( true );
-		  
+	auto& simRegistryActor = GetSimRegistry( )->get<FOceanShip>( ehandleID );
+	GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveOnPos = posRef;
+	GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode = BoatMoveMode::EBoatMoveMode_On;
+	GetSimRegistry( )->get<FOceanShip>( ehandleID ).ExpectSpeed = 1.0f;
+	if (GetSimRegistry( )->get<FOceanShip>( ehandleID ).MainMeshComponent) {
+		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MainMeshComponent->SetSimulatePhysics( true );
 	}
+
 
 	bool isArrived =IsArriving( ehandleID, posRef );
 	if (isArrived)
