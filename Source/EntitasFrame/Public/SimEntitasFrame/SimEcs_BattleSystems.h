@@ -130,11 +130,11 @@ struct OceanShipSystem :public SystemT {
 			{
 				
 				/*FString str = FString::Printf(TEXT("%f %f %f"), rootDir.X, rootDir.Y, rootDir.Z);*/
-				GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, FString::FromInt(existCosValue));
+				//GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, FString::FromInt(existCosValue));
 				
 				FVector tempExpectPos = currentPos + expectDir * 900;
-				DrawDebugLine(GWorld, currentPos + FVector(0, 0, 150), tempExpectPos + FVector(0, 0, 150), FColor::Red, 0, 1, 0, 5);
-				DrawDebugLine(GWorld, currentPos + FVector(0, 0, 150), ship.MoveOnPos + FVector(0, 0, 150), FColor::Blue, 0, 1, 0, 5);
+				//DrawDebugLine(GWorld, currentPos + FVector(0, 0, 150), tempExpectPos + FVector(0, 0, 150), FColor::Red, 0, 1, 0, 5);
+				//DrawDebugLine(GWorld, currentPos + FVector(0, 0, 150), ship.MoveOnPos + FVector(0, 0, 150), FColor::Blue, 0, 1, 0, 5);
 				float newYaw = FindLookAtRotation(tempExpectPos, currentPos).Yaw;
 	
 				rot.Yaw = newYaw + 2 * ship.TurnIndex;
