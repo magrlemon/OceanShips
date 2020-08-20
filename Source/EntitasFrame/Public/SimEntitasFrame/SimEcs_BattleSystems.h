@@ -68,14 +68,18 @@ struct OceanShipSystem :public SystemT {
 
 	FRotator FindLookAtRotation( const FVector& Start, const FVector& Target )
 	{
-		const FVector fLerpValue = FMath::Lerp( Target, Start, 0.001 );
-		FVector fValue = Target - fLerpValue;
-		fValue.Z = 0.0;
-		float dist = FVector::Dist( Target, Start );
-		if (dist < 5000.0f) {
-			MakeRotFromX( fValue );
-		}
-		return MakeRotFromX( fValue );
+		FVector rot = Target - Start;
+		//rot.Z = 0;
+		return MakeRotFromX(rot);
+
+		//const FVector fLerpValue = FMath::Lerp(Target, Start, 0.01);
+		//FVector fValue = Target - fLerpValue;
+		//fValue.Z = 0.0;
+		//float dist = FVector::Dist(Target, Start);
+		//if (dist < 5000.0f) {
+		//	MakeRotFromX(fValue);
+		//}
+		//return MakeRotFromX(fValue);
 	}
 
 	void AddForce(FOceanShip& ship, FVector forceLocation, UStaticMeshComponent* root)
@@ -104,26 +108,51 @@ struct OceanShipSystem :public SystemT {
 		}
 	}
 
-	void FaceRotate(FOceanShip& ship)
+	void FaceRotate(FOceanShip& ship, UStaticMeshComponent* root)
 	{
 		if (!ship.MainMeshComponent)
 			return;
+		/*if (ship.MoveMode != EBoatMoveMode_On || ship.MoveMode != EBoatMoveMode_Back)
+			return;*/
 
 		FRotator rot;
 		FVector currentPos = ship.MainMeshComponent->GetComponentLocation();
 		ship.MoveOnPos.Z = currentPos.Z;
-
+				
 		if (ship.MoveMode == EBoatMoveMode_On)
 		{
 			ship.bRollBack = false;
-			rot.Yaw = FindLookAtRotation(currentPos, ship.MoveOnPos).Yaw;
+			FVector rootDir = root->GetForwardVector();
+			FVector expectDir = ship.MoveOnPos - currentPos;
+			expectDir.Normalize();
+			float existCosValue = rootDir.CosineAngle2D(expectDir);			
+			if (existCosValue < 0.9/*ship.TurnStep * ship.TurnIndex < 180*/)
+			{
+				
+				/*FString str = FString::Printf(TEXT("%f %f %f"), rootDir.X, rootDir.Y, rootDir.Z);*/
+				GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, FString::FromInt(existCosValue));
+				
+				FVector tempExpectPos = currentPos + expectDir * 900;
+				DrawDebugLine(GWorld, currentPos + FVector(0, 0, 150), tempExpectPos + FVector(0, 0, 150), FColor::Red, 0, 1, 0, 5);
+				DrawDebugLine(GWorld, currentPos + FVector(0, 0, 150), ship.MoveOnPos + FVector(0, 0, 150), FColor::Blue, 0, 1, 0, 5);
+				float newYaw = FindLookAtRotation(tempExpectPos, currentPos).Yaw;
+	
+				rot.Yaw = newYaw + 2 * ship.TurnIndex;
+				//FMath::LerpStable(root->GetComponentRotation().Yaw, FindLookAtRotation(currentPos, ship.MoveOnPos).Yaw, existCosValue);		
+				ship.TurnIndex++;
+			}
+			else
+			{
+				rot.Yaw = FindLookAtRotation(currentPos, ship.MoveOnPos).Yaw;
+				ship.TurnIndex = 0;
+			}
 		}
 		else if(ship.MoveMode == EBoatMoveMode_Back)
 		{
 			ship.bRollBack = true;
 			ship.ForwardAxisValue = -ship.CurrentSpeed;
 			rot.Yaw = FindLookAtRotation( currentPos,ship.MoveOnPos ).Yaw;
-		}
+		}	
 
 		if (ship.MainMeshComponent != NULL)
 		{
@@ -151,7 +180,8 @@ struct OceanShipSystem :public SystemT {
 
 		CheckSpeedUp(ship);
 
-		FaceRotate(ship);
+		if(ship.MoveMode != EBoatMoveMode_Idle)
+			FaceRotate(ship, root);
 		
 	}
 
@@ -194,10 +224,10 @@ struct OceanShipSystem :public SystemT {
 		else if (ship.MoveMode == EBoatMoveMode_Fire)
 		{
 			ship.ExpectSpeed = 0;
-			boat->StartFire();
-			ship.MoveMode = EBoatMoveMode_Idle;
 			boat->EnableWaveForce(false);
 			boat->EnableBoatEffect(false);
+			boat->StartFire();
+			ship.MoveMode = EBoatMoveMode_Idle;			
 		}
 	}
 
