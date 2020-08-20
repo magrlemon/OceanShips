@@ -72,8 +72,8 @@ public:
 	void FunSingleColumnFormationArithmetic(  FTransform& leaderTrans );		//单纵队
 	void FunSingleRowFormationArithmetic(  FTransform& leaderTrans );			//单横队
 	void FunDoubleRowFormationArithmetic(  FTransform& leaderTrans );			//双横队
-	void FunEchelonFormationArithmetic(  FTransform& leaderTrans );			//梯阶队
-	void FunBearingFormationArithmetic(  FTransform& leaderTrans );			//方位队
+	void FunEchelonFormationArithmetic(  FTransform& leaderTrans );				//梯阶队
+	void FunBearingFormationArithmetic(  FTransform& leaderTrans );				//方位队
 
 
 /////////////////////////////////////////////////////////////////////////////        
@@ -82,13 +82,17 @@ public:
 
 //LeaderFormation
 	FVector4 CaculateNextLeaderFormationLocate( const FTransform& leaderTrans, float  fNextDistance, float formationAngle );
-
-
+	FVector CaculateSingleColumnFormationLocate( const FTransform& leaderTrans, float  fNextDistance, float formationAngle );
+	FVector CaculateSingleRowFormationLocate( const FTransform& leaderTrans, float  fNextDistance, float formationAngle );
+	FVector CaculateDoubleRowFormationLocate( const FTransform& leaderTrans, float  fNextDistanceRow, float fNextDistanceColumn );
+	FVector CaculateEchelonFormationLocate( const FTransform& leaderTrans, float  fNextDistance, float formationAngle );
+	FVector CaculateBearingFormationLocate( const FTransform& leaderTrans, float  fNextDistance, float formationAngle );
 private:
 	SimEcs_DelegateFormation * m_pSimDelegateFormation;
 	float baseFormationAngle = 30.0f;
 	float formationAngle = 5.0f;
-	float formationLength = 5000.0f;
+	float formationRowLength = 5000.0f;
+	float formationColumnLength = 5000.0f;
 	float thresholdValue = 100.0f;
 
 	int   FormationCoolDownTime = 3.0f;

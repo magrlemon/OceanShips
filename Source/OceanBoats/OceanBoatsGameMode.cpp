@@ -14,7 +14,6 @@
 #include "Sim_OceanSceneManager.h"
 #include "SimDataStructure.h"
 #include "SimEcs_EntityManager.h"
-#include "Boat_Archetype.h"
 #include "SoldierPawn.h"
 //#include "ObstacleInterface.h"
 
@@ -99,15 +98,16 @@ RetVar AOceanBoatsGameMode::MoveEntity(int argc, void ** argv)
 		double PosX = *((double*)(argv[1]));
 		double PosY = *((double*)(argv[2]));
 		double dir  = *((double*)(argv[3]));
-		//GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "MoveEntity");
-		//return MoveEntity(name,PosX,PosY,dir);
+
 		USimOceanSceneManager_Singleton::GetInstance()->MoveEntity(name, FVector(PosX, PosY, 0));
 		bool isArrived = USimOceanSceneManager_Singleton::GetInstance( )->IsArriving( name, FVector( PosX, PosY, 0 ) );
 		if (isArrived) {
+			USimOceanSceneManager_Singleton::GetInstance( )->SetIdle( name, FVector( PosX, PosY, 0 ) );
 			ret.iRet = behaviac::BT_SUCCESS;
+			GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "leader arrived" );
 			return ret;
 		}
-		
+
 	}
 	ret.iRet = behaviac::BT_RUNNING;
 	return ret;
@@ -127,6 +127,7 @@ RetVar AOceanBoatsGameMode::MoveBackEntity(int argc, void ** argv)
 		USimOceanSceneManager_Singleton::GetInstance()->MoveBackEntity(name, FVector(PosX, PosY, 0));
 		bool isArrived = USimOceanSceneManager_Singleton::GetInstance()->IsArriving(name, FVector(PosX, PosY, 0));
 		if (isArrived) {
+			USimOceanSceneManager_Singleton::GetInstance( )->SetIdle( name, FVector( PosX, PosY, 0 ) );
 			ret.iRet = behaviac::BT_SUCCESS;
 			return ret;
 		}
@@ -164,8 +165,8 @@ RetVar AOceanBoatsGameMode::MoveEntity(FString name, double PosX, double PosY, d
 				FVector relativePos; relativePos.Set( PosX*100.0f, PosY*100.0f, 0 );
 				relativePos = USimOceanSceneManager_Singleton::GetInstance( )->GetCovertScenePosition(relativePos );
 				//GEngine->AddOnScreenDebugMessage( -1, 18.f, FColor::Red, relativePos.ToString() );
-				if(auto Boat_Arche = Cast<ABoat_Archetype>( actor ))
-					Boat_Arche->Active_MoveOn( relativePos );
+				/*if(auto Boat_Arche = Cast<ABoat_Archetype>( actor ))
+					Boat_Arche->Active_MoveOn( relativePos );*/
 			}
 		}
 	}

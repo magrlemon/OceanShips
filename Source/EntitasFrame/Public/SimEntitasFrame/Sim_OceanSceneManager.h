@@ -55,6 +55,11 @@ public:
 			BoatTargetPosition = FVector( 0.0f, 0.0f, 0.0f );
 			ForwardVector = FVector( 0.0f, 0.0f, 0.0f );
 			IsLeader = false;
+			AvoidForceMultiplier = 2.0f;
+			// Avoidance force
+			AvoidanceForce = 20000.0f;
+
+			AvoidanceDistance = 1000.0f;
 		}
 		BoatFormationStruct( FName name, FVector locate, FVector forwardVector ,bool isLeader ) : Name( name ), 
 			BoatTargetPosition( locate ), ForwardVector(forwardVector), IsLeader( isLeader ) {};
@@ -62,6 +67,12 @@ public:
 		FVector BoatTargetPosition = FVector( 0.0f, 0.0f, 0.0f );
 		FVector ForwardVector = FVector( 0.0f, 0.0f, 0.0f );
 		bool IsLeader = false;
+		// Avoid Distance Multiplier
+		float AvoidForceMultiplier = 2.0f;
+		// Avoidance force
+		float AvoidanceForce = 2000.0f;
+
+		float AvoidanceDistance = 1000.0f;
 	};
 
 
@@ -119,7 +130,7 @@ public:
 	//get name
 	EntityHandleId GetSimHandleIDWithName( const FString& strName );
 
-	AActor* GetOceanActor( );
+	TSharedPtr<AActor>  GetOceanActor( );
 
 	ASimEcs_PlayerCameraManager* GetSimPlayerCamera( );
 
@@ -147,6 +158,8 @@ public:
 	/* update leader'position && direction*/
 	void UpdateLeader( const EntityHandleId eID, FVector& posRef  );
 
+	/* get leader by group name*/
+	EntityHandleId GetGroupLeader( const FString& strGroup );
 protected:
 	/* initialize Scenario xml data */
 	void InitialzieScenarioData( );

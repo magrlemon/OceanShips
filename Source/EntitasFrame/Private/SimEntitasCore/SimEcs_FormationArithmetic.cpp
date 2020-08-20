@@ -62,7 +62,7 @@ void SimEcs_DelegateFormation::RunFormation( FTransform& leaderTrans, EBoatForma
 
 /////////////////////////////////////////////////////////////////////////////
 //////////////                                        //////////////////////            
-//////////////            Formation Arithmetic		 /////////////////////                                 
+//////////////            Formation Arithmetic		  /////////////////////                                 
 //////////////                                        ////////////////////              
 /////////////////////////////////////////////////////////////////////////
 
@@ -103,7 +103,7 @@ void SimEcs_FormationArithmetic::FunLeaderFormationArithmetic( FTransform& leade
 	for (auto& itemGroup : TTMapBoatFormationInfo) {
 		//sub leader id -1
 		for (int32 location = 0; location <= (itemGroup.Value.Num( )) / 2; location++) {
-			float followDis = formationLength + location * formationLength;
+			float followDis = formationRowLength + location * formationRowLength;
 			float nextAngle = baseFormationAngle + (formationAngle * location) / 2.0f;
 			FVector4 doublePoints = CaculateNextLeaderFormationLocate( leaderTrans, followDis, nextAngle );
 			TArray<EntityHandleId> handleIDs;
@@ -116,10 +116,10 @@ void SimEcs_FormationArithmetic::FunLeaderFormationArithmetic( FTransform& leade
 				return;
 			else if (!itemGroup.Value[handleIDs[location * 2]].IsLeader) {
 				FVector btp = itemGroup.Value[handleIDs[location * 2]].BoatTargetPosition;
-				if (FVector::DistSquared2D( btp, posLeft ) + baseFormationAngle * 0.5 > FVector::DistSquared2D( btp, posRight ))
+				if (FVector::Dist2D( btp, posLeft ) + baseFormationAngle * 0.5 > FVector::Dist2D( btp, posRight ))
 					bSawpPositionL = true;
-
 			}
+
 			if (location * 2 + 1 >= itemGroup.Value.Num( )) {
 				if (bSawpPositionL && bSawpPositionR) {
 					itemGroup.Value[handleIDs[location * 2]].BoatTargetPosition = posRight;
@@ -131,7 +131,7 @@ void SimEcs_FormationArithmetic::FunLeaderFormationArithmetic( FTransform& leade
 			}
 			else if (!itemGroup.Value[handleIDs[location * 2 + 1]].IsLeader) {
 				FVector btp = itemGroup.Value[handleIDs[location * 2 + 1]].BoatTargetPosition;
-				if (FVector::DistSquared2D( btp, posRight ) + baseFormationAngle * 0.5 > FVector::DistSquared2D( btp, posLeft ))
+				if (FVector::Dist2D( btp, posRight ) + formationRowLength * 0.5f > FVector::Dist2D( btp, posLeft ))
 					bSawpPositionR = true;
 
 			}
@@ -165,24 +165,101 @@ FVector4 SimEcs_FormationArithmetic::CaculateNextLeaderFormationLocate( const FT
 /////////////////////////////////////////////////////////////////////////
 
 void SimEcs_FormationArithmetic::FunSingleColumnFormationArithmetic(  FTransform& leaderTrans ) {
+	if (!m_pSimDelegateFormation)return;
 
+	auto& TTMapBoatFormationInfo = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo;
+	for (auto& itemGroup : TTMapBoatFormationInfo) {
+		//sub leader id -1
+		for (int32 location = 0; location < (itemGroup.Value.Num( )); location++) {
+			TArray<EntityHandleId> handleIDs;
+			int32 flag = itemGroup.Value.GetKeys( handleIDs );
+			if (!itemGroup.Value[handleIDs[location]].IsLeader) {
+				float followDis = formationRowLength + location * formationRowLength;
+				float nextAngle = baseFormationAngle + (formationAngle * location) / 2.0f;
+				FVector SingleRowPoints = CaculateSingleColumnFormationLocate( leaderTrans, followDis, nextAngle );
+				FVector nextPosition = FVector( SingleRowPoints.X, SingleRowPoints.Y, leaderTrans.GetTranslation( ).Z );
+				itemGroup.Value[handleIDs[location]].BoatTargetPosition = nextPosition;
+			}
+		}
+	}
 }
 
+FVector SimEcs_FormationArithmetic::CaculateSingleColumnFormationLocate( const FTransform& leaderTrans, float  fNextDistance, float formationAngle ) {
+	float bastAngle = 180.0f;
+	FVector ForwardVector = leaderTrans.GetRotation( ).GetForwardVector( );
+	const FVector RAxisDirection = ForwardVector.RotateAngleAxis( bastAngle, FVector::UpVector );
+	FVector ColumnPosition = RAxisDirection.GetSafeNormal( ) * fNextDistance + leaderTrans.GetTranslation( );
+	return FVector( ColumnPosition.X, ColumnPosition.Y, leaderTrans.GetTranslation( ).Z );
+}
 
 /////////////////////////////////////////////////////////////////////////////        
 //////////////           单横队						  /////////////////////                                 
 /////////////////////////////////////////////////////////////////////////
 
 void SimEcs_FormationArithmetic::FunSingleRowFormationArithmetic(  FTransform& leaderTrans ) {
+	if (!m_pSimDelegateFormation)return;
 
+	auto& TTMapBoatFormationInfo = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo;
+	for (auto& itemGroup : TTMapBoatFormationInfo) {
+		//sub leader id -1
+		for (int32 location = 0; location < (itemGroup.Value.Num( )); location++) {
+			float followDis = formationRowLength + location * formationRowLength;
+			float nextAngle = baseFormationAngle + (formationAngle * location) / 2.0f;
+			FVector SingleRowPoints = CaculateSingleRowFormationLocate( leaderTrans, followDis, nextAngle );
+			TArray<EntityHandleId> handleIDs;
+			int32 flag = itemGroup.Value.GetKeys( handleIDs );
+
+			if (!itemGroup.Value[handleIDs[location]].IsLeader) {
+				FVector nextPosition = FVector( SingleRowPoints.X, SingleRowPoints.Y, leaderTrans.GetTranslation( ).Z );
+				itemGroup.Value[handleIDs[location]].BoatTargetPosition = nextPosition;
+			}
+		}
+	}
+} 
+
+FVector SimEcs_FormationArithmetic::CaculateSingleRowFormationLocate( const FTransform& leaderTrans, float  fNextDistance, float formationAngle ) {
+	float bastAngle = 180.0f; 
+
+	FVector ForwardVector = leaderTrans.GetRotation( ).GetForwardVector( );
+	const FVector LAxisDirection = ForwardVector.RotateAngleAxis( bastAngle, FVector::UpVector );
+	FVector rowPosition = LAxisDirection.GetSafeNormal( ) * fNextDistance + leaderTrans.GetTranslation( );
+	return rowPosition;
 }
 
+
 /////////////////////////////////////////////////////////////////////////////        
-//////////////           方位队						  /////////////////////                                 
+//////////////           双横队						  /////////////////////                                 
 /////////////////////////////////////////////////////////////////////////
 //双横队
 void SimEcs_FormationArithmetic::FunDoubleRowFormationArithmetic(  FTransform& leaderTrans ) {
+	if (!m_pSimDelegateFormation)return;
 
+	auto& TTMapBoatFormationInfo = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo;
+	for (auto& itemGroup : TTMapBoatFormationInfo) {
+
+		int32 boatOneRowNum = itemGroup.Value.Num( )/2;
+		int32 validIndex = 0;
+		for (int32 location = 0; location < (itemGroup.Value.Num( )); location++) {
+			TArray<EntityHandleId> handleIDs;
+			int32 flag = itemGroup.Value.GetKeys( handleIDs );
+			if (!itemGroup.Value[handleIDs[location]].IsLeader) {
+				float followDis = formationRowLength + validIndex * formationRowLength;
+				int32 rowNum = boatOneRowNum > location ? 1 : 2;
+				FVector SingleRowPoints = CaculateDoubleRowFormationLocate( leaderTrans, followDis, rowNum );
+				FVector nextPosition = FVector( SingleRowPoints.X, SingleRowPoints.Y, leaderTrans.GetTranslation( ).Z );
+				itemGroup.Value[handleIDs[location]].BoatTargetPosition = nextPosition;
+				validIndex++;
+			}
+		}
+	}
+}
+
+FVector SimEcs_FormationArithmetic::CaculateDoubleRowFormationLocate( const FTransform& leaderTrans, 
+	float  fNextDistanceRow, float fNextDistanceColumn ) {
+
+	float  jumpIndex = (fNextDistanceRow - 1)*-1.0f;
+	FVector OffectValue = FVector( fNextDistanceRow, jumpIndex* fNextDistanceColumn,0.0f );
+	return leaderTrans.TransformPosition( OffectValue );
 }
 
 
@@ -191,9 +268,37 @@ void SimEcs_FormationArithmetic::FunDoubleRowFormationArithmetic(  FTransform& l
 /////////////////////////////////////////////////////////////////////////
 
 void SimEcs_FormationArithmetic::FunEchelonFormationArithmetic(  FTransform& leaderTrans ) {
+	if (!m_pSimDelegateFormation)return;
+
+	auto& TTMapBoatFormationInfo = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo;
+	for (auto& itemGroup : TTMapBoatFormationInfo) {
+		//sub leader id -1
+		for (int32 location = 0; location <= itemGroup.Value.Num( ); location++) {
+			float followDis = formationRowLength + location * formationRowLength;
+			float nextAngle = baseFormationAngle + (formationAngle * location) / 2.0f;
+			FVector4 doublePoints = CaculateNextLeaderFormationLocate( leaderTrans, followDis, nextAngle );
+			TArray<EntityHandleId> handleIDs;
+			int32 flag = itemGroup.Value.GetKeys( handleIDs );
+			FVector posRight = FVector( doublePoints.Z, doublePoints.W, leaderTrans.GetTranslation( ).Z );
+			if (!itemGroup.Value[handleIDs[location ]].IsLeader) {
+				FVector btp = itemGroup.Value[handleIDs[location]].BoatTargetPosition;
+				if (FVector::Dist2D( btp, posRight ) + formationRowLength * 0.5f > FVector::Dist2D( btp, posRight ))
+					itemGroup.Value[handleIDs[location]].BoatTargetPosition = posRight;
+			}
+		}
+	}
 }
 
+FVector SimEcs_FormationArithmetic::CaculateEchelonFormationLocate( const FTransform& leaderTrans, float  fNextDistance, float formationAngle ) {
+	float bastAngle = 180.0f; float l, r;
+	l = bastAngle - formationAngle; 
+	r = bastAngle + formationAngle;
 
+	FVector ForwardVector = leaderTrans.GetRotation( ).GetForwardVector( );
+	const FVector RAxisDirection = ForwardVector.RotateAngleAxis( r, FVector::UpVector );
+	FVector rightPosition = RAxisDirection.GetSafeNormal( ) * fNextDistance + leaderTrans.GetTranslation( );
+	return FVector( rightPosition.X, rightPosition.Y, leaderTrans.GetTranslation( ).Z);
+}
 
 /////////////////////////////////////////////////////////////////////////////        
 //////////////           方位队						  /////////////////////                                 
@@ -201,4 +306,9 @@ void SimEcs_FormationArithmetic::FunEchelonFormationArithmetic(  FTransform& lea
 
 void SimEcs_FormationArithmetic::FunBearingFormationArithmetic(  FTransform& leaderTrans ) {
 
+}
+
+FVector SimEcs_FormationArithmetic::CaculateBearingFormationLocate( const FTransform& leaderTrans, float  fNextDistance, float formationAngle ) {
+
+	return FVector::ZeroVector;
 }
