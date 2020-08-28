@@ -222,5 +222,3 @@
 	// set unique type id for this SimEcs_Entity<T>
 	template<class E>
 	const EntityTypeId SimEcs_Entity<E>::STATIC_ENTITY_TYPE_ID = SimEcs_FamilyTypeID<SimEcs_IEntity>::Get<E>();
-
-

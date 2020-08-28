@@ -52,7 +52,7 @@
 		}
 
 		// increase component LUT size
-		this->m_ComponentLUT.Reserve(this->m_ComponentLUT.Num() + COMPONENT_LUT_GROW);
+		this->m_ComponentLUT.SetNum(this->m_ComponentLUT.Num() + COMPONENT_LUT_GROW);
 
 		this->m_ComponentLUT[i] = component;
 		return i;

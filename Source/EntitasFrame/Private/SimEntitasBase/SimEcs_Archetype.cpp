@@ -2,7 +2,7 @@
 
 #include "SimEcs_Archetype.h"
 #include "SimEcs_ComponentWrapper.h"
-
+#include "Classes\AdvancedBuoyancyComponent\AdvancedBuoyancyComponent.h"
 
 // Sets default values
 ASimEcs_Archetype::ASimEcs_Archetype( /*const FObjectInitializer& ObjectInitializer*/ )
@@ -61,5 +61,23 @@ void ASimEcs_Archetype::EnableBoatEffect_Implementation(bool enable)
 }
 void ASimEcs_Archetype::StartFire_Implementation()
 {
+	GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "boat->Get( )->StartFire( );" );
+}
+
+void ASimEcs_Archetype::GrapBuoyancyComponent_Initialize( int32 ActorType ) {
+
+	//TArray<UActorComponent*> allComponents = owner->GetComponents( ).Array( );
+	///*for (int i = 0; i < allComponents.Num( ); i++) {
+	//	if (allComponents[i] == NULL) {
+	//		continue;
+	//	}
+	//	if (allComponents[i]->IsA<UBuoyancyForceComponent>( )) {
+	//		PhysicsComponent = (UPrimitiveComponent*)allComponents[i];
+	//		break;
+	//	}
+	//}*/
+	UAdvancedBuoyancyComponent* pUBuoyancyComponent = (UAdvancedBuoyancyComponent*)(this->GetComponentByClass( UAdvancedBuoyancyComponent::StaticClass( ) ));
+	if(pUBuoyancyComponent)
+		pUBuoyancyComponent->AddLocalOffset(FVector::ZeroVector );
 
 }

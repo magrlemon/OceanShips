@@ -881,6 +881,7 @@ void ASoldierPlayerController::ViewBoat()
 void ASoldierPlayerController::StartSimulate()
 {
 	IGameModeInterface::Execute_StartMove(UGameplayStatics::GetGameMode(this));
+	USimOceanSceneManager_Singleton::GetInstance( )->ChangeFormationType( "pz01_5", EBoatFormation::E_SINGLE_COLUMN_FORMATION );
 }
 
 void ASoldierPlayerController::ClientTeamMessage_Implementation( APlayerState* SenderPlayerState, const FString& S, FName Type, float MsgLifeTime )

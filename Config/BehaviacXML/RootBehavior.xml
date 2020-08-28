@@ -8,20 +8,20 @@
       <property ResultOption="BT_SUCCESS" />
     </node>
     <node class="Action" id="4">
-      <property Method="Self.AiImagineAgent::MoveEntity(&quot;pz01_5&quot;,500,100,50)" />
+      <property Method="Self.AiImagineAgent::MoveEntity(&quot;pz01_5&quot;,500,1100,50)" />
       <property ResultOption="BT_INVALID" />
     </node>
     <node class="Action" id="5">
-      <property Method="Self.AiImagineAgent::MoveEntity(&quot;pz01_5&quot;,800,50,50)" />
+      <property Method="Self.AiImagineAgent::MoveEntity(&quot;pz01_5&quot;,800,1800,50)" />
       <property ResultOption="BT_INVALID" />
     </node>
     <node class="Action" id="3">
-      <property Method="Self.AiImagineAgent::MoveEntity(&quot;pz01_5&quot;,1000,100,50)" />
+      <property Method="Self.AiImagineAgent::MoveEntity(&quot;pz01_5&quot;,720,2140,50)" />
       <property ResultOption="BT_INVALID" />
     </node>
     <node class="DecoratorTime" id="8">
       <property DecorateWhenChildEnds="false" />
-      <property Time="const float 15000" />
+      <property Time="const float 3000" />
       <node class="Action" id="9">
         <property Method="Self.AiImagineAgent::Wait()" />
         <property ResultOption="BT_SUCCESS" />
@@ -40,7 +40,7 @@
       </node>
     </node>
     <node class="Action" id="6">
-      <property Method="Self.AiImagineAgent::MoveBackEntity(&quot;pz01_5&quot;,900,100,50,0)" />
+      <property Method="Self.AiImagineAgent::MoveEntity(&quot;pz01_5&quot;,500,1800,50)" />
       <property ResultOption="BT_SUCCESS" />
     </node>
     <node class="Action" id="7">

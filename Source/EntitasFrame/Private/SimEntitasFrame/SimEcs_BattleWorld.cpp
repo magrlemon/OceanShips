@@ -21,12 +21,13 @@ void ASimEcs_WorldActor::BeginPlay()
 
 		ECSWorld = MakeUnique<SimEcs_World>();
 
-		ECSWorld->CreateAndRegisterSystem<CopyTransformToECSSystem>();
-		ECSWorld->CreateAndRegisterSystem<BoidSystem>();
+		//ECSWorld->CreateAndRegisterSystem<CopyTransformToECSSystem>();
+		//ECSWorld->CreateAndRegisterSystem<BoidSystem>();
 		ECSWorld->CreateAndRegisterSystem<MovementSystem>();
 		ECSWorld->CreateAndRegisterSystem<BoatsMovementSystem>( );
 		ECSWorld->CreateAndRegisterSystem<ExplosionSystem>();
 		ECSWorld->CreateAndRegisterSystem<OceanShipSystem>();
+		ECSWorld->CreateAndRegisterSystem<AvoidObstacleSystem>( );
 		ECSWorld->CreateAndRegisterSystem<BoatFormationSystem>( );
 		ECSWorld->CreateAndRegisterSystem<RaycastSystem>();
 		ECSWorld->CreateAndRegisterSystem<BarrierFixedRaycastSystem>();
@@ -34,7 +35,7 @@ void ASimEcs_WorldActor::BeginPlay()
 		ECSWorld->CreateAndRegisterSystem<SwitchSimulatePhysicalSystem>( );
 		ECSWorld->CreateAndRegisterSystem<StaticMeshDrawSystem>();
 		//ECSWorld->CreateAndRegisterSystem<DebugDrawSystem>();
-		ECSWorld->CreateAndRegisterSystem<CopyTransformToActorSystem>();
+		//ECSWorld->CreateAndRegisterSystem<CopyTransformToActorSystem>();
 		ECSWorld->CreateAndRegisterSystem<ArchetypeSpawnerSystem>();		
 		ECSWorld->InitializeSystems(this);
 

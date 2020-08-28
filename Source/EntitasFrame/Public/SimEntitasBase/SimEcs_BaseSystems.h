@@ -76,7 +76,11 @@ struct BoatsMovementSystem :public SystemT {
 			if (boatPtr.IsValid( )) {
 				if (SimInstance->IsLeader( entity )) {
 					pos.pos = boatPtr.Get( )->GetTransform( ).GetLocation( );
+
 				}
+				//read udp map[] == > value; value.name  value.pos;
+				//pos.pos = value.pos;
+				//active = true;
 			}
 		} );
 	}
@@ -192,8 +196,7 @@ struct ArchetypeSpawnerSystem :public SystemT {
 					USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypesName.Add( handleID, *(FoundArchetype->GetName( )) );
 					//GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, FoundArchetype->GetName( ) );
 				}
-				//FString strInfor = TEXT( "m_mapArchetypes pawnerSystem" );
-				//USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
+
 				USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypes.Add( handleID, FoundArchetype);
 			}
 		}
@@ -225,8 +228,9 @@ struct ArchetypeSpawnerSystem :public SystemT {
 			SpawnInfo.Template = nullptr;
 			SpawnInfo.Instigator = nullptr;
 			SpawnInfo.Name = spawner.Name;
-			GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, spawner.Name.ToString() );
-			SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+			SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn; 
+			FVector textpos = SpawnPosition; textpos.Z = -6000.0f;
 			FoundArchetype = MakeShareable( OwnerActor->GetWorld( )->SpawnActor<ASimEcs_Archetype>( spawner.ArchetypeClass, SpawnPosition, quatRot.Rotator( ), SpawnInfo ) );
 			if (!FoundArchetype.IsValid( ))return;
 
@@ -236,17 +240,17 @@ struct ArchetypeSpawnerSystem :public SystemT {
 				UE_LOG( LogFlying, Warning, TEXT( "Error when spawning archetype: %s" ), *GetNameSafe( spawner.ArchetypeClass ) );
 			}
 			else {
-				GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, FoundArchetype.Get( )->GetName( ));
+
 				FoundArchetype->ArchType = spawner.ActorType;
 				FoundArchetype->GrapMesh(Cast<UStaticMeshComponent>(FoundArchetype->GetRootComponent()));
-
+				FoundArchetype->GrapBuoyancyComponent_Initialize( spawner.ActorType );
 				if (spawner.ActorType < BP_ACTOR_TYPE_SPLIT) {
 					USimOceanSceneManager_Singleton::BoatFormationStruct boatFormate;
 					boatFormate.Name = spawner.Name;
 					boatFormate.BoatTargetPosition = SpawnPosition;
 					boatFormate.ForwardVector = quatRot.GetForwardVector( );
 					boatFormate.IsLeader = spawner.isLeader;
-				
+					
 					auto FoundGroup = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo.Find( spawner.GroupName );
 					if (!FoundGroup) {
 						USimOceanSceneManager_Singleton::TMapFormation mapBoatsFormation;
@@ -262,9 +266,8 @@ struct ArchetypeSpawnerSystem :public SystemT {
 					if(spawner.isLeader)
 						USimOceanSceneManager_Singleton::GetInstance( )->m_MapLeaderArchetypes.Add( spawner.GroupName, spawner.entHandleId );
 
+
 				}
-				//FString strInfor = TEXT( "m_mapArchetypes pawnerSystem" );
-				//USimOceanSceneManager_Singleton::GetInstance( )->DebugLogger( strInfor );
 				USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypes.Add( spawner.entHandleId, FoundArchetype );
 			}
 		}
@@ -393,4 +396,17 @@ struct SwitchSimulatePhysicalSystem :public SystemT {
 	void update( SimEcs_Registry &registry, float dt ) override;
 
 };
+
+//////////////////////////////////////////////////////////////////////////
+// AvoidObstacle System
+//////////////////////////////////////////////////////////////////////////
+DECLARE_CYCLE_STAT( TEXT( "SimEcs: AvoidObstacle System" ), STAT_AvoidObstacle, STATGROUP_ECS );
+struct AvoidObstacleSystem :public SystemT {
+
+	using  BoatFormationType = USimOceanSceneManager_Singleton::BoatFormationStruct;
+	FVector  AvoidObstacle( FOceanShip & ex, BoatFormationType * pBFType, FVector& fCurrentPosition );
+	void update( SimEcs_Registry &registry, float dt ) override;
+
+};
+
 

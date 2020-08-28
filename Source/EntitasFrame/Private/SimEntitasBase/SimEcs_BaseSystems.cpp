@@ -231,32 +231,40 @@ void BarrierFixedRaycastSystem::update( SimEcs_Registry &registry, float dt )
 		auto archeType = USimOceanSceneManager_Singleton::GetInstance( )->FindArchetype( entity );
 		if (!archeType)return;
 
-		FCollisionQueryParams cqq( FName( TEXT( "sim_ocean" ) ), true, NULL );
-		cqq.bTraceComplex = true;
-		cqq.bReturnPhysicalMaterial = false;
-		cqq.AddIgnoredActor( archeType.Get( ) );
-	//	TArray<AActor* > InIgnoreActors;
-	//	InIgnoreActors.Add( archeType.Get() );
-	////	InIgnoreActors.Add( USimOceanSceneManager_Singleton::GetInstance( )->GetOceanActor( ) );
-	//	cqq.AddIgnoredActors( InIgnoreActors );
-		
+		FCollisionQueryParams Line( FName( TEXT( "sim_ocean" ) ), true, NULL );
+		Line.bTraceComplex = true;
+		Line.bReturnPhysicalMaterial = false;
+		Line.AddIgnoredActor( archeType.Get( ) );
 		fPos = archeType.Get( )->GetTransform( ).GetLocation( );
 
 		const FRotator Rotation = archeType.Get( )->GetTransform( ).Rotator( );
 		dir = FVector::UpVector * -1.0f;
-		FVector beginPos = fPos;
-		FVector posEnd = fPos + dir * 1000;
+		FVector actorLocation = fPos;
+		FVector forwardVector = fPos + dir * ECS_ABOUVE_GROUD_HEIGHT;
 		UWorld* World = GEngine->GameViewport->GetWorld( );
 		if (!World)return;
-		World->LineTraceSingleByChannel( HitResult, beginPos, posEnd, ECC_WorldStatic, cqq );
 
-
-		if (HitResult.GetActor( )) {
-			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType( HitResult.PhysMaterial.Get( ) );
+		TArray<struct FHitResult> OutHitResults;
+		bool const bHadBlockingHit = World->LineTraceMultiByChannel( OutHitResults, actorLocation, forwardVector, ECC_WorldStatic, Line );
+		if (!bHadBlockingHit)return;
+		int32 findHitIdx = -1;
+		for (int32 HitIdx = 0; HitIdx < OutHitResults.Num( ); HitIdx++) {
+			const FHitResult& Check = OutHitResults[HitIdx];
+			if (Check.GetActor( ) && Check.GetActor( )->Tags.Num()>0 &&  Check.GetActor( )->Tags[0].Compare( "Landscape" ) == 0) {
+				findHitIdx = HitIdx;
+				break;
+			}
+			else {
+				findHitIdx = HitIdx;
+			}
+		}
+		if (findHitIdx < 0)return;
+		if (OutHitResults[findHitIdx].GetActor( )) {
+			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType( OutHitResults[findHitIdx].PhysMaterial.Get( ) );
 
 			auto  SceneComponent = archeType.Get( )->GetRootComponent( );
 			if (archeType && SceneComponent) {
-				pos.pos = HitResult.Location + dir * -10.0f;
+				pos.pos = OutHitResults[findHitIdx].Location + dir * -10.0f;
 				
 				if (ray.Distance < 15.0f) {
 					FSimulatePhysical fsp;
@@ -324,6 +332,88 @@ void SwitchSimulatePhysicalSystem::update( SimEcs_Registry &registry, float dt )
 	}
 
 	//logic can be done here for custom deleters, nothing right now
+}
 
 
+
+
+/////////////////////////////////////////////////////////////////////////////
+//////////////                                        //////////////////////            
+//////////////            Boat Formation             /////////////////////                                 
+//////////////                                        ////////////////////              
+/////////////////////////////////////////////////////////////////////////
+
+#define COLLISION_TRACE ECC_GameTraceChannel4
+using  BoatFormationType = USimOceanSceneManager_Singleton::BoatFormationStruct;
+FVector  AvoidObstacleSystem::AvoidObstacle( FOceanShip & ex, BoatFormationType * pBFType, FVector& fCurrentPosition )
+{
+	if (!pBFType || !ex.MainMeshComponent)return FVector::ZeroVector;
+	FVector actorLocation = fCurrentPosition + FVector::UpVector * 100.0f;
+	FVector forwardVector = (ex.MainMeshComponent->GetComponentRotation( ).Vector( ).GetSafeNormal() * pBFType->AvoidanceDistance) + actorLocation;
+
+	FHitResult OutHitResult;
+	FCollisionQueryParams Line( FName( "Collision param" ), true );
+	UWorld* World = GEngine->GameViewport->GetWorld( );
+	if (!World)	return 	FVector::ZeroVector;
+	TArray<struct FHitResult> OutHitResults;
+	//DrawDebugLine( World, actorLocation, forwardVector, FColor::Green, true, 5.0f );
+	bool const bHadBlockingHit = World->LineTraceMultiByChannel( OutHitResults, actorLocation, forwardVector, COLLISION_TRACE, Line );
+	int32 findHitIdx = -1;
+	for (int32 HitIdx = 0; HitIdx < OutHitResults.Num( ); HitIdx++) {
+		const FHitResult& Check = OutHitResults[HitIdx];
+		if (Check.GetActor( ) && Check.GetActor( )->Tags.Num( ) > 0 && Check.GetActor( )->Tags[0].Compare( "bp_oceanboat" ) == 0) {
+			findHitIdx = HitIdx;
+			GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "find AvoidObstacle %s", *(Check.GetActor( )->GetName()) );
+		}
+	}
+	if (findHitIdx < 0) return FVector::ZeroVector;
+	FVector returnVector = FVector( 0, 0, 0 );
+	float distanceToBound = distanceToBound = (fCurrentPosition - OutHitResults[findHitIdx].ImpactPoint).Size( );
+	if (bHadBlockingHit && findHitIdx>=0) {
+
+		if (OutHitResults[findHitIdx].ImpactPoint.X > fCurrentPosition.X) {
+			returnVector.X += (1 / (distanceToBound * (1 / pBFType->AvoidForceMultiplier))) * -1;
+		}
+		else if (OutHitResults[findHitIdx].ImpactPoint.X < fCurrentPosition.X) {
+
+			returnVector.X += (1 / (distanceToBound * (1 / pBFType->AvoidForceMultiplier))) * 1;
+		}
+
+		if (OutHitResults[findHitIdx].ImpactPoint.Y > fCurrentPosition.Y) {
+			returnVector.Y += (1 / (distanceToBound * (1 / pBFType->AvoidForceMultiplier))) * -1;
+		}
+		else if (OutHitResults[findHitIdx].ImpactPoint.Y < fCurrentPosition.Y) {
+
+			returnVector.Y += (1 / (distanceToBound * (1 / pBFType->AvoidForceMultiplier))) * 1;
+		}
+
+		returnVector.Normalize( );
+		FVector avoidance = returnVector * pBFType->AvoidanceForce;
+		GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, avoidance.ToString() );
+		return avoidance;
+	}
+	return FVector( 0, 0, 0 );
+}
+
+
+void AvoidObstacleSystem::update( SimEcs_Registry &registry, float dt )
+{
+	assert( OwnerActor );
+
+	SCOPE_CYCLE_COUNTER( STAT_AvoidObstacle );
+
+	//tick the lifetime timers
+	registry.view<FOceanShip, FFormation, FPosition>( ).each( [&, dt]( auto entity, FOceanShip & ex, FFormation & formation, FPosition& pos ) {
+		if (formation.GroupName.IsEmpty( ))return;
+		auto boatFormationInfo = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo.Find( formation.GroupName );
+		if (boatFormationInfo) {
+
+			USimOceanSceneManager_Singleton::BoatFormationStruct* itemLafe = boatFormationInfo->Find( entity );
+			if (ex.MainMeshComponent) {
+				ex.MainMeshComponent->GetComponentLocation( );
+				itemLafe->ExpectAvoidOffect = AvoidObstacle( ex, itemLafe, pos.pos );
+				itemLafe->ExpectAvoidOffect.Z = 0.0f;
+			}
+		}
+	} );
 }

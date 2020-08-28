@@ -470,8 +470,23 @@ struct FFormation {
 	GENERATED_BODY( )
 
 	UPROPERTY( EditAnywhere )
-		int32 FormationValue;
+		int32 FormationValue = 1;
 	UPROPERTY(EditAnywhere)
 		FString GroupName;
+};
+
+
+USTRUCT( BlueprintType )
+struct FAnimation {
+	GENERATED_BODY( )
+
+	UPROPERTY( EditAnywhere )
+		int32 Time = 10;
+	UPROPERTY( EditAnywhere )
+		FString AnimName;   //¶¯»­Ãû³Æ
+	UPROPERTY( EditAnywhere )
+		FString PartName;   //Ì«Ñô·«°å
+
+	    
 };
 

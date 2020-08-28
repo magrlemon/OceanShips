@@ -34,29 +34,39 @@ void SimEcs_DelegateFormation::Update( float delta )
 
 void SimEcs_DelegateFormation::RunFormation( FTransform& leaderTrans, EBoatFormation eFromationType )
 {
+	FString strFromation = "";
 	switch (eFromationType) {
 	case EBoatFormation::E_LEADER_FORMATION:				//人字形
 		RunLeaderFormationArithmetic.ExecuteIfBound( leaderTrans );
+		strFromation = "LEADER FORMATION";
 		break;
 	case EBoatFormation::E_SINGLE_COLUMN_FORMATION:			//单纵队
 		RunSingleColumnFormationArithmetic.ExecuteIfBound(leaderTrans);
+		strFromation = "SINGLE COLUMN FORMATION";
 		break;
 	case EBoatFormation::E_SINGLE_ROW_FORMATION:			//单横队
 		RunSingleRowFormationArithmetic.ExecuteIfBound(leaderTrans);
+		strFromation = "SINGLE ROW FORMATION";
 		break;
 	case EBoatFormation::E_DOUBLE_ROW_FORMATION:			//双横队
 		RunDoubleRowFormationArithmetic.ExecuteIfBound(leaderTrans);
+		strFromation = "DOUBLE ROW FORMATION";
 		break;
 	case EBoatFormation::E_ECHELON_FORMATION:				//梯阶队
 		RunEchelonFormationArithmetic.ExecuteIfBound(leaderTrans);
+		strFromation = "ECHELON FORMATION";
 		break;
 	case EBoatFormation::E_BEARING_FORMATION:				//方位队
 		RunBearingFormationArithmetic.ExecuteIfBound(leaderTrans);
+		strFromation = "BEARING FORMATION";
 		break;
 	default:
 		RunLeaderFormationArithmetic.ExecuteIfBound(leaderTrans);
 		break;
 	}
+
+	FString simMsg = FString::Printf( TEXT( "Run Formation is Name is : %s" ), *strFromation );
+	USimOceanSceneManager_Singleton::GetInstance( )->PushSimMessage( simMsg );
 }
 
 
@@ -203,13 +213,13 @@ void SimEcs_FormationArithmetic::FunSingleRowFormationArithmetic(  FTransform& l
 	for (auto& itemGroup : TTMapBoatFormationInfo) {
 		//sub leader id -1
 		for (int32 location = 0; location < (itemGroup.Value.Num( )); location++) {
-			float followDis = formationRowLength + location * formationRowLength;
-			float nextAngle = baseFormationAngle + (formationAngle * location) / 2.0f;
-			FVector SingleRowPoints = CaculateSingleRowFormationLocate( leaderTrans, followDis, nextAngle );
 			TArray<EntityHandleId> handleIDs;
 			int32 flag = itemGroup.Value.GetKeys( handleIDs );
 
 			if (!itemGroup.Value[handleIDs[location]].IsLeader) {
+				float followDis = formationRowLength + location * formationRowLength;
+				float nextAngle = baseFormationAngle + (formationAngle * location) / 2.0f;
+				FVector SingleRowPoints = CaculateSingleRowFormationLocate( leaderTrans, followDis, nextAngle );
 				FVector nextPosition = FVector( SingleRowPoints.X, SingleRowPoints.Y, leaderTrans.GetTranslation( ).Z );
 				itemGroup.Value[handleIDs[location]].BoatTargetPosition = nextPosition;
 			}
@@ -218,7 +228,7 @@ void SimEcs_FormationArithmetic::FunSingleRowFormationArithmetic(  FTransform& l
 } 
 
 FVector SimEcs_FormationArithmetic::CaculateSingleRowFormationLocate( const FTransform& leaderTrans, float  fNextDistance, float formationAngle ) {
-	float bastAngle = 180.0f; 
+	float bastAngle = 90.0f; 
 
 	FVector ForwardVector = leaderTrans.GetRotation( ).GetForwardVector( );
 	const FVector LAxisDirection = ForwardVector.RotateAngleAxis( bastAngle, FVector::UpVector );

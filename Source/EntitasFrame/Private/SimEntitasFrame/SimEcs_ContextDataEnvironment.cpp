@@ -443,14 +443,14 @@ void ASimContextDataNavalCraftEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine>
 #define  _GEN_COMPONENT_(TYPE)\
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId(),m_JsonValue );\
 
-		_GEN_COMPONENT_( OceanShip )
-			_GEN_COMPONENT_( Movement )
+		//_GEN_COMPONENT_( OceanShip )
+		/*	_GEN_COMPONENT_( Movement )
 			_GEN_COMPONENT_( Force )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( Faction )
 			_GEN_COMPONENT_( Projectile )
 			_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_( DebugSphere )
+			_GEN_COMPONENT_( DebugSphere )*/
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -489,7 +489,12 @@ void ASimContextDataNavalCraftEnvironment::SerializeStructure( TMapScenario & re
 		else if (key.Key.Compare( TEXT( "z" ) ) == 0) {
 			m_STPropData.entPos.Z = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "z:", *(key.Value) );
-		}//BoatMass 
+		}
+		else if (key.Key.Compare( TEXT( "heading" ) ) == 0) {
+			m_STPropData.entDirection = FCString::Atof( *(key.Value) );
+			Writer->WriteValue( "heading:", *(key.Value) );
+		}
+		//BoatMass 
 		else if (key.Key.Compare( TEXT( "质量" ) ) == 0) {
 			m_STPropData.entPos.Z = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "BoatMass:", *(key.Value) );
@@ -1937,3 +1942,5 @@ void ASimContextDataZJHEnvironment::SerializeStructure( TMapScenario & refScenar
 	Writer->WriteObjectEnd( );
 	Writer->Close( );
 }
+
+//////////////////////////////////////////////////////////////////////////

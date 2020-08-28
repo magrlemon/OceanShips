@@ -45,7 +45,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void StartFire();
+
 	virtual void StartFire_Implementation();
+
+	void GrapBuoyancyComponent_Initialize( int32 ActorType);
 
 public:
 	int GetDamageResult(int type);

@@ -57,22 +57,27 @@ public:
 			IsLeader = false;
 			AvoidForceMultiplier = 2.0f;
 			// Avoidance force
-			AvoidanceForce = 20000.0f;
+			AvoidanceForce = 2000.0f;
 
 			AvoidanceDistance = 1000.0f;
+
+			ExpectAvoidOffect = FVector::ZeroVector;
 		}
-		BoatFormationStruct( FName name, FVector locate, FVector forwardVector ,bool isLeader ) : Name( name ), 
-			BoatTargetPosition( locate ), ForwardVector(forwardVector), IsLeader( isLeader ) {};
-		FName Name= "";
+		BoatFormationStruct( FName name, FVector locate, FVector forwardVector , FVector expectAvoidOffect,bool isLeader ) : Name( name ),
+			BoatTargetPosition( locate ), ForwardVector(forwardVector), ExpectAvoidOffect( expectAvoidOffect ),IsLeader( isLeader ) {};
+		FName Name = "";
 		FVector BoatTargetPosition = FVector( 0.0f, 0.0f, 0.0f );
 		FVector ForwardVector = FVector( 0.0f, 0.0f, 0.0f );
+		FVector ExpectAvoidOffect = FVector::ZeroVector;
 		bool IsLeader = false;
 		// Avoid Distance Multiplier
 		float AvoidForceMultiplier = 2.0f;
 		// Avoidance force
-		float AvoidanceForce = 2000.0f;
+		float AvoidanceForce = 20000.0f;
+		// Avoidance Distance
+		float AvoidanceDistance = 5000.0f;
 
-		float AvoidanceDistance = 1000.0f;
+		
 	};
 
 
@@ -151,7 +156,7 @@ public:
 
 	SimEcs_Registry * GetSimRegistry() ;
 
-
+	void  ChangeFormationType( const FString& strName, const EBoatFormation eforamtion );
 	/* is leader*/
 	bool IsLeader( const EntityHandleId eID );
 

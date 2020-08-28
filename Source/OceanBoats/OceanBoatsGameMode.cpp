@@ -15,6 +15,7 @@
 #include "SimDataStructure.h"
 #include "SimEcs_EntityManager.h"
 #include "SoldierPawn.h"
+#include "SimApi.h"
 //#include "ObstacleInterface.h"
 
 AOceanBoatsGameMode::AOceanBoatsGameMode( /*const FObjectInitializer& ObjectInitializer*/ ) //: Super( ObjectInitializer )
@@ -99,6 +100,10 @@ RetVar AOceanBoatsGameMode::MoveEntity(int argc, void ** argv)
 		double PosY = *((double*)(argv[2]));
 		double dir  = *((double*)(argv[3]));
 
+		if (FMath::Abs(PosX - 720)<0.1f && FMath::Abs( PosY - 2140 )<0.1)
+		{
+			USimOceanSceneManager_Singleton::GetInstance( )->ChangeFormationType( name,EBoatFormation::E_SINGLE_ROW_FORMATION );
+		}
 		USimOceanSceneManager_Singleton::GetInstance()->MoveEntity(name, FVector(PosX, PosY, 0));
 		bool isArrived = USimOceanSceneManager_Singleton::GetInstance( )->IsArriving( name, FVector( PosX, PosY, 0 ) );
 		if (isArrived) {
@@ -107,7 +112,6 @@ RetVar AOceanBoatsGameMode::MoveEntity(int argc, void ** argv)
 			GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "leader arrived" );
 			return ret;
 		}
-
 	}
 	ret.iRet = behaviac::BT_RUNNING;
 	return ret;

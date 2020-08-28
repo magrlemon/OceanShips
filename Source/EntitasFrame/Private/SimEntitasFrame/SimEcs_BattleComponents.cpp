@@ -33,7 +33,7 @@ void USimEcs_FactionComponentWrapper::ParseJson( FString& jsonValue ) {
 	const TSharedRef< TJsonReader<> >& Reader = TJsonReaderFactory<>::Create( jsonValue );
 	if (FJsonSerializer::Deserialize(Reader,JsonObject))
 	{
-	
+	    
 	}
 }
 
@@ -94,6 +94,7 @@ void USimEcs_OceanShipComponentWrapper::ParseJson( FString& jsonValue ) {
 		Value.SteeringSpeed = JsonObject->GetIntegerField( "SteeringSpeed:" );
 		Value.ForwardSpeed = JsonObject->GetIntegerField( "ForwardSpeed:" );
 		Value.TurnStep = JsonObject->GetIntegerField( "TurnStep:" );
+		Value.isLeader = JsonObject->GetBoolField( "Leader:" );
 	}
 }
 
@@ -188,4 +189,43 @@ void USimEcs_FormationComponentWrapper::ParseJson( FString& jsonValue ) {
 		GEngine->AddOnScreenDebugMessage( -1, 3.f, FColor::Red, *Value.GroupName );
 	}
 }
+
+
+
+//
+///////////////////////////////////////////////////////////////////////////////
+////////////////                                        //////////////////////            
+////////////////             Formation             /////////////////////                                 
+////////////////                                        ////////////////////              
+///////////////////////////////////////////////////////////////////////////
+////
+//
+////* FExplosion
+//USimEcs_AnimationComponentWrapper::USimEcs_AnimationComponentWrapper( )
+//{
+//	PrimaryComponentTick.bCanEverTick = false;
+//	IComponentWrapper::STATIC_COMPONENT_TYPE_ID = EComponentClass::ECC_ENT_FORMAION_COMPONENT;
+//}
+//
+//void USimEcs_AnimationComponentWrapper::AddToEntity( u64 uHandleID, FString& jsonValue ) {
+//	auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
+//	if (simRegistry) {
+//		ParseJson( jsonValue );
+//		simRegistry->accommodate<FFormation>( uHandleID, Value );
+//	}
+//}
+//
+//void USimEcs_AnimationComponentWrapper::ParseJson( FString& jsonValue ) {
+//	if (jsonValue.IsEmpty( ))
+//		return;
+//	TSharedPtr<FJsonObject> JsonObject;
+//	const TSharedRef< TJsonReader<> >& Reader = TJsonReaderFactory<>::Create( jsonValue );
+//	if (FJsonSerializer::Deserialize( Reader, JsonObject )) {
+//
+//		Value.Time = JsonObject->GetIntegerField( "Time:" );
+//		Value.AnimName = JsonObject->GetStringField( "AnimName:" );
+//		Value.PartName = JsonObject->GetStringField( "PartName:" );
+//
+//	}
+//}
 

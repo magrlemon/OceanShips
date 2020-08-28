@@ -9,13 +9,14 @@ public class EntitasFrame : ModuleRules
         //PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         // UEBuildConfiguration.bForceEnableExceptions = true;
         PrivatePCHHeaderFile = "Public/EntitasFramePCH.h";
-
+        
         PublicDependencyModuleNames.AddRange(new string[] {
             "Core",
             "CoreUObject",
             "Engine",
             "InputCore" ,
             "CommonPlugin",
+            "OceanPlugin",
             "HeadMountedDisplay",
             "AssetRegistry",
             "PhysX",

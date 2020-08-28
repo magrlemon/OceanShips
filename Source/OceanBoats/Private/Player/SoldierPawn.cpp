@@ -34,7 +34,7 @@ ASoldierPawn::ASoldierPawn(const FObjectInitializer& ObjectInitializer)
 
 	MovementComponent = CreateDefaultSubobject<UPawnMovementComponent, UFloatingPawnMovement>(MovementComponentName);
 	MovementComponent->UpdatedComponent = CollisionComponent;
-	Cast<UFloatingPawnMovement>(MovementComponent)->MaxSpeed = 5000;
+	Cast<UFloatingPawnMovement>(MovementComponent)->MaxSpeed = 20000;
 
 	// Structure to hold one-time initialization
 	struct FConstructorStatics

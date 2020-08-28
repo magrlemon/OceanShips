@@ -70,12 +70,25 @@ struct OceanShipSystem :public SystemT {
 	bool GetRotateYaw( FOceanShip& ship, FRotator& rot ) {
 
 		if (ship.MainMeshComponent) {
-			float fCurrentHeading = ship.MainMeshComponent->GetComponentRotation( ).Vector( ).HeadingAngle( );
-			float fTargetHeading = (ship.MoveOnPos - ship.MainMeshComponent->GetComponentLocation( )).HeadingAngle( );
-			float factor = FMath::Clamp( FMath::Abs( fTargetHeading - fCurrentHeading ), 0.001f, 0.003f );
+			FVector fCurrentHeading = ship.MainMeshComponent->GetForwardVector( ).GetSafeNormal( );
+			FVector fTargetHeading = (ship.MoveOnPos - ship.MainMeshComponent->GetComponentLocation( )).GetSafeNormal( );
+			float fNeedLerpMaxYaw = fCurrentHeading.CosineAngle2D( fTargetHeading );
+			float factor = FMath::Clamp( FMath::Abs( FMath::Sin( fNeedLerpMaxYaw ) ), 0.0001f, 0.01f );
 			fTargetHeading = FMath::Lerp( fCurrentHeading, fTargetHeading, factor );
-			float fYaw = FMath::RadiansToDegrees( fTargetHeading - fCurrentHeading );
-			rot = ship.MainMeshComponent->GetComponentRotation( ).Add( 0.0f, fYaw, 0.0f );
+			FVector lerpHeading = (fTargetHeading - fCurrentHeading).GetSafeNormal( );
+			float fYaw = lerpHeading.CosineAngle2D( fTargetHeading )*0.001f * ship.TurnStep;
+			const float leftOrRight = (FVector::CrossProduct( fCurrentHeading, fTargetHeading ).Z > 0) ? -1.0f : 1.0f;
+			rot = ship.MainMeshComponent->GetComponentRotation( ).Add( 0.0f, FMath::RadiansToDegrees( fYaw * leftOrRight ), 0.0f );
+
+			if (ship.isLeader) {
+
+				//UWorld* World = GEngine->GameViewport->GetWorld( );
+				//if (!World)return false;
+				//float dis = FVector::Distance( ship.MainMeshComponent->GetComponentLocation( ), ship.MoveOnPos );
+				//GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, FString::SanitizeFloat( fYaw * leftOrRight ) );
+				//DrawDebugLine( World, ship.MainMeshComponent->GetComponentLocation( ), ship.MoveOnPos + FVector::UpVector * 100.0f, FColor::Red, true, 5.0f );
+				//DrawDebugLine( World, ship.MainMeshComponent->GetComponentLocation( ), ship.MoveOnPos + fTargetHeading * 2000.0f, FColor::Green, true, 5.0f );
+			}
 			return true;
 		}
 		return false;
@@ -85,20 +98,12 @@ struct OceanShipSystem :public SystemT {
 	{
 		FVector rot = Target - Start;
 		//rot.Z = 0;
-		return MakeRotFromX(rot);
+		return MakeRotFromX( rot );
 
 		const FVector fLerpValue = FMath::Lerp( Start, Target, 0.001f );
 		FVector fValue = fLerpValue.GetSafeNormal( );
 		fValue.Z = 0.0;
 		return MakeRotFromX( fValue );
-		//const FVector fLerpValue = FMath::Lerp(Target, Start, 0.01);
-		//FVector fValue = Target - fLerpValue;
-		//fValue.Z = 0.0;
-		//float dist = FVector::Dist(Target, Start);
-		//if (dist < 5000.0f) {
-		//	MakeRotFromX(fValue);
-		//}
-		//return MakeRotFromX(fValue);
 	}
 
 	void AddForce( FOceanShip& ship, FVector forceLocation, UStaticMeshComponent* root )
@@ -128,8 +133,8 @@ struct OceanShipSystem :public SystemT {
 	}
 
 
-void FaceRotate(FOceanShip& ship, UStaticMeshComponent* root)
-{
+	void FaceRotate( FOceanShip& ship, UStaticMeshComponent* root )
+	{
 		if (!ship.MainMeshComponent)
 			return;
 		/*if (ship.MoveMode != EBoatMoveMode_On || ship.MoveMode != EBoatMoveMode_Back)
@@ -138,33 +143,9 @@ void FaceRotate(FOceanShip& ship, UStaticMeshComponent* root)
 		FRotator rot;
 		FVector currentPos = ship.MainMeshComponent->GetComponentLocation( );
 		ship.MoveOnPos.Z = currentPos.Z;
-				
+
 		if (ship.MoveMode == EBoatMoveMode_On) {
-			ship.bRollBack = false;
-			FVector rootDir = root->GetForwardVector();
-			FVector expectDir = ship.MoveOnPos - currentPos;
-			expectDir.Normalize();
-			float existCosValue = rootDir.CosineAngle2D(expectDir);			
-			if (existCosValue < 0.9/*ship.TurnStep * ship.TurnIndex < 180*/)
-			{
-				
-				/*FString str = FString::Printf(TEXT("%f %f %f"), rootDir.X, rootDir.Y, rootDir.Z);*/
-				//GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, FString::FromInt(existCosValue));
-				
-				FVector tempExpectPos = currentPos + expectDir * 900;
-				//DrawDebugLine(GWorld, currentPos + FVector(0, 0, 150), tempExpectPos + FVector(0, 0, 150), FColor::Red, 0, 1, 0, 5);
-				//DrawDebugLine(GWorld, currentPos + FVector(0, 0, 150), ship.MoveOnPos + FVector(0, 0, 150), FColor::Blue, 0, 1, 0, 5);
-				float newYaw = FindLookAtRotation(tempExpectPos, currentPos).Yaw;
-	
-				rot.Yaw = newYaw + 2 * ship.TurnIndex;
-				//FMath::LerpStable(root->GetComponentRotation().Yaw, FindLookAtRotation(currentPos, ship.MoveOnPos).Yaw, existCosValue);		
-				ship.TurnIndex++;
-			}
-			else
-			{
-				rot.Yaw = FindLookAtRotation(currentPos, ship.MoveOnPos).Yaw;
-				ship.TurnIndex = 0;
-			}
+
 			if (!GetRotateYaw( ship, rot )) return;
 
 		}
@@ -172,7 +153,7 @@ void FaceRotate(FOceanShip& ship, UStaticMeshComponent* root)
 			ship.bRollBack = true;
 			ship.ForwardAxisValue = -ship.CurrentSpeed;
 			rot.Yaw = FindLookAtRotation( currentPos, ship.MoveOnPos ).Yaw;
-		}	
+		}
 
 		if (ship.MainMeshComponent != NULL) {
 			ship.MainMeshComponent->SetWorldRotation( rot );
@@ -199,11 +180,9 @@ void FaceRotate(FOceanShip& ship, UStaticMeshComponent* root)
 
 		CheckSpeedUp( ship );
 
-		FaceRotate( ship );
+		if (ship.MoveMode != EBoatMoveMode_Idle)
+			FaceRotate( ship, root );
 
-		if(ship.MoveMode != EBoatMoveMode_Idle)
-			FaceRotate(ship, root);
-		
 	}
 
 	void RecordBoatDetail( FOceanShip& ship, ASimEcs_Archetype* boat )
@@ -244,8 +223,8 @@ void FaceRotate(FOceanShip& ship, UStaticMeshComponent* root)
 			ship.ExpectSpeed = 0;
 			boat->EnableWaveForce( false );
 			boat->EnableBoatEffect( false );
-			boat->StartFire();
-			ship.MoveMode = EBoatMoveMode_Idle;			
+			boat->StartFire( );
+			ship.MoveMode = EBoatMoveMode_Idle;
 		}
 	}
 
@@ -279,7 +258,7 @@ void FaceRotate(FOceanShip& ship, UStaticMeshComponent* root)
 				else {
 					EntityHandleId handleID = USimOceanSceneManager_Singleton::GetInstance( )->GetGroupLeader( formation.GroupName );
 					bLeaderIdle = registry.get<FOceanShip>( handleID ).MoveMode > EBoatMoveMode_Back ? true : false;
-					if (FVector::Dist2D( boatPos, ship.MoveOnPos ) < 600)
+					if (FVector::Dist2D( boatPos, ship.MoveOnPos ) < ECS_DISATACE_SHIP_THRESHOLD)
 						beJump = true;
 				}
 
@@ -685,18 +664,22 @@ struct BoatFormationSystem :public SystemT {
 	{
 		if (!pBFType)return FVector::ZeroVector;
 		FVector actorLocation = fTargetPosition;
-		FVector forwardVector = (ex.MainMeshComponent->GetComponentRotation( ).Vector() * pBFType->AvoidanceDistance) + actorLocation;
+		FVector forwardVector = (ex.MainMeshComponent->GetComponentRotation( ).Vector( ) * pBFType->AvoidanceDistance) + actorLocation;
 
 		FHitResult OutHitResult;
 		FCollisionQueryParams Line( FName( "Collision param" ), true );
+		Line.TraceTag = "Sim_BoatArchetype";
+		Line.bTraceComplex = true;
+		Line.bReturnFaceIndex = false;
 		UWorld* World = GEngine->GameViewport->GetWorld( );
-		if (!World)	return 	FVector::ZeroVector;
+		if (!World)	return 	FVector::ZeroVector;       
+		DrawDebugLine( World, actorLocation, forwardVector+ FVector::UpVector * 100.0f, FColor::Red, true, 5.0f );
 
 		bool const bHadBlockingHit = World->LineTraceSingleByChannel( OutHitResult, actorLocation, forwardVector, COLLISION_TRACE, Line );
 		FVector returnVector = FVector( 0, 0, 0 );
 		float distanceToBound = distanceToBound = (fTargetPosition - OutHitResult.ImpactPoint).Size( );
 		if (bHadBlockingHit) {
-
+			GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "AvoidObstacle" );
 			if (OutHitResult.ImpactPoint.X > fTargetPosition.X) {
 				returnVector.X += (1 / (distanceToBound * (1 / pBFType->AvoidForceMultiplier))) * -1;
 			}
@@ -739,7 +722,7 @@ struct BoatFormationSystem :public SystemT {
 							float fLeaderHeadingDegrees = FMath::RadiansToDegrees( itemLafe->ForwardVector.HeadingAngle( ) );
 							FTransform leaderTrans( FQuat::MakeFromEuler( FVector( 0.0, 0.0, fLeaderHeadingDegrees ) ), SamplePoint );
 							//LeaderFormation( leaderTrans );
-							m_SimDelegateFormation.RunFormation( leaderTrans, EBoatFormation::E_SINGLE_COLUMN_FORMATION );//formation.FormationValue
+							m_SimDelegateFormation.RunFormation( leaderTrans, EBoatFormation( formation.FormationValue ) );//formation.FormationValue
 							FormationLastTime = NowPlatformTime;
 						}
 					}
@@ -753,9 +736,14 @@ struct BoatFormationSystem :public SystemT {
 						ex.MainMeshComponent->GetComponentLocation( );
 						shipLocation = AvoidObstacle( ex, itemLafe, shipLocation );
 						shipLocation.Z = 0.0f;
+						UWorld* World = GEngine->GameViewport->GetWorld( );
+						if (!World)return;
+						FVector fCurrentPosition = ex.MainMeshComponent->GetComponentLocation( );
+						//DrawDebugLine( World, fCurrentPosition, ex.MoveOnPos + FVector::UpVector * 100.0f, FColor::Red, true, 5.0f );
 					}
-					FVector fTargetPosition = FVector( itemLafe->BoatTargetPosition ) + shipLocation;
+					FVector fTargetPosition = FVector( itemLafe->BoatTargetPosition ) + itemLafe->ExpectAvoidOffect;
 					USimOceanSceneManager_Singleton::GetInstance( )->MoveEntity( formation.GroupName, entity, fTargetPosition );
+
 				}
 			}
 		} );

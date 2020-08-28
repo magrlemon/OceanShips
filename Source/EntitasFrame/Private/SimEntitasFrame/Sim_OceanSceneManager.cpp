@@ -42,7 +42,7 @@ void USimOceanSceneManager_Singleton::GenOceanScenarioBarrier( ) {
 
 void USimOceanSceneManager_Singleton::MakeRoot( ) {
 
-	m_ScenarioMeshTransform.SetRotation( FQuat::MakeFromEuler( FVector( 0.0f, 0.0f, 90.0f ) ) );
+	m_ScenarioMeshTransform.SetRotation( FQuat::MakeFromEuler( FVector( 0.0f, 0.0f, 0.0f ) ) );
 	m_ScenarioMeshTransform.SetLocation( m_vecScenarioMesh );
 
 	/* Barrier Area Region A */
@@ -207,7 +207,7 @@ void USimOceanSceneManager_Singleton::UpdateLeader( const EntityHandleId eID, FV
 
 	UWorld* pWorld = GEngine->GameViewport->GetWorld( );
 	if (!pWorld)return;
-	DrawDebugLine( pWorld, leaderPosition + FVector(0.0f,0.0f,500.0f), posRef + FVector( 0.0f, 0.0f, 500.0f ), FColor::Red, true, 5.0f );
+	//DrawDebugLine( pWorld, leaderPosition + FVector(0.0f,0.0f,500.0f), posRef + FVector( 0.0f, 0.0f, 500.0f ), FColor::Red, true, 5.0f );
 }
 
 
@@ -283,6 +283,7 @@ void USimOceanSceneManager_Singleton::RemoveSimMessage( ) {
 //  deal  boat data,replace (boat component )date to ecs system
 */
 //////////////////////////////////////////////////////////////////////////
+
 bool  USimOceanSceneManager_Singleton::IsArriving( const FString& strName, const FVector& posRef ) {
 	if (strName.IsEmpty( ))return false;
 	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
@@ -290,8 +291,7 @@ bool  USimOceanSceneManager_Singleton::IsArriving( const FString& strName, const
 		FVector relativePos = GetCovertScenePosition( posRef, ESceneRelevantConv::E_SENERAIO_POINT );
 		auto archeType = USimOceanSceneManager_Singleton::GetInstance( )->FindArchetype( ehandleID );
 		FVector arcPos = archeType->GetTransform( ).GetLocation( );
-		float dis = FVector::Dist2D( arcPos, relativePos );
-		if (FVector::Dist2D( arcPos, relativePos ) < 600.0f) {
+		if (FVector::Dist2D( arcPos, relativePos ) < ECS_DISATACE_SHIP_THRESHOLD) {
 			SetIdle( strName, posRef );
 			return true;
 		}
@@ -304,7 +304,7 @@ bool  USimOceanSceneManager_Singleton::IsArriving( const EntityHandleId ehandleI
 	if (ehandleID > 0) {
 		auto archeType = USimOceanSceneManager_Singleton::GetInstance( )->FindArchetype( ehandleID );
 		FVector arcPos = archeType->GetTransform( ).GetLocation( );
-		if (FVector::Dist2D( arcPos, posRef ) < 600.0f) {
+		if (FVector::Dist2D( arcPos, posRef ) < ECS_DISATACE_SHIP_THRESHOLD) {
 			SetIdle( ehandleID, posRef );
 			return true;
 		}
@@ -316,8 +316,15 @@ void  USimOceanSceneManager_Singleton::SetIdle( const FString& strName, const FV
 	if (strName.IsEmpty( ))return;
 	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
 	if (ehandleID > 0) {
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode = BoatMoveMode::EBoatMoveMode_Idle;
-		GetSimRegistry( )->get<FOceanShip>( ehandleID ).ExpectSpeed = 0.0f;
+		SetIdle( ehandleID, posRef );
+	}
+}
+
+void  USimOceanSceneManager_Singleton::ChangeFormationType( const FString& strName,const EBoatFormation eforamtion ) {
+	if (strName.IsEmpty( ))return;
+	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
+	if (ehandleID > 0) {
+		GetSimRegistry( )->get<FFormation>( ehandleID ).FormationValue = int32( eforamtion );
 	}
 }
 
@@ -326,6 +333,8 @@ void  USimOceanSceneManager_Singleton::SetIdle( const EntityHandleId ehandleID, 
 	if (ehandleID > 0) {
 		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode = BoatMoveMode::EBoatMoveMode_Idle;
 		GetSimRegistry( )->get<FOceanShip>( ehandleID ).ExpectSpeed = 0.0f;
+		m_MapArchetypes[ehandleID]->EnableBoatEffect( false );
+		m_MapArchetypes[ehandleID]->EnableWaveForce( false );
 	}
 }
 
@@ -396,7 +405,7 @@ void USimOceanSceneManager_Singleton::Firing( const FString& strName, const bool
 	if (ehandleID > 0) {
 		auto& ship = GetSimRegistry( )->get<FOceanShip>( ehandleID );
 		ship.MoveMode = EBoatMoveMode_Fire;
-		GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "boat->Get( )->StartFire( );" );
+		//GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "boat->Get( )->StartFire( );" );
 	}
 }
 

@@ -38,6 +38,10 @@ Preprocessor defines:
 // 8MB
 #define ECS_SYSTEM_MEMORY_BUFFER_SIZE		8388608
 
+#define ECS_ABOUVE_GROUD_HEIGHT				800      //障碍物离地间隙
+
+
+#define ECS_DISATACE_SHIP_THRESHOLD			1500.0f      //障碍物离地间隙
 
 #include "util/Handle.h"
 #include "SimEcs_Platform.h"
@@ -53,7 +57,7 @@ static const FString bp_type_names[] = {
 	"/Game/TropicalIsland/BluePrints/BP_AirCraft",
 	"/Game/TropicalIsland/BluePrints/BP_Helicopter",
 	"/Game/ShipsAndExamples/BP_Boat",
-	"/Game/ShipsAndExamples/BP_Boat_DLT271",
+	"/Game/ShipsAndExamples/BP_Boat_DLT_271",
 
 
 	//-----------船艇-------------
@@ -103,6 +107,7 @@ enum   EEntityEquips {
 	EEE_PATROLBOAT_TYPE,		//巡逻艇				8
 	EEE_TRAFFICBOAT_TYPE,		//交通艇				9
 	EEE_ENGINEERINBOAT_TYPE,	//工程作业艇		   10
+	EEE_TCC_CAR_TYPE,			//探测车		   10
 
 	EEE_COASTDEF_TYPE = 1000,
 	EEE_COASTDEF_SJZ_TYPE,			//三角锥		 1001
