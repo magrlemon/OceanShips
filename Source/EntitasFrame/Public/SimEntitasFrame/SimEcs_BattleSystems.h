@@ -144,7 +144,7 @@ struct OceanShipSystem :public SystemT {
 		FVector currentPos = ship.MainMeshComponent->GetComponentLocation( );
 		ship.MoveOnPos.Z = currentPos.Z;
 
-		if (ship.MoveMode == EBoatMoveMode_On) {
+		if (ship.MoveMode == EBoatMoveMode_On || ship.MoveMode == EBoatMoveMode_Fire) {
 
 			if (!GetRotateYaw( ship, rot )) return;
 
@@ -224,7 +224,7 @@ struct OceanShipSystem :public SystemT {
 			boat->EnableWaveForce( false );
 			boat->EnableBoatEffect( false );
 			boat->StartFire( );
-			ship.MoveMode = EBoatMoveMode_Idle;
+			//ship.MoveMode = EBoatMoveMode_Idle;
 		}
 	}
 
