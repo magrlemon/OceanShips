@@ -91,6 +91,7 @@ void ASoldierPlayerController::SetupInputComponent( )
 
 	InputComponent->BindAction( "BoatDetail", IE_Pressed, this, &ASoldierPlayerController::BoatDetails );
 	InputComponent->BindAction( "ViewBoat", IE_Pressed, this, &ASoldierPlayerController::ViewBoat);
+	InputComponent->BindAction("ResetView", IE_Pressed, this, &ASoldierPlayerController::ResetView);
 	InputComponent->BindAction("StartSimulate", IE_Pressed, this, &ASoldierPlayerController::StartSimulate);
 }
 
@@ -876,6 +877,12 @@ void ASoldierPlayerController::ViewBoat()
 			SwitchBoatIndex = 0;
 		}		
 	}
+}
+
+void ASoldierPlayerController::ResetView()
+{
+	SetViewTarget(NULL);
+	SwitchBoatIndex = 0;
 }
 
 void ASoldierPlayerController::StartSimulate()

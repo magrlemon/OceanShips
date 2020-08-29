@@ -61,6 +61,8 @@ public:
 
 	void ViewBoat();
 
+	void ResetView();
+
 	void StartSimulate();
 
 	/** Local function say a string */
