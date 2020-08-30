@@ -63,6 +63,10 @@ public:
 
 	void ResetView();
 
+	void Turn(float val);
+
+	void LookUp(float val);
+
 	void StartSimulate();
 
 	/** Local function say a string */
@@ -214,6 +218,8 @@ public:
 	// end ASoldierPlayerController-specific
 
 	virtual void PreClientTravel(const FString& PendingURL, ETravelType TravelType, bool bIsSeamlessTravel) override;
+
+	virtual void UpdateRotation(float DeltaTime);
 
 protected:
 

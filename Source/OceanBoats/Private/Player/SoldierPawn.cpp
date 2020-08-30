@@ -94,8 +94,8 @@ void ASoldierPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 		PlayerInputComponent->BindAxis("MoveForward", this, &ASoldierPawn::MoveForward);
 		PlayerInputComponent->BindAxis("MoveRight", this, &ASoldierPawn::MoveRight);
-		PlayerInputComponent->BindAxis("Turn", this, &ASoldierPawn::AddControllerYawInput);
-		PlayerInputComponent->BindAxis("LookUp", this, &ASoldierPawn::AddControllerPitchInput);
+		//PlayerInputComponent->BindAxis("Turn", this, &ASoldierPawn::AddControllerYawInput);
+		//PlayerInputComponent->BindAxis("LookUp", this, &ASoldierPawn::AddControllerPitchInput);
 	}
 }
 void ASoldierPawn::MoveForward(float Val)

@@ -80,6 +80,8 @@ void ASoldierPlayerController::SetupInputComponent( )
 	InputComponent->BindAction( "ToggleScoreboard", IE_Pressed, this, &ASoldierPlayerController::OnToggleScoreboard );
 
 	InputComponent->BindAxis( "MoveForwardAxisName", this, &ASoldierPlayerController::MoveForward );
+	InputComponent->BindAxis("Turn", this, &ASoldierPlayerController::Turn);
+	InputComponent->BindAxis("LookUp", this, &ASoldierPlayerController::LookUp);
 
 	// voice chat
 	InputComponent->BindAction( "PushToTalk", IE_Pressed, this, &APlayerController::StartTalking );
@@ -869,20 +871,54 @@ void ASoldierPlayerController::ViewBoat()
 		if (boat)
 		{
 			SetViewTarget(boat);
+			ReservedViewTarget = boat;
 			SwitchBoatIndex++;
 		}
 		else
 		{
 			SetViewTarget(NULL);
+			ReservedViewTarget = NULL;
 			SwitchBoatIndex = 0;
 		}		
+	}
+}
+
+void ASoldierPlayerController::UpdateRotation(float DeltaTime)
+{
+	Super::UpdateRotation(DeltaTime);
+
+	FRotator rot;
+	//AActor* target = GetViewTarget();
+	APlayerCameraManager* camMgr = UGameplayStatics::GetPlayerCameraManager(this, 0);
+	if (camMgr)
+	{		
+		if (ReservedViewTarget)
+		{
+			rot.Yaw = GetControlRotation().Yaw;
+			rot.Pitch = GetControlRotation().Pitch;
+			UCameraComponent* cam = Cast<UCameraComponent>(ReservedViewTarget->GetComponentByClass(UCameraComponent::StaticClass()));
+			if (cam)
+				cam->SetWorldRotation(rot);
+		}
+
 	}
 }
 
 void ASoldierPlayerController::ResetView()
 {
 	SetViewTarget(NULL);
+	ReservedViewTarget = NULL;
 	SwitchBoatIndex = 0;
+}
+
+void ASoldierPlayerController::Turn(float val)
+{
+	AddYawInput(val);
+}
+
+void ASoldierPlayerController::LookUp(float val)
+{
+	AddPitchInput(val);
 }
 
 void ASoldierPlayerController::StartSimulate()
