@@ -33,7 +33,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Game")
 		void GrapMesh(UStaticMeshComponent* mainMesh);
-	virtual void CreateNewEntityFromThis( uint64  handleID );
+	//virtual void CreateNewEntityFromThis( uint64  handleID );
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void EnableWaveForce(bool enable);
@@ -54,7 +54,14 @@ public:
 	int GetDamageResult(int type);
 	int GetTotalDamage();
 	void AddResult(int type);
-	
+	void Active_MoveOn(FOceanShip& ship);
+
+protected:
+	void MoveOnFromBack();
+
+private:
+	FOceanShip* m_ship;
+
 public:
 	int32 ArchType;
 	uint64 EntId;

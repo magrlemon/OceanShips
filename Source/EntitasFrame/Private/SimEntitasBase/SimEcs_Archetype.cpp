@@ -17,15 +17,15 @@ void ASimEcs_Archetype::GrapMesh(UStaticMeshComponent* mainMesh) {
 	MainStaticMesh = mainMesh;
 }
 
-void ASimEcs_Archetype::CreateNewEntityFromThis( uint64  handleID)
-{
-	for (auto c : GetComponents( )) {
-		auto wr = Cast<IComponentWrapper>( c );
-		if (wr) {
-		//	wr->AddToEntity( handleID );
-		}
-	}
-}
+//void ASimEcs_Archetype::CreateNewEntityFromThis( uint64  handleID)
+//{
+//	for (auto c : GetComponents( )) {
+//		auto wr = Cast<IComponentWrapper>( c );
+//		if (wr) {
+//		//	wr->AddToEntity( handleID );
+//		}
+//	}
+//}
 
 int ASimEcs_Archetype::GetDamageResult(int type)
 {
@@ -45,10 +45,23 @@ int ASimEcs_Archetype::GetTotalDamage()
 	}
 	return total;
 }
+
 void ASimEcs_Archetype::AddResult(int type)
 {
 	DamageResults.FindOrAdd(type)++;
 }
+
+void ASimEcs_Archetype::Active_MoveOn(FOceanShip& ship)
+{
+	m_ship = &ship;
+	GetWorldTimerManager().SetTimer(ship.DelayHandler, this, &ASimEcs_Archetype::MoveOnFromBack, ship.BackMoveTime);
+}
+
+void ASimEcs_Archetype::MoveOnFromBack()
+{
+	m_ship->MoveMode = EBoatMoveMode_On;
+}
+
 
 void ASimEcs_Archetype::EnableWaveForce_Implementation(bool enable)
 {
@@ -61,7 +74,7 @@ void ASimEcs_Archetype::EnableBoatEffect_Implementation(bool enable)
 }
 void ASimEcs_Archetype::StartFire_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "boat->Get( )->StartFire( );" );
+	//GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "boat->Get( )->StartFire( );" );
 }
 
 void ASimEcs_Archetype::GrapBuoyancyComponent_Initialize( int32 ActorType ) {
