@@ -366,11 +366,11 @@ struct FOceanShip {
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
 		float BoatMass = 5000.0f;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
-		float StepSpeed = 0.01;
+		float StepSpeed = 0.001;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
 		float SteeringSpeed = 200;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
-		float ForwardSpeed = 1200;
+		float ForwardSpeed = 800;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
 		float TurnStep = 3;
 
@@ -417,6 +417,7 @@ struct FOceanShip {
 	bool FireEnd = false;
 	int FireIndex = 0;
 	float FireTime;
+	float BackMoveTime = 4;
 	int TurnIndex = 0;
 	bool ReverseMoveEnd = false;
 	bool bSpeedDown = false;
