@@ -186,6 +186,8 @@ public:
 	void SetPresenceForLocalPlayers( const FString& StatusStr, const FVariantData& PresenceData );
 
 	void ToggleMainMenu( );
+
+	void ToggleSceneObjectsList( );
 	/** Show messaging and punt to welcome screen */
 	void HandleSignInChangeMessaging( );
 

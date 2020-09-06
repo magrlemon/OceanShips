@@ -90,12 +90,13 @@ public:
 	/** toggle InGameMenu handler */
 	void OnToggleInGameMenu();
 
+	void OnToggleSceneObjectsMenu( );
+
 	/** Show the in-game menu if it's not already showing */
 	void ShowInGameMenu();
 
 	/** Hides scoreboard if currently diplayed */
 	void OnConditionalCloseScoreboard();
-
 
 	/**  MoveForward */
 	void MoveForward( float Val );

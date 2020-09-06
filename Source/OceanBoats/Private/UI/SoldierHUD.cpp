@@ -9,6 +9,7 @@
 #include "Weapons/SoldierWeapon.h"
 #include "Weapons/SoldierDamageType.h"
 #include "Weapons/SoldierWeapon_Instant.h"
+#include "Widgets/SSoldierMenuWidget.h"
 #include "Misc/NetworkVersion.h"
 #include "OnlineSubsystemUtils.h"
 #include "UI/Menu/Widgets/SBoatBoard.h"
@@ -1109,14 +1110,10 @@ bool ASoldierHUD::ShowScoreboard(bool bEnable, bool bFocus)
 			return false;
 		}
 	}
-	
-	if (bEnable)
-	{
-		ASoldierPlayerController* SoldierPC = Cast<ASoldierPlayerController>(PlayerOwner);
-		if (SoldierPC == NULL || SoldierPC->IsGameMenuVisible() )
-		{
-			return false;
-		}
+
+	ASoldierPlayerController* SoldierPC = Cast<ASoldierPlayerController>( PlayerOwner );
+	if (SoldierPC == NULL || SoldierPC->IsGameMenuVisible( )) {
+		return false;
 	}
 
 	bIsScoreBoardVisible = bEnable;
@@ -1142,6 +1139,14 @@ bool ASoldierHUD::ShowScoreboard(bool bEnable, bool bFocus)
 			// Give input focus to the scoreboard
 			FSlateApplication::Get().SetKeyboardFocus(ScoreboardWidget);
 		}
+		if (SoldierPC) {
+			// Disable controls while paused
+			SoldierPC->SetCinematicMode( true, false, false, true, true );
+
+			SoldierPC->SetPause( false );
+			FInputModeGameAndUI InputMode;
+			SoldierPC->SetInputMode( InputMode );
+		}
 	} 
 	else
 	{
@@ -1158,8 +1163,106 @@ bool ASoldierHUD::ShowScoreboard(bool bEnable, bool bFocus)
 			// Make sure viewport has focus
 			FSlateApplication::Get().SetAllUserFocusToGameViewport();
 		}
+
+		if (SoldierPC) {
+			// Make sure viewport has focus
+			FSlateApplication::Get( ).SetAllUserFocusToGameViewport( );
+
+			// Don't renable controls if the match is over
+			ASoldierHUD* const SoldierHUD = SoldierPC->GetSoldierHUD( );
+			if (SoldierHUD != NULL) {
+				SoldierPC->SetCinematicMode( false, false, false, true, true );
+
+				FInputModeGameOnly InputMode;
+				SoldierPC->SetInputMode( InputMode );
+
+			}
+		}
 	}
 	return true;
+}
+
+/*
+*  show objects list information
+*/
+bool ASoldierHUD::ShowObjectsListDetails( bool bEnable, bool bFocus ) {
+	if (bIsObjectsListVisible == bEnable) {
+		// if the scoreboard is already enabled, disable it in favour of the new request
+		if (bEnable) {
+			ToggleObjectsList( );
+		}
+		else {
+			return false;
+		}
+	}
+	ASoldierPlayerController* SoldierPC = Cast<ASoldierPlayerController>( PlayerOwner );
+	if (SoldierPC == NULL || SoldierPC->IsGameMenuVisible( )) {
+		return false;
+	}
+	if (bEnable) {
+		
+		SAssignNew( SceneObjectsWidgetOverlay, SOverlay )
+			+ SOverlay::Slot( )
+			.HAlign( EHorizontalAlignment::HAlign_Center )
+			.VAlign( EVerticalAlignment::VAlign_Center )
+			.Padding( FMargin( 200 ) )
+			[
+				SAssignNew( SceneObjectsListWidget, SSceneObjectsList )
+				.PlayerOwner( MakeWeakObjectPtr( Cast<ULocalPlayer>( PlayerOwner->Player ) ) )
+			];
+
+
+		GEngine->GameViewport->AddViewportWidgetContent( SAssignNew( SceneObjectsWidgetContainer, SWeakWidget )
+			.PossiblyNullContent( SceneObjectsWidgetOverlay ) );
+
+
+		if(SceneObjectsListWidget.IsValid())
+			SceneObjectsListWidget->BuildSceneObjectsList( );
+
+		if (SoldierPC) {
+			// Disable controls while paused
+			SoldierPC->SetCinematicMode( true, false, false, true, true );
+
+			SoldierPC->SetPause( false );
+			FInputModeGameAndUI InputMode;
+			SoldierPC->SetInputMode( InputMode );
+		}
+	}
+	else {
+		if (SceneObjectsListWidget.IsValid( )) {
+			if (GEngine && GEngine->GameViewport) {
+				GEngine->GameViewport->RemoveViewportWidgetContent( SceneObjectsWidgetContainer.ToSharedRef( ) );
+			}
+		}
+
+		if (bFocus) {
+			// Make sure viewport has focus
+			FSlateApplication::Get( ).SetAllUserFocusToGameViewport( );
+		}
+
+		if (SoldierPC) {
+			// Make sure viewport has focus
+			FSlateApplication::Get( ).SetAllUserFocusToGameViewport( );
+
+			// Don't renable controls if the match is over
+			ASoldierHUD* const SoldierHUD = SoldierPC->GetSoldierHUD( );
+			if (SoldierHUD != NULL) {
+				SoldierPC->SetCinematicMode( false, false, false, true, true );
+
+				FInputModeGameOnly InputMode;
+				SoldierPC->SetInputMode( InputMode );
+
+			}
+		}
+	}
+	bIsObjectsListVisible = bEnable;
+
+	return false;
+}
+
+void ASoldierHUD::ToggleObjectsList( ) {
+
+	ShowObjectsListDetails( !bIsObjectsListVisible );
 }
 
 void ASoldierHUD::ToggleChat()

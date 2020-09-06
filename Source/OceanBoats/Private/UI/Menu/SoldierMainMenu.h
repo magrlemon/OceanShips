@@ -4,6 +4,7 @@
 #include "SlateExtras.h"
 #include "Widgets/SoldierMenuItem.h"
 #include "Widgets/SSoldierMenuWidget.h"
+#include "Widgets/SSceneObjectsList.h"
 #include "Widgets/SSoldierSplitScreenLobbyWidget.h"
 #include "SoldierOptions.h"
 #include "ArmySimGameInstance.h"
@@ -46,6 +47,9 @@ public:
 	void UnLockAndHideMenu( );
 
 	void ToggleGameMainMenu( );
+
+	/** Show Scene Objects browser */
+	void OnShowSceneObjectsBrowser( );
 protected:
 
 	enum class EMap
@@ -83,6 +87,8 @@ protected:
 	TSharedPtr<class SWeakWidget> SplitScreenLobbyWidgetContainer;
 
 
+	/** demo list widget */
+	TSharedPtr<class SSceneObjectsList> SceneObjectsListWidget;
 
 	/** leaderboard widget */
 	TSharedPtr<class SSoldierLeaderboard> LeaderboardWidget;
@@ -101,6 +107,9 @@ protected:
 
 	/** Custom demo browser menu */
 	TSharedPtr<class FSoldierMenuItem> DemoBrowserItem;
+
+	/** Custom demo browser menu */
+	TSharedPtr<class FSoldierMenuItem> SceneObjectsBrowserItem;
 
 	/** LAN Options */
 	TSharedPtr<class FSoldierMenuItem> HostLANItem;
@@ -228,6 +237,7 @@ protected:
 
 	/** Show demo browser */
 	void OnShowDemoBrowser();
+
 
 	/** Plays sound and calls Quit */
 	void OnUIQuit();

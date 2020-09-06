@@ -334,10 +334,10 @@ void FSoldierMainMenu::Construct(TWeakObjectPtr<UArmySimGameInstance> _GameInsta
 
 #if !SHOOTER_CONSOLE_UI
 
-		// Demos
+		//SceneObjects UI
 		{
-			//MenuHelper::AddMenuItemSP(RootMenuItem, LOCTEXT("Demos", "DEMOS"), this, &FSoldierMainMenu::OnShowDemoBrowser);
-			//MenuHelper::AddCustomMenuItem(DemoBrowserItem,SAssignNew(DemoListWidget,SSoldierDemoList).OwnerWidget(MenuWidget).PlayerOwner(GetPlayerOwner()));
+			MenuHelper::AddMenuItemSP( RootMenuItem, LOCTEXT( "Objects", "Scene Objects" ), this, &FSoldierMainMenu::OnShowSceneObjectsBrowser );
+			MenuHelper::AddCustomMenuItem( SceneObjectsBrowserItem,SAssignNew( SceneObjectsListWidget, SSceneObjectsList ).OwnerWidget( MenuWidget ).PlayerOwner( GetPlayerOwner( ) ) );
 		}
 #endif
 
@@ -1282,6 +1282,13 @@ void FSoldierMainMenu::OnShowDemoBrowser()
 {
 	MenuWidget->NextMenu = DemoBrowserItem->SubMenu;
 	MenuWidget->EnterSubMenu();
+}
+
+void FSoldierMainMenu::OnShowSceneObjectsBrowser( )
+{
+	MenuWidget->NextMenu = SceneObjectsBrowserItem->SubMenu;
+	SceneObjectsListWidget->BuildSceneObjectsList( );
+	MenuWidget->EnterSubMenu( );
 }
 
 void FSoldierMainMenu::OnUIQuit()

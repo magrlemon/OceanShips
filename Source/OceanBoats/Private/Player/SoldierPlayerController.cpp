@@ -95,6 +95,8 @@ void ASoldierPlayerController::SetupInputComponent( )
 	InputComponent->BindAction( "ViewBoat", IE_Pressed, this, &ASoldierPlayerController::ViewBoat);
 	InputComponent->BindAction("ResetView", IE_Pressed, this, &ASoldierPlayerController::ResetView);
 	InputComponent->BindAction("StartSimulate", IE_Pressed, this, &ASoldierPlayerController::StartSimulate);
+	InputComponent->BindAction( "ToggleObjectLisht", IE_Pressed, this, &ASoldierPlayerController::OnToggleSceneObjectsMenu );
+	
 }
 
 
@@ -517,9 +519,33 @@ void ASoldierPlayerController::OnToggleGameMainMenu( ) {
 	SGI->ToggleMainMenu( );
 }
 
+
+void ASoldierPlayerController::OnToggleSceneObjectsMenu( ) {
+
+	if (GEngine->GameViewport == nullptr) {
+		return;
+	}
+	ASoldierHUD* SoldierHUD = GetSoldierHUD( );
+	if (SoldierHUD && (SoldierHUD->IsMatchOver( ) == false)) {
+		SoldierHUD->ToggleObjectsList( );
+	}
+	// this is not ideal, but necessary to prevent both players from pausing at the same time on the same frame
+	//UWorld* GameWorld = GEngine->GameViewport->GetWorld( );
+
+	//for (auto It = GameWorld->GetControllerIterator( ); It; ++It) {
+	//	ASoldierPlayerController* Controller = Cast<ASoldierPlayerController>( *It );
+	//	if (Controller && Controller->IsPaused( )) {
+	//		return;
+	//	}
+	//}
+	//UArmySimGameInstance* SGI = GameWorld != NULL ? Cast<UArmySimGameInstance>( GameWorld->GetGameInstance( ) ) : NULL;
+	//if (SGI == nullptr)return;
+	////SGI->ToggleMainMenu( );
+	//SGI->ToggleSceneObjectsList( );
+}
+
 void ASoldierPlayerController::OnToggleInGameMenu( )
 {
-	
 	if (GEngine->GameViewport == nullptr) {
 		return;
 	}
@@ -870,8 +896,10 @@ void ASoldierPlayerController::ViewBoat()
 		AActor* boat = IGameModeInterface::Execute_GetBoat(UGameplayStatics::GetGameMode(this), SwitchBoatIndex);
 		if (boat)
 		{
-			SetViewTarget(boat);
-			ReservedViewTarget = boat;
+			FViewTargetTransitionParams TransitionParams;
+			TransitionParams.BlendTime = 2.0f;
+			SetViewTarget(boat, TransitionParams );
+		ReservedViewTarget = boat;
 			SwitchBoatIndex++;
 		}
 		else

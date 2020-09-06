@@ -941,3 +941,10 @@ void UArmySimGameInstance::ToggleMainMenu( ) {
 		MainMenuUI->ToggleGameMainMenu( );
 
 }
+
+void UArmySimGameInstance::ToggleSceneObjectsList( ) {
+
+	if (MainMenuUI)
+		MainMenuUI->OnShowSceneObjectsBrowser( );
+
+}

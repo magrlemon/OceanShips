@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ArmySimTypes.h"
+#include "Widgets/SSceneObjectsList.h"
 #include "SoldierHUD.generated.h"
 
 class SBoatBoard;
@@ -115,6 +116,8 @@ public:
 	 */
 	bool ShowScoreboard(bool bEnable, bool bFocus = false);
 	bool ShowBoatDetails(bool bEnable);
+
+	bool ShowObjectsListDetails( bool bEnable, bool bFocus =true );
 	/** 
 	 * Add death message.
 	 *
@@ -131,6 +134,12 @@ public:
 	 *
 	 */
 	void ToggleChat();
+
+	/*
+	* Toggle chat ObjectsList visibility.
+	*
+	*/
+	void ToggleObjectsList( );
 
 	/** 
 	 * Set chat window visibility.
@@ -300,6 +309,9 @@ protected:
 
 	uint32 bIsBoatDetailVisible : 1;
 
+	/** Is the scene object widget on screen? */
+	uint32 bIsObjectsListVisible : 1;
+
 	/** Scoreboard widget. */
 	TSharedPtr<class SOceanBoatsScoreboardWidget>	ScoreboardWidget;
 	TSharedPtr<class SBoatBoard>	BoatDetailWidget;
@@ -309,11 +321,17 @@ protected:
 
 	TSharedPtr<class SOverlay>	BoatDetailWidgetOverlay;
 
+	TSharedPtr<class SOverlay>	SceneObjectsWidgetOverlay;
+
 	/** Scoreboard widget container - used for removing */
 	TSharedPtr<class SWidget> ScoreboardWidgetContainer;
 	TSharedPtr<class SWidget> BoatDetailWidgetContainer;
+	TSharedPtr<class SWidget> SceneObjectsWidgetContainer;
 	/** Chatbox widget. */
 	TSharedPtr<class SChatWidget> ChatWidget;
+
+	/** demo list widget */
+	TSharedPtr<class SSceneObjectsList> SceneObjectsListWidget;
 
 	/** Array of information strings to render (Waiting to respawn etc) */
 	TArray<FCanvasTextItem> InfoItems;

@@ -329,6 +329,7 @@ void ASimContextDataDroneBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> 
 			_GEN_COMPONENT_( Velocity )
 			_GEN_COMPONENT_( Formation )
 			_GEN_COMPONENT_( Faction )
+			_GEN_COMPONENT_( Projectile )
 			_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_( DebugSphere )
 
