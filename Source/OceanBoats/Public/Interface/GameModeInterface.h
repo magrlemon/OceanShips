@@ -27,21 +27,21 @@ public:
 		void StartMove();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void AddBoat(AActor* boat);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		void AddRuinedBoat(AActor* boat);
+	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+	//	void AddRuinedBoat(AActor* boat);
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		void BroadcastDestroy(AActor* victim, int killerId, ObstacleType type);	
+	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+	//	void BroadcastDestroy(AActor* victim, int killerId, ObstacleType type);	
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		int GetKilledNum(ObstacleType type);
+	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+	//	int GetKilledNum(ObstacleType type);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		int GetBoatNum();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		AActor* GetBoat(int index);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		int GetKilledNumByKiller(int uid);
+	/*UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		int GetKilledNumByKiller(int uid);*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void Killed(AActor* Killer, AActor* Victim);
 };

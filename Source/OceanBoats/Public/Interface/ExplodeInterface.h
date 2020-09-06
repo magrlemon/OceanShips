@@ -25,5 +25,7 @@ class OCEANBOATS_API IExplodeInterface
 public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		void ExplodeImpl(int killerId, FVector impactpoint);
+		void SetKiller(AActor* killer);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void KillEvent(AActor* victim);
 };

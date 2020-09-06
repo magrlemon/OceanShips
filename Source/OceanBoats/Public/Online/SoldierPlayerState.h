@@ -52,13 +52,13 @@ class ASoldierPlayerState : public APlayerState
 	/** get number of points */
 	float GetScore() const;
 
-	int32 GetKills(ObstacleType type);
+	//int32 GetKills(ObstacleType type);
 
-	int32 GetBoats();
+	/*int32 GetBoats();
 
 	AActor* GetBoat(int32 index);
 
-	int GetKilledBy(int killerId);
+	int GetKilledBy(int killerId);*/
 
 	/** get number of bullets fired this match */
 	int32 GetNumBulletsFired() const;

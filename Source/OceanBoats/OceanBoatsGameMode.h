@@ -40,15 +40,15 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void AddBoat(AActor* boat);
 	virtual void AddBoat_Implementation(AActor* boat);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		void AddRuinedBoat(AActor* boat);
-	virtual void AddRuinedBoat_Implementation(AActor* boat);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		void BroadcastDestroy(AActor* victim, int killerId, ObstacleType type);
-	virtual void BroadcastDestroy_Implementation(AActor* victim, int killerId, ObstacleType type);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		int GetKilledNum(ObstacleType type);
-	virtual int GetKilledNum_Implementation(ObstacleType type);
+	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+	//	void AddRuinedBoat(AActor* boat);
+	//virtual void AddRuinedBoat_Implementation(AActor* boat);
+	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+	//	void BroadcastDestroy(AActor* victim, int killerId, ObstacleType type);
+	//virtual void BroadcastDestroy_Implementation(AActor* victim, int killerId, ObstacleType type);
+	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+	//	int GetKilledNum(ObstacleType type);
+	//virtual int GetKilledNum_Implementation(ObstacleType type);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		int GetBoatNum();
@@ -56,9 +56,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		AActor* GetBoat(int index);
 	virtual AActor* GetBoat_Implementation(int index);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		int GetKilledNumByKiller(int uid);
-	virtual int GetKilledNumByKiller_Implementation(int uid);
+	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+	//	int GetKilledNumByKiller(int uid);
+	//virtual int GetKilledNumByKiller_Implementation(int uid);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void Killed(AActor* Killer, AActor* Victim);
 	virtual void Killed_Implementation(AActor* Killer, AActor* Victim);
@@ -172,8 +172,8 @@ protected:
 
 	bool bAllowBots;
 
-	TArray<OceanObstacleCls> ObstacleCollection;
-	TMap<int, int> DestroyCollection;
+	//TArray<OceanObstacleCls> ObstacleCollection;
+	//TMap<int, int> DestroyCollection;
 
 public:
 	void InitBehaviac();
@@ -184,8 +184,8 @@ public:
 	RetVar EndTask(int argc, void ** argv);
 	RetVar MoveEntity(FString name,double PosX,double PosY,double dir);
 	void BehaviacExec();
-	void InitObstacles();
-	void AddObsctacleType(FString name, ObstacleType type);
+	//void InitObstacles();
+	//void AddObsctacleType(FString name, ObstacleType type);
 private:
 	AiImagineAgent *_AiImagineAgent = nullptr;
 	bool _wait = false;

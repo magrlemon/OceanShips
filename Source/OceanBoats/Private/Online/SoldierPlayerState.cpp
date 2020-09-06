@@ -121,25 +121,25 @@ float ASoldierPlayerState::GetScore() const
 	return Score;
 }
 
-int32 ASoldierPlayerState::GetKills(ObstacleType type)
-{
-	return IGameModeInterface::Execute_GetKilledNum(UGameplayStatics::GetGameMode(this),type);
-}
+//int32 ASoldierPlayerState::GetKills(ObstacleType type)
+//{
+//	return 0;// IGameModeInterface::Execute_GetKilledNum(UGameplayStatics::GetGameMode(this), type);
+//}
 
-int32 ASoldierPlayerState::GetBoats()
-{
-	return IGameModeInterface::Execute_GetBoatNum(UGameplayStatics::GetGameMode(this));
-}
-
-AActor* ASoldierPlayerState::GetBoat(int32 index)
-{
-	return IGameModeInterface::Execute_GetBoat(UGameplayStatics::GetGameMode(this),index);
-}
-
-int ASoldierPlayerState::GetKilledBy(int killerId)
-{
-	return IGameModeInterface::Execute_GetKilledNumByKiller(UGameplayStatics::GetGameMode(this), killerId);
-}
+//int32 ASoldierPlayerState::GetBoats()
+//{
+//	return 0;// IGameModeInterface::Execute_GetBoatNum(UGameplayStatics::GetGameMode(this));
+//}
+//
+//AActor* ASoldierPlayerState::GetBoat(int32 index)
+//{
+//	return 0;//IGameModeInterface::Execute_GetBoat(UGameplayStatics::GetGameMode(this),index);
+//}
+//
+//int ASoldierPlayerState::GetKilledBy(int killerId)
+//{
+//	return 0;// IGameModeInterface::Execute_GetKilledNumByKiller(UGameplayStatics::GetGameMode(this), killerId);
+//}
 
 int32 ASoldierPlayerState::GetNumBulletsFired() const
 {

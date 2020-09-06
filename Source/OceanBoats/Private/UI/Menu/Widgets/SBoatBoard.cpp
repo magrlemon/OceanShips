@@ -11,6 +11,7 @@
 #include "SimEcs_Archetype.h"
 #include "Sim_OceanSceneManager.h"
 
+#define TSHIP_FONT( RelativePath, ... ) FSlateFontInfo( FPaths::ProjectContentDir() / "Slate"/ RelativePath + TEXT(".ttf"), __VA_ARGS__ )
 //FBoatboardRow::FBoatboardRow(const FOnlineStatsRow& Row)
 //	: Rank(FString::FromInt(Row.Rank))
 //	, PlayerName(Row.NickName)
@@ -35,7 +36,7 @@ void SBoatBoard::Construct(const FArguments& InArgs)
 {
 	PlayerOwner = InArgs._PlayerOwner;
 	//OwnerWidget = InArgs._OwnerWidget;
-	const int32 BoxWidth = 1200;
+	const int32 BoxWidth = 1600;
 	bReadingStats = false;
 
 	//LeaderboardReadCompleteDelegate = FOnLeaderboardReadCompleteDelegate::CreateRaw(this, &SBoatBoard::OnStatsRead);
@@ -58,11 +59,12 @@ void SBoatBoard::Construct(const FArguments& InArgs)
 				.BorderImage(&ScoreboardStyle->ItemBorderBrush)
 				[
 					SAssignNew(RowListWidget, SListView< TSharedPtr<FBoatboardRow> >)
-					.ItemHeight(30)
+					.ItemHeight(50)
 					.ListItemsSource(&StatRows)
 					.SelectionMode(ESelectionMode::Single)
 					.OnGenerateRow(this, &SBoatBoard::MakeListViewWidget)
 					.OnSelectionChanged(this, &SBoatBoard::EntrySelectionChanged)
+					
 					.HeaderRow(
 						SNew(SHeaderRow)
 						.Style(FArmySimStyle::Get(), "OceanBoats.Row.HeaderRowStyle")
@@ -191,7 +193,7 @@ void SBoatBoard::OnStatsRead(bool bWasSuccessful)
 
 	UWorld* gWorld = GetWorld();
 	ASoldierPlayerState* playerState = Cast<ASoldierPlayerState>(gWorld->GetPlayerControllerIterator()->Get()->PlayerState);
-	int num = playerState->GetBoats();
+	//int num = playerState->GetBoats();
 
 	for(auto boatInstance : USimOceanSceneManager_Singleton::GetInstance()->m_MapArchetypes)
 	{
@@ -365,7 +367,8 @@ TSharedRef<ITableRow> SBoatBoard::MakeListViewWidget(TSharedPtr<FBoatboardRow> I
 			}
 			return SNew(STextBlock)
 				.Text(ItemText)
-				.TextStyle(FArmySimStyle::Get(), "OceanBoats.ScoreboardListTextStyle");		
+				//.Font(TSHIP_FONT("Fonts/msyh-Black", 24))
+				.TextStyle(FArmySimStyle::Get(), "OceanBoats.DefaultScoreboard.Row.HeaderTextStyle");		
 		}
 		TSharedPtr<FBoatboardRow> Item;
 	};

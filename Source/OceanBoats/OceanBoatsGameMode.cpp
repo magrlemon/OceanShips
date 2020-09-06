@@ -225,15 +225,15 @@ void AOceanBoatsGameMode::InitGame( const FString& MapName, const FString& Optio
 	//SetAllowBots( BotsCountOptionValue > 0 ? true : false, BotsCountOptionValue );
 	Super::InitGame( MapName, Options, ErrorMessage );
 	//GEngine->AddOnScreenDebugMessage( -1, 18.f, FColor::Blue, MapName );
-	InitObstacles();
+	//InitObstacles();
 }
 
-void AOceanBoatsGameMode::InitObstacles()
-{
-	AddObsctacleType("GTZ",Obstacle_GTZ);//轨条砦
-	AddObsctacleType("SJZ",Obstacle_STZ);//三角锥
-	AddObsctacleType("HLS",Obstacle_HLS);//海立石
-}
+//void AOceanBoatsGameMode::InitObstacles()
+//{
+//	AddObsctacleType("GTZ",Obstacle_GTZ);//轨条砦
+//	AddObsctacleType("SJZ",Obstacle_STZ);//三角锥
+//	AddObsctacleType("HLS",Obstacle_HLS);//海立石
+//}
 
 void AOceanBoatsGameMode::SetAllowBots( bool bInAllowBots, int32 InMaxBots )
 {
@@ -524,16 +524,16 @@ void AOceanBoatsGameMode::RequestFinishAndExitToMainMenu( )
 	}
 }
 
-void AOceanBoatsGameMode::AddObsctacleType(FString name, ObstacleType type)
-{
-	OceanObstacleCls ob;
-	ob.name = name;
-	ob.type = type;
-
-	int index = ObstacleCollection.Find(ob);
-	if (index < 0)
-		index = ObstacleCollection.Add(ob);
-}
+//void AOceanBoatsGameMode::AddObsctacleType(FString name, ObstacleType type)
+//{
+//	OceanObstacleCls ob;
+//	ob.name = name;
+//	ob.type = type;
+//
+//	int index = ObstacleCollection.Find(ob);
+//	if (index < 0)
+//		index = ObstacleCollection.Add(ob);
+//}
 
 void AOceanBoatsGameMode::StartMove_Implementation()
 {
@@ -550,35 +550,35 @@ void AOceanBoatsGameMode::AddBoat_Implementation(AActor* boat)
 	boats.Add(boat);
 }
 
-void AOceanBoatsGameMode::AddRuinedBoat_Implementation(AActor* boat)
-{
+//void AOceanBoatsGameMode::AddRuinedBoat_Implementation(AActor* boat)
+//{
+//
+//}
 
-}
+//void AOceanBoatsGameMode::BroadcastDestroy_Implementation(AActor* victim, int killerId, ObstacleType type)
+//{
+//	OceanObstacleCls ob;
+//	ob.type = type;
+//	int index = ObstacleCollection.Find(ob);
+//	if (index >= 0)
+//	{
+//		ObstacleCollection[index].destroyed++;
+//	}
+//
+//	FConstControllerIterator iter = GWorld->GetControllerIterator();
+//	Killed(iter->Get());
+//}
 
-void AOceanBoatsGameMode::BroadcastDestroy_Implementation(AActor* victim, int killerId, ObstacleType type)
-{
-	OceanObstacleCls ob;
-	ob.type = type;
-	int index = ObstacleCollection.Find(ob);
-	if (index >= 0)
-	{
-		ObstacleCollection[index].destroyed++;
-	}
-
-	FConstControllerIterator iter = GWorld->GetControllerIterator();
-	Killed(iter->Get());
-}
-
-int AOceanBoatsGameMode::GetKilledNum_Implementation(ObstacleType type)
-{
-	OceanObstacleCls ob;
-	ob.type = type;
-	int index = ObstacleCollection.Find(ob);
-	if (index >= 0)
-		return ObstacleCollection[index].destroyed;
-
-	return 0;
-}
+//int AOceanBoatsGameMode::GetKilledNum_Implementation(ObstacleType type)
+//{
+//	OceanObstacleCls ob;
+//	ob.type = type;
+//	int index = ObstacleCollection.Find(ob);
+//	if (index >= 0)
+//		return ObstacleCollection[index].destroyed;
+//
+//	return 0;
+//}
 
 int AOceanBoatsGameMode::GetBoatNum_Implementation()
 {
@@ -619,22 +619,22 @@ AActor* AOceanBoatsGameMode::GetBoat_Implementation(int index)
 	return nullptr;
 }
 
-int AOceanBoatsGameMode::GetKilledNumByKiller_Implementation(int uid)
-{
-	for(int i = 0; i < boats.Num(); ++i)
-	{
-		if (boats[i]->GetUniqueID() == uid)
-		{			
-			int num = 0;
-			for (int k = 0; k < ObstacleCollection.Num(); ++k)
-			{
-				num += IBoatInterface::Execute_GetDestroyNum(boats[i], ObstacleCollection[k].type);
-			}
-			return num;
-		}
-	}
-	return 0;
-}
+//int AOceanBoatsGameMode::GetKilledNumByKiller_Implementation(int uid)
+//{
+//	for(int i = 0; i < boats.Num(); ++i)
+//	{
+//		if (boats[i]->GetUniqueID() == uid)
+//		{			
+//			int num = 0;
+//			for (int k = 0; k < ObstacleCollection.Num(); ++k)
+//			{
+//				num += IBoatInterface::Execute_GetDestroyNum(boats[i], ObstacleCollection[k].type);
+//			}
+//			return num;
+//		}
+//	}
+//	return 0;
+//}
 
 void AOceanBoatsGameMode::Killed_Implementation(AActor* Killer, AActor* Victim)
 {
