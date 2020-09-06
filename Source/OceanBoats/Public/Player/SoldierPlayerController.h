@@ -365,5 +365,7 @@ private:
 	int SwitchBoatIndex = 0;
  	//TUniquePtr<SimEcs::ArmySimSystems<>> m_ArmySimSystems;
 	AActor* ReservedViewTarget;
+
+	FVector pawnPos;
 };
 

@@ -10,7 +10,7 @@
 #include "UI/Style/ArmySimStyle.h"
 #include "UI/SoldierHUD.h"
 #include "Online.h"
-#include "OnlineAchievementsInterface.h" 
+#include "OnlineAchievementsInterface.h"
 #include "OnlineEventsInterface.h"
 #include "OnlineStatsInterface.h"
 #include "OnlineIdentityInterface.h"
@@ -166,7 +166,7 @@ void ASoldierPlayerController::TickActor( float DeltaTime, enum ELevelTick TickT
 };
 
 void ASoldierPlayerController::BeginPlay( ) {
-
+	pawnPos = GetPawn()->GetActorLocation();
 }
 
 void ASoldierPlayerController::BeginDestroy( )
@@ -905,6 +905,12 @@ void ASoldierPlayerController::ViewBoat()
 		else
 		{
 			SetViewTarget(NULL);
+			if (ReservedViewTarget)
+			{
+				FVector pos = ReservedViewTarget->GetActorLocation();
+				pos.Z = pawnPos.Z;
+				GetPawn()->SetActorLocation(pos);
+			}
 			ReservedViewTarget = NULL;
 			SwitchBoatIndex = 0;
 		}		
@@ -935,6 +941,12 @@ void ASoldierPlayerController::UpdateRotation(float DeltaTime)
 void ASoldierPlayerController::ResetView()
 {
 	SetViewTarget(NULL);
+	if (ReservedViewTarget)
+	{
+		FVector pos = ReservedViewTarget->GetActorLocation();
+		pos.Z = pawnPos.Z;
+		GetPawn()->SetActorLocation(pos);
+	}
 	ReservedViewTarget = NULL;
 	SwitchBoatIndex = 0;
 }

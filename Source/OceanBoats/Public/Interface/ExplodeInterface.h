@@ -28,4 +28,8 @@ public:
 		void SetKiller(AActor* killer);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void KillEvent(AActor* victim);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		bool IsKilled();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Cannon")
+		void SetHitPos(FVector hitPos);
 };
