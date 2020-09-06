@@ -399,7 +399,32 @@ public:
 };
 
 
+//////////////////////////////////////////////////////////////////////////
+// application 
+//////////////////////////////////////////////////////////////////////////
 
+
+/** Struct to store information about a stream, returned from search results. */
+struct FActorsStreamInfo {
+	FActorsStreamInfo( ) : Name(""), Timestamp(0),bIsLive( false ) {}
+
+	/** The name of the stream (generally this is auto generated, refer to friendly name for UI) */
+	FString Name;
+
+	/** The date and time the stream was recorded */
+	FDateTime Timestamp;
+
+	/** True if the stream is live and the game hasn't completed yet */
+	bool bIsLive;
+
+};
+
+
+struct FEnumerateObjectsStreamsResult  {
+	//! A list of streams that were found
+	TArray<FActorsStreamInfo> FoundObjectsStreams;
+
+};
 
 
 

@@ -62,6 +62,13 @@ EntityHandleId USimOceanSceneManager_Singleton::GetSimHandleIDWithName( const FS
 	return EntityHandleId( 0 );
 }
 
+
+TSharedPtr<ASimEcs_Archetype>  USimOceanSceneManager_Singleton::GetSimActorWithName( const FString& strName ) {
+	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
+	return FindArchetype( ehandleID );
+
+}
+
 //get tag
 TSharedPtr<AActor> USimOceanSceneManager_Singleton::GetSimActorWithTag( const FString& strTag ) {
 	if (!m_ScenarioSceneTap.IsValid( )) {
@@ -130,6 +137,33 @@ USimEcs_ComponentSystemLink* USimOceanSceneManager_Singleton::GetComponentSysLin
 
 TWeakPtr<SimEcs_Engine> USimOceanSceneManager_Singleton::GetSimEcsEngineWeakPtr( ) {
 	return  m_ComponentSL_Ptr->GetEntityFrameData( ).Pin( )->GetEcsEnginePtr( );
+}
+
+
+void USimOceanSceneManager_Singleton::EnumerateObjectsStreams( const FEnumerateObjectsStreamsCallback& Delegate )
+{
+	/*if (Delegate.IsBound( )) {
+		return FEnumerateObjectsStreamsCallback::CreateLambda( [Delegate]( const FEnumerateObjectsStreamsResult& Result ) {
+			Delegate.ExecuteIfBound( Result );
+		} );
+	}
+	else {
+		return FEnumerateObjectsStreamsCallback( Delegate );
+	}*/
+	FEnumerateObjectsStreamsResult Result;
+	for (auto itme : m_MapArchetypesName) {
+		if (!itme.Value.IsNone()) {
+			FActorsStreamInfo StreamInfo;
+			StreamInfo.bIsLive = true;
+			StreamInfo.Name = itme.Value.ToString();
+			StreamInfo.Timestamp = 0;
+			Result.FoundObjectsStreams.Add( StreamInfo );
+		}
+	}
+
+	if (Delegate.IsBound( )) {
+		Delegate.ExecuteIfBound( Result );
+	}
 }
 
 

@@ -176,7 +176,6 @@ public:
 
 
 
-
 namespace Event {
 	class EventHandler;
 }

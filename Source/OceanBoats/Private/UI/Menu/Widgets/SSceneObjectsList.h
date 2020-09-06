@@ -8,6 +8,7 @@
 #include "SSoldierMenuWidget.h"
 #include "NetworkReplayStreaming.h"
 #include "SoldierScoreboardWidgetStyle.h"
+#include "Sim_OceanSceneManager.h"
 #include "Misc/NetworkVersion.h"
 
 struct FSceneObjectsEntry;
@@ -58,7 +59,7 @@ public:
 	void OnBuildSceneObjectsListFinished();
 
 	/** Called when we get results from the replay streaming interface */
-	void OnEnumerateStreamsComplete(const FEnumerateStreamsResult& Result);
+	void OnEnumerateStreamsComplete(const FEnumerateObjectsStreamsResult& Result);
 
 	/** Play chosen demo */
 	void LocateObjects();

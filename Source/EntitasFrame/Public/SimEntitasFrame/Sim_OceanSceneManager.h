@@ -17,6 +17,7 @@
 #include "SimEcs_EntitasFrameData.h"
 #include "util/GpsDataTransfer.h"
 #include "SimEcs_CameraManager.h"
+#include "SimDataStructure.h"
 #include "Sim_OceanSceneManager.generated.h"
 
 
@@ -26,6 +27,15 @@
 class USingletonAttribute;
 class UGameInstance;
 class USimEcs_ComponentSystemLink;
+
+
+/**
+ *  DECLARE_DELEGATE_OneParam  Arithmetic
+ */
+
+DECLARE_DELEGATE_OneParam( FEnumerateObjectsStreamsCallback, const FEnumerateObjectsStreamsResult& );
+
+
 
 UCLASS( Blueprintable, BlueprintType )
 class ENTITASFRAME_API  USimOceanSceneManager_Singleton : public UObject {
@@ -135,6 +145,8 @@ public:
 	//get name
 	EntityHandleId GetSimHandleIDWithName( const FString& strName );
 
+	TSharedPtr<ASimEcs_Archetype>  GetSimActorWithName( const FString& strName );
+
 	TSharedPtr<AActor>  GetOceanActor( );
 
 	ASimEcs_PlayerCameraManager* GetSimPlayerCamera( );
@@ -165,6 +177,16 @@ public:
 
 	/* get leader by group name*/
 	EntityHandleId GetGroupLeader( const FString& strGroup );
+
+
+	/**
+	 * Retrieves the Objects streams that are available for object list. May execute asynchronously.
+	 *
+	 * @param Delegate A delegate that will be executed if b ound when the list of streams is available
+	 */
+	//virtual void EnumerateObjectsStreams( const FNetworkReplayVersion& ReplayVersion, const FString& UserString, const FString& MetaString, const FEnumerateStreamsCallback& Delegate ) = 0;
+
+	void EnumerateObjectsStreams( const FEnumerateObjectsStreamsCallback& Delegate );
 protected:
 	/* initialize Scenario xml data */
 	void InitialzieScenarioData( );

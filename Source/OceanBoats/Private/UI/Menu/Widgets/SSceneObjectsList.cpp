@@ -8,12 +8,17 @@
 #include "ArmyGameLoadingScreen.h"
 #include "ArmySimGameInstance.h"
 #include "NetworkReplayStreaming.h"
+#include "SimDataStructure.h"
+#include "Sim_OceanSceneManager.h"
 #include "ArmySimGameViewportClient.h"
 
 #define LOCTEXT_NAMESPACE "ArmySim.HUD.Menu"
 
+
+
+
 struct FSceneObjectsEntry {
-	FNetworkReplayStreamInfo StreamInfo;
+	FActorsStreamInfo StreamInfo;
 	FString		Date;
 	FString		Size;
 	int32		ResultsIndex;
@@ -76,7 +81,7 @@ void SSceneObjectsList::Construct( const FArguments& InArgs )
 						.OnMouseButtonDoubleClick( this, &SSceneObjectsList::OnListItemDoubleClicked )
 						.HeaderRow(
 							SNew( SHeaderRow )
-							+ SHeaderRow::Column( "DemoName" ).FixedWidth( NameWidth ).DefaultLabel( NSLOCTEXT( "DemoList", "DemoNameColumn", "Demo Name" ) )
+							+ SHeaderRow::Column( "ObjectName" ).FixedWidth( NameWidth ).DefaultLabel( NSLOCTEXT( "ObjectList", "ObjectNameColumn", "Object Name" ) )
 							+ SHeaderRow::Column( "Viewers" ).FixedWidth( ViewersWidth ).DefaultLabel( NSLOCTEXT( "Viewers", "ViewersColumn", "Viewers" ) )
 							+ SHeaderRow::Column( "Date" ).FixedWidth( DateWidth ).DefaultLabel( NSLOCTEXT( "DemoList", "DateColumn", "Date" ) )
 							+ SHeaderRow::Column( "Length" ).FixedWidth( LengthWidth ).DefaultLabel( NSLOCTEXT( "Length", "LengthColumn", "Length" ) )
@@ -108,20 +113,18 @@ void SSceneObjectsList::Construct( const FArguments& InArgs )
 	FSlateApplication::Get( ).PlaySound( ItemStyle->MenuEnterSound, GetOwnerUserIndex( ) );
 }
 
-void SSceneObjectsList::OnEnumerateStreamsComplete( const FEnumerateStreamsResult& Result )
+void SSceneObjectsList::OnEnumerateStreamsComplete( const FEnumerateObjectsStreamsResult& Result )
 {
 	check( bUpdatingSceneObjectsList ); // should not be called otherwise
 
 	bool bFinished = true;
 
-	for (const auto& StreamInfo : Result.FoundStreams) {
-		float SizeInKilobytes = StreamInfo.SizeInBytes / 1024.0f;
+	for (const auto& StreamInfo : Result.FoundObjectsStreams) {
+		//float SizeInKilobytes = StreamInfo.SizeInBytes / 1024.0f;
 
 		TSharedPtr<FSceneObjectsEntry> NewDemoEntry = MakeShareable( new FSceneObjectsEntry( ) );
-
 		NewDemoEntry->StreamInfo = StreamInfo;
 		NewDemoEntry->Date = StreamInfo.Timestamp.ToString( TEXT( "%m/%d/%Y %h:%M %A" ) );	// UTC time
-		NewDemoEntry->Size = SizeInKilobytes >= 1024.0f ? FString::Printf( TEXT( "%2.2f MB" ), SizeInKilobytes / 1024.0f ) : FString::Printf( TEXT( "%i KB" ), (int)SizeInKilobytes );
 
 		SceneObjectsList.Add( NewDemoEntry );
 	}
@@ -130,7 +133,7 @@ void SSceneObjectsList::OnEnumerateStreamsComplete( const FEnumerateStreamsResul
 	struct FCompareDateTime {
 		FORCEINLINE bool operator()( const TSharedPtr<FSceneObjectsEntry> & A, const TSharedPtr<FSceneObjectsEntry> & B ) const
 		{
-			return A->StreamInfo.Timestamp.GetTicks( ) > B->StreamInfo.Timestamp.GetTicks( );
+			return A->StreamInfo.Name > B->StreamInfo.Name;
 		}
 	};
 
@@ -190,9 +193,9 @@ void SSceneObjectsList::BuildSceneObjectsList( )
 	bUpdatingSceneObjectsList = true;
 	SceneObjectsList.Empty( );
 
-	if (ReplayStreamer.IsValid( )) {
-		ReplayStreamer->EnumerateStreams( EnumerateStreamsVersion, INDEX_NONE, FString( ), TArray<FString>( ), FEnumerateStreamsCallback::CreateSP( this, &SSceneObjectsList::OnEnumerateStreamsComplete ) );
-	}
+
+	USimOceanSceneManager_Singleton::GetInstance( )->EnumerateObjectsStreams(
+		FEnumerateObjectsStreamsCallback::CreateSP( this, &SSceneObjectsList::OnEnumerateStreamsComplete ) );
 }
 
 /** Called when demo list building is finished */
@@ -220,10 +223,24 @@ void SSceneObjectsList::LocateObjects( )
 		UArmySimGameInstance* const GI = Cast<UArmySimGameInstance>( PlayerOwner->GetGameInstance( ) );
 
 		if (GI != NULL) {
-			FString DemoName = SelectedItem->StreamInfo.Name;
+			ASoldierPlayerController* const PrimaryPC = Cast<ASoldierPlayerController>( GI->GetFirstLocalPlayerController( ) );
+			FString ActorName = SelectedItem->StreamInfo.Name;
+			if (ActorName.IsEmpty( ))return;
+			APlayerCameraManager* camMgr = UGameplayStatics::GetPlayerCameraManager( PrimaryPC, 0 );
+			if (camMgr) {
+				TSharedPtr<ASimEcs_Archetype> boat = USimOceanSceneManager_Singleton::GetInstance()->GetSimActorWithName( ActorName );
+				if (boat.IsValid()) {
+					FViewTargetTransitionParams TransitionParams;
+					TransitionParams.BlendTime = 2.0f;
+					PrimaryPC->SetViewTarget( boat.Get(), TransitionParams );
 
-			// Play the demo
-			//GI->LocateObjects( PlayerOwner.Get(), DemoName );
+				}
+				else {
+					PrimaryPC->SetViewTarget( NULL );
+
+				}
+			}
+
 		}
 	}
 }
@@ -241,7 +258,7 @@ void SSceneObjectsList::DeleteDemo( )
 		if (GI != NULL) {
 			UArmySimGameViewportClient* SoldierViewport = Cast<UArmySimGameViewportClient>( GI->GetGameViewportClient( ) );
 
-			if (SoldierViewport) {
+		/*	if (SoldierViewport) {
 				SoldierViewport->ShowDialog(
 					PlayerOwner,
 					EArmySimDialogType::Generic,
@@ -251,7 +268,7 @@ void SSceneObjectsList::DeleteDemo( )
 					FOnClicked::CreateRaw( this, &SSceneObjectsList::OnDemoDeleteConfirm ),
 					FOnClicked::CreateRaw( this, &SSceneObjectsList::OnDemoDeleteCancel )
 				);
-			}
+			}*/
 		}
 	}
 }
@@ -383,8 +400,8 @@ TSharedRef<ITableRow> SSceneObjectsList::MakeListViewWidget( TSharedPtr<FSceneOb
 		{
 			FText ItemText = FText::GetEmpty( );
 
-			if (ColumnName == "DemoName") {
-				FString NameString = Item->StreamInfo.FriendlyName.IsEmpty( ) ? Item->StreamInfo.Name : Item->StreamInfo.FriendlyName;
+			if (ColumnName == "ObjectName") {
+				FString NameString =  Item->StreamInfo.Name ;
 
 				const int MAX_DEMO_NAME_DISPLAY_LEN = 18;
 				if (NameString.Len( ) > MAX_DEMO_NAME_DISPLAY_LEN) {
@@ -398,16 +415,16 @@ TSharedRef<ITableRow> SSceneObjectsList::MakeListViewWidget( TSharedPtr<FSceneOb
 				ItemText = FText::FromString( NameString );
 			}
 			else if (ColumnName == "Viewers") {
-				ItemText = FText::FromString( FString::Printf( TEXT( "%i" ), Item->StreamInfo.NumViewers ) );
+			//	ItemText = FText::FromString( FString::Printf( TEXT( "%i" ), Item->StreamInfo.NumViewers ) );
 			}
 			else if (ColumnName == "Date") {
 				ItemText = FText::FromString( Item->Date );
 			}
 			else if (ColumnName == "Length") {
-				const int32 Minutes = Item->StreamInfo.LengthInMS / (1000 * 60);
-				const int32 Seconds = (Item->StreamInfo.LengthInMS / 1000) % 60;
+				//const int32 Minutes = Item->StreamInfo.LengthInMS / (1000 * 60);
+				//const int32 Seconds = (Item->StreamInfo.LengthInMS / 1000) % 60;
 
-				ItemText = FText::FromString( FString::Printf( TEXT( "%02i:%02i" ), Minutes, Seconds ) );
+				//ItemText = FText::FromString( FString::Printf( TEXT( "%02i:%02i" ), Minutes, Seconds ) );
 			}
 			else if (ColumnName == "Size") {
 				ItemText = FText::FromString( Item->Size );

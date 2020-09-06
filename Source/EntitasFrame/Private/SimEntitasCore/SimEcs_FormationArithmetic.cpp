@@ -82,7 +82,7 @@ SimEcs_FormationArithmetic::SimEcs_FormationArithmetic(  SimEcs_DelegateFormatio
 	m_pSimDelegateFormation = pDelegateFromation;
 	if (m_pSimDelegateFormation)
 	{
-		m_pSimDelegateFormation->RunSingleColumnFormationArithmetic.BindRaw(this, &SimEcs_FormationArithmetic::FunLeaderFormationArithmetic);
+		m_pSimDelegateFormation->RunLeaderFormationArithmetic.BindRaw(this, &SimEcs_FormationArithmetic::FunLeaderFormationArithmetic);
 		m_pSimDelegateFormation->RunSingleColumnFormationArithmetic.BindRaw(this, &SimEcs_FormationArithmetic::FunSingleColumnFormationArithmetic);
 		m_pSimDelegateFormation->RunSingleRowFormationArithmetic.BindRaw(this, &SimEcs_FormationArithmetic::FunSingleRowFormationArithmetic);
 		m_pSimDelegateFormation->RunDoubleRowFormationArithmetic.BindRaw(this, &SimEcs_FormationArithmetic::FunDoubleRowFormationArithmetic);
@@ -92,12 +92,11 @@ SimEcs_FormationArithmetic::SimEcs_FormationArithmetic(  SimEcs_DelegateFormatio
 }
 
 SimEcs_FormationArithmetic::~SimEcs_FormationArithmetic() {
-	m_pSimDelegateFormation->RunSingleColumnFormationArithmetic.Unbind();
+	m_pSimDelegateFormation->RunLeaderFormationArithmetic.Unbind();
 	m_pSimDelegateFormation->RunSingleColumnFormationArithmetic.Unbind();
 	m_pSimDelegateFormation->RunSingleRowFormationArithmetic.Unbind();
 	m_pSimDelegateFormation->RunDoubleRowFormationArithmetic.Unbind();
 	m_pSimDelegateFormation->RunEchelonFormationArithmetic.Unbind();
-	m_pSimDelegateFormation->RunSingleColumnFormationArithmetic.Unbind();
 	m_pSimDelegateFormation->RunBearingFormationArithmetic.Unbind();
 }
 
