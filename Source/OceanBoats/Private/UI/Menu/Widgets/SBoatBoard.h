@@ -5,7 +5,7 @@
 #include "SlateBasics.h"
 #include "SlateExtras.h"
 #include "OceanBoats.h"
-//#include "SoldierLeaderboards.h"
+#include "SSoldierMenuWidget.h"
 #include "SoldierScoreboardWidgetStyle.h"
 
 /** leaderboard row display information */
@@ -43,7 +43,7 @@ struct FBoatboardRow
 };
 
 //class declare
-class SBoatBoard : public SCompoundWidget
+class SBoatBoard : public  SSoldierMenuWidget
 {
 public:
 	SLATE_BEGIN_ARGS(SBoatBoard)
@@ -141,7 +141,7 @@ protected:
 	/** Handle to the registered LoginComplete delegate */
 	FDelegateHandle OnLoginCompleteDelegateHandle;
 
-	const FSoldierScoreboardStyle* ScoreboardStyle;
+	//const FSoldierScoreboardStyle* ScoreboardStyle;
 };
 
 

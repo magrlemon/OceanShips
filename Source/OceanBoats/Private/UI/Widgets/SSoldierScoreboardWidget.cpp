@@ -760,7 +760,7 @@ TSharedRef<SWidget> SSoldierScoreboardWidget::MakeTotalsRow(uint8 TeamNum) const
 			]
 		]
 	];
-
+	PlaySound( ScoreboardStyle->PlayerChangeSound );
 	return TotalsRow.ToSharedRef();
 }
 

@@ -126,7 +126,7 @@ protected:
 	/** Network replay streaming interface */
 	TSharedPtr<INetworkReplayStreamer> ReplayStreamer;
 
-	const FSoldierScoreboardStyle* SceneObjectsStyle;
+
 };
 
 

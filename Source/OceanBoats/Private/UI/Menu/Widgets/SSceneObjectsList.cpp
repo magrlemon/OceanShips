@@ -33,74 +33,79 @@ void SSceneObjectsList::Construct( const FArguments& InArgs )
 	const int32 DateWidth = 210;
 	const int32 LengthWidth = 64;
 
-	SceneObjectsStyle = &FArmySimStyle::Get( ).GetWidgetStyle<FSoldierScoreboardStyle>( "DefaultSoldierScoreboardStyle" );
 
+	const FSoldierMenuStyle* ItemStyle = &FArmySimStyle::Get( ).GetWidgetStyle<FSoldierMenuStyle>( "DefaultSoldierMenuStyle" );
 
 	ChildSlot
 		.VAlign( VAlign_Fill )
 		.HAlign( HAlign_Fill )
 		[
-			SNew( SVerticalBox )
+			/*SNew( SBorder )
+			.BorderBackgroundColor( FLinearColor( 0.2f, 0.2f, 0.2f, 0.4f ) )
+			.BorderImage( &ItemStyle->LeftBackgroundBrush )
+			[*/
+				SNew( SVerticalBox )
+				+ SVerticalBox::Slot( )
+				.HAlign( HAlign_Left )
+				.Padding( FMargin( 0.0f, 0.0f, 0.0f, 18.0f ) )
+				[
+					SNew( SCheckBox )
+					.IsChecked( this, &SSceneObjectsList::IsShowAllReplaysChecked )
+					.OnCheckStateChanged( this, &SSceneObjectsList::OnShowAllReplaysChecked )
+					.Style( FCoreStyle::Get( ), "Checkbox" )
+					[
+						SNew( STextBlock )
+						.Text( LOCTEXT( "Show Barriers", "Show Barriers from all Scene" ) )
+					.TextStyle( FArmySimStyle::Get( ), "SoldierGame.DemoListCheckboxTextStyle" )
+					]
+				]
+				+ SVerticalBox::Slot( )
+				.AutoHeight( )
+				[
+					SNew( SBox )
+					.WidthOverride( 800 )
+					.HeightOverride( 600 )
+					[
+			
+						SAssignNew( ObjectsListWidget, SListView<TSharedPtr<FSceneObjectsEntry>> )
+						.ItemHeight( 60 )
+						.ListItemsSource( &SceneObjectsList )
+						.SelectionMode( ESelectionMode::Single )
+						.OnGenerateRow( this, &SSceneObjectsList::MakeListViewWidget )
+						.OnSelectionChanged( this, &SSceneObjectsList::EntrySelectionChanged )
+						.OnMouseButtonDoubleClick( this, &SSceneObjectsList::OnListItemDoubleClicked )
+						.HeaderRow(
+							SNew( SHeaderRow )
+							+ SHeaderRow::Column( "DemoName" ).FixedWidth( NameWidth ).DefaultLabel( NSLOCTEXT( "DemoList", "DemoNameColumn", "Demo Name" ) )
+							+ SHeaderRow::Column( "Viewers" ).FixedWidth( ViewersWidth ).DefaultLabel( NSLOCTEXT( "Viewers", "ViewersColumn", "Viewers" ) )
+							+ SHeaderRow::Column( "Date" ).FixedWidth( DateWidth ).DefaultLabel( NSLOCTEXT( "DemoList", "DateColumn", "Date" ) )
+							+ SHeaderRow::Column( "Length" ).FixedWidth( LengthWidth ).DefaultLabel( NSLOCTEXT( "Length", "LengthColumn", "Length" ) )
+							+ SHeaderRow::Column( "Size" ).HAlignHeader( HAlign_Left ).HAlignCell( HAlign_Right ).DefaultLabel( NSLOCTEXT( "DemoList", "SizeColumn", "Size" ) ) )
+					]
+				]
+			
+	
 			+ SVerticalBox::Slot( )
-			.HAlign( HAlign_Left )
-			.Padding( FMargin( 0.0f, 0.0f, 0.0f, 18.0f ) )
-			[
-				SNew( SCheckBox )
-				.IsChecked( this, &SSceneObjectsList::IsShowAllReplaysChecked )
-			.OnCheckStateChanged( this, &SSceneObjectsList::OnShowAllReplaysChecked )
-			.Style( FCoreStyle::Get( ), "Checkbox" )
-			[
-				SNew( STextBlock )
-				.Text( LOCTEXT( "Show Barriers", "Show Barriers from all Scene" ) )
-			.TextStyle( FArmySimStyle::Get( ), "SoldierGame.DemoListCheckboxTextStyle" )
-			]
-		]
-		+ SVerticalBox::Slot( )
-		.AutoHeight( )
-		[
-			SNew( SBox )
-			.WidthOverride( 800 )
-			.HeightOverride( 600 )
-			[
-				SNew( SBorder )
-				.BorderBackgroundColor( FLinearColor( 0.2f, 0.2f, 0.2f, 0.4f ) )
-				.BorderImage( &SceneObjectsStyle->ItemBorderBrush )
+				.AutoHeight( )
 				[
-					SAssignNew( ObjectsListWidget, SListView<TSharedPtr<FSceneObjectsEntry>> )
-					.ItemHeight( 60 )
-					.ListItemsSource( &SceneObjectsList )
-					.SelectionMode( ESelectionMode::Single )
-					.OnGenerateRow( this, &SSceneObjectsList::MakeListViewWidget )
-					.OnSelectionChanged( this, &SSceneObjectsList::EntrySelectionChanged )
-					.OnMouseButtonDoubleClick( this, &SSceneObjectsList::OnListItemDoubleClicked )
-					.HeaderRow(
-						SNew( SHeaderRow )
-						+ SHeaderRow::Column( "DemoName" ).FixedWidth( NameWidth ).DefaultLabel( NSLOCTEXT( "DemoList", "DemoNameColumn", "Demo Name" ) )
-						+ SHeaderRow::Column( "Viewers" ).FixedWidth( ViewersWidth ).DefaultLabel( NSLOCTEXT( "Viewers", "ViewersColumn", "Viewers" ) )
-						+ SHeaderRow::Column( "Date" ).FixedWidth( DateWidth ).DefaultLabel( NSLOCTEXT( "DemoList", "DateColumn", "Date" ) )
-						+ SHeaderRow::Column( "Length" ).FixedWidth( LengthWidth ).DefaultLabel( NSLOCTEXT( "Length", "LengthColumn", "Length" ) )
-						+ SHeaderRow::Column( "Size" ).HAlignHeader( HAlign_Left ).HAlignCell( HAlign_Right ).DefaultLabel( NSLOCTEXT( "DemoList", "SizeColumn", "Size" ) ) )
+					SNew( SOverlay )
+					+ SOverlay::Slot( )
+					.VAlign( VAlign_Center )
+					.HAlign( HAlign_Center )
+					[
+						SNew( STextBlock )
+						.Text( this, &SSceneObjectsList::GetBottomText )
+						.TextStyle( FArmySimStyle::Get( ), "SoldierGame.MenuServerListTextStyle" )
+					]
 				]
-			]
-		]
-		+ SVerticalBox::Slot( )
-			.AutoHeight( )
-			[
-				SNew( SOverlay )
-				+ SOverlay::Slot( )
-				.VAlign( VAlign_Center )
-				.HAlign( HAlign_Center )
-				[
-					SNew( STextBlock )
-					.Text( this, &SSceneObjectsList::GetBottomText )
-					.TextStyle( FArmySimStyle::Get( ), "SoldierGame.MenuServerListTextStyle" )
-				]
-			]
+			
 		];
+
 
 	ReplayStreamer = FNetworkReplayStreaming::Get( ).GetFactory( ).CreateReplayStreamer( );
 
 	BuildSceneObjectsList( );
+	FSlateApplication::Get( ).PlaySound( ItemStyle->MenuEnterSound, GetOwnerUserIndex( ) );
 }
 
 void SSceneObjectsList::OnEnumerateStreamsComplete( const FEnumerateStreamsResult& Result )

@@ -1062,6 +1062,8 @@ bool ASoldierHUD::ShowBoatDetails(bool bEnable)
 		GEngine->GameViewport->AddViewportWidgetContent(
 			SAssignNew(BoatDetailWidgetContainer, SWeakWidget)
 			.PossiblyNullContent(BoatDetailWidgetOverlay));
+
+
 		
 		for (int i = 0; i < input->AxisMappings.Num(); ++i)
 		{
@@ -1070,6 +1072,7 @@ bool ASoldierHUD::ShowBoatDetails(bool bEnable)
 				input->AxisMappings[i].Scale = 0;
 			}			
 		}
+
 	}
 	else
 	{
@@ -1147,6 +1150,7 @@ bool ASoldierHUD::ShowScoreboard(bool bEnable, bool bFocus)
 			FInputModeGameAndUI InputMode;
 			SoldierPC->SetInputMode( InputMode );
 		}
+
 	} 
 	else
 	{
@@ -1179,6 +1183,7 @@ bool ASoldierHUD::ShowScoreboard(bool bEnable, bool bFocus)
 			}
 		}
 	}
+
 	return true;
 }
 
@@ -1199,16 +1204,24 @@ bool ASoldierHUD::ShowObjectsListDetails( bool bEnable, bool bFocus ) {
 	if (SoldierPC == NULL || SoldierPC->IsGameMenuVisible( )) {
 		return false;
 	}
+
+	const FSoldierMenuStyle* ItemStyle = &FArmySimStyle::Get( ).GetWidgetStyle<FSoldierMenuStyle>( "DefaultSoldierMenuStyle" );
+
 	if (bEnable) {
-		
+
 		SAssignNew( SceneObjectsWidgetOverlay, SOverlay )
 			+ SOverlay::Slot( )
 			.HAlign( EHorizontalAlignment::HAlign_Center )
 			.VAlign( EVerticalAlignment::VAlign_Center )
 			.Padding( FMargin( 200 ) )
 			[
-				SAssignNew( SceneObjectsListWidget, SSceneObjectsList )
-				.PlayerOwner( MakeWeakObjectPtr( Cast<ULocalPlayer>( PlayerOwner->Player ) ) )
+				SNew( SBorder )
+				.BorderBackgroundColor( FLinearColor( 0.2f, 0.2f, 0.2f, 0.4f ) )
+				.BorderImage( &ItemStyle->LeftBackgroundBrush )
+				[
+					SAssignNew( SceneObjectsListWidget, SSceneObjectsList )
+					.PlayerOwner( MakeWeakObjectPtr( Cast<ULocalPlayer>( PlayerOwner->Player ) ) )
+				]
 			];
 
 
@@ -1227,6 +1240,7 @@ bool ASoldierHUD::ShowObjectsListDetails( bool bEnable, bool bFocus ) {
 			FInputModeGameAndUI InputMode;
 			SoldierPC->SetInputMode( InputMode );
 		}
+
 	}
 	else {
 		if (SceneObjectsListWidget.IsValid( )) {
@@ -1254,6 +1268,7 @@ bool ASoldierHUD::ShowObjectsListDetails( bool bEnable, bool bFocus ) {
 
 			}
 		}
+		
 	}
 	bIsObjectsListVisible = bEnable;
 

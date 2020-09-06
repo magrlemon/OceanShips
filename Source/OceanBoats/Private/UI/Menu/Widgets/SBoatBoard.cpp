@@ -9,6 +9,7 @@
 #include "SoldierPlayerState.h"
 #include "Interface/BoatInterface.h"
 #include "SimEcs_Archetype.h"
+#include "ArmySimMenuItemWidgetStyle.h"
 #include "Sim_OceanSceneManager.h"
 
 #define TSHIP_FONT( RelativePath, ... ) FSlateFontInfo( FPaths::ProjectContentDir() / "Slate"/ RelativePath + TEXT(".ttf"), __VA_ARGS__ )
@@ -40,7 +41,9 @@ void SBoatBoard::Construct(const FArguments& InArgs)
 	bReadingStats = false;
 
 	//LeaderboardReadCompleteDelegate = FOnLeaderboardReadCompleteDelegate::CreateRaw(this, &SBoatBoard::OnStatsRead);
-	ScoreboardStyle = &FArmySimStyle::Get().GetWidgetStyle<FSoldierScoreboardStyle>("DefaultSoldierScoreboardStyle");
+	////ScoreboardStyle = &FArmySimStyle::Get().GetWidgetStyle<FSoldierScoreboardStyle>("DefaultSoldierScoreboardStyle");
+
+	const FSoldierMenuStyle* ItemStyle = &FArmySimStyle::Get( ).GetWidgetStyle<FSoldierMenuStyle>( "DefaultSoldierMenuStyle" );
 
 	ChildSlot
 	.VAlign(VAlign_Fill)
@@ -52,11 +55,11 @@ void SBoatBoard::Construct(const FArguments& InArgs)
 		[
 			SNew(SBox)  
 			.WidthOverride(BoxWidth)
-			.HeightOverride(500)			
+			.HeightOverride(600)			
 			[
 				SNew(SBorder)
 				.BorderBackgroundColor(FLinearColor(0.2f, 0.2f, 0.2f, 0.4f))
-				.BorderImage(&ScoreboardStyle->ItemBorderBrush)
+				.BorderImage(&ItemStyle->LeftBackgroundBrush )
 				[
 					SAssignNew(RowListWidget, SListView< TSharedPtr<FBoatboardRow> >)
 					.ItemHeight(50)
@@ -93,6 +96,9 @@ void SBoatBoard::Construct(const FArguments& InArgs)
 	];
 
 	OnStatsRead(true);
+
+
+	FSlateApplication::Get( ).PlaySound( ItemStyle->MenuEnterSound, GetOwnerUserIndex() );
 }
 void SBoatBoard::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
 {
