@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.25807.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{4435BDFA-0067-46C9-B7BC-84965A094AC8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{34CF4394-7DC3-4914-A05B-4D1F5572019E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{2C11CA15-6850-4062-8ADD-C3B19901B838}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{43DCFA22-241A-43E6-BC0E-B01E3334D4BF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UE4", "Intermediate\ProjectFiles\UE4.vcxproj", "{BBEBA460-3B8A-4B8C-A18E-B7C11CCE80C1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OceanBoats", "Intermediate\ProjectFiles\OceanBoats.vcxproj", "{CCEBFC53-6E13-434C-800D-739893C08241}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visualizers", "Visualizers", "{C1B5F679-896D-4E63-9AED-0A03A5B070E5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visualizers", "Visualizers", "{ED5CEE17-8665-46F3-B4E6-79FF9FA592A4}"
 	ProjectSection(SolutionItems) = preProject
 		..\OceanEngine\Engine\Extras\VisualStudioDebugging\UE4.natvis = ..\OceanEngine\Engine\Extras\VisualStudioDebugging\UE4.natvis
 	EndProjectSection
@@ -63,7 +63,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{BBEBA460-3B8A-4B8C-A18E-B7C11CCE80C1} = {4435BDFA-0067-46C9-B7BC-84965A094AC8}
-		{CCEBFC53-6E13-434C-800D-739893C08241} = {2C11CA15-6850-4062-8ADD-C3B19901B838}
+		{BBEBA460-3B8A-4B8C-A18E-B7C11CCE80C1} = {34CF4394-7DC3-4914-A05B-4D1F5572019E}
+		{CCEBFC53-6E13-434C-800D-739893C08241} = {43DCFA22-241A-43E6-BC0E-B01E3334D4BF}
 	EndGlobalSection
 EndGlobal
