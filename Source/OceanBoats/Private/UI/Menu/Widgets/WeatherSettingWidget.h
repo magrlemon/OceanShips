@@ -28,56 +28,7 @@ public:
 	/** needed for every widget */
 	void Construct(const FArguments& InArgs);
 
-	///** if we want to receive focus */
-	//virtual bool SupportsKeyboardFocus() const override { return true; }
-
-	///** focus received handler - keep the ActionBindingsList focused */
-	//virtual FReply OnFocusReceived(const FGeometry& MyGeometry, const FFocusEvent& InFocusEvent) override;
-	//
-	///** focus lost handler - keep the ActionBindingsList focused */
-	//virtual void OnFocusLost(const FFocusEvent& InFocusEvent) override;
-
-	///** key down handler */
-	//virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyboardEvent) override;
-
-	///** SListView item double clicked */
-	//void OnListItemDoubleClicked(TSharedPtr<FSceneObjectsEntry> InItem);
-
-	///** creates single item widget, called for every list item */
-	//TSharedRef<ITableRow> MakeListViewWidget(TSharedPtr<FSceneObjectsEntry> Item, const TSharedRef<STableViewBase>& OwnerTable);
-
-	///** selection changed handler */
-	//void EntrySelectionChanged(TSharedPtr<FSceneObjectsEntry> InItem, ESelectInfo::Type SelectInfo);
-
-	///** Updates the list until it's completely populated */
-	//void UpdateBuildSceneObjectsListStatus();
-
-	///** Populates the demo list */
-	//void BuildSceneObjectsList();
-
-	///** Called when demo list building finished */
-	//void OnBuildSceneObjectsListFinished();
-
-	///** Called when we get results from the replay streaming interface */
-	//void OnEnumerateStreamsComplete(const FEnumerateObjectsStreamsResult& Result);
-
-	///** Play chosen demo */
-	//void LocateObjects();
-
-	///** Delete chosen demo */
-	//void DeleteDemo();
-
-	///** Delete chosen demo (really) */
-	//FReply OnDemoDeleteConfirm();
-
-	///** Cancel delete chosen demo */
-	//FReply OnDemoDeleteCancel();
-
-	///** Called by delegate when the replay streaming interface has finished deleting */
-	//void OnDeleteFinishedStreamComplete(const FDeleteFinishedStreamResult& Result);
-
-	///** selects item at current + MoveBy index */
-	//void MoveSelection(int32 MoveBy);
+	
 
 	/**
 	 * Ticks this widget.  Override in derived classes, but always call the parent implementation.
@@ -105,27 +56,28 @@ private:
 	void OnSetDayValue(float NewValue, bool bFromSlider);
 	void OnDaySliderMouseEnd();
 
-	/** Version used for enumerating replays. This is manipulated depending on whether we want to show all versions or not. */
-	FNetworkReplayVersion EnumerateStreamsVersion;
+	float GetWaveValue() const;
+	void OnSetWaveValue(float NewValue, bool bFromSlider);
+	void OnWaveSliderMouseEnd();
+
+	float GetWindValue() const;
+	void OnSetWindValue(float NewValue, bool bFromSlider);
+	void OnWindSliderMouseEnd();
+
+	float GetWindDirValue() const;
+	void OnSetWindDirValue(float NewValue, bool bFromSlider);
+	void OnWindDirSliderMouseEnd();
+
 
 protected:
-
-	///** Whether we're building the demo list or not */
-	//bool bUpdatingSceneObjectsList;
-
-	///** action bindings array */
-	//TArray< TSharedPtr<FSceneObjectsEntry> > SceneObjectsList;
-
-	///** action bindings list slate widget */
-	//TSharedPtr< SListView< TSharedPtr<FSceneObjectsEntry> > > ObjectsListWidget; 
-
-	///** currently selected list item */
-	//TSharedPtr<FSceneObjectsEntry> SelectedItem;
-
+	
 	/** get current status text */
 	FText GetTimeOfDayText() const;
 	FText GetDayText() const;
 	FText GetBottomText() const;
+	FText GetWaveText() const;
+	FText GetWindText() const;
+	FText GetWindDirText() const;
 
 	/** current status text */
 	FText StatusText;
@@ -143,6 +95,9 @@ protected:
 	ECheckBoxState mRainyState;
 	float mTimeOfDay;
 	float mDay;
+	float mWave;
+	float mWind;
+	float mWindDir;
 };
 
 

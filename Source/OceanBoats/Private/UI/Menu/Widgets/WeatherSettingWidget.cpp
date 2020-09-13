@@ -28,10 +28,7 @@ void SWeatherSettingWidget::Construct(const FArguments& InArgs)
 {
 	PlayerOwner = InArgs._PlayerOwner;
 	OwnerWidget = InArgs._OwnerWidget;
-	//bUpdatingSceneObjectsList = false;
 	StatusText = FText::GetEmpty();
-
-	EnumerateStreamsVersion = FNetworkVersion::GetReplayVersion();
 
 	const int32 BoxWidth = 600;
 
@@ -143,6 +140,106 @@ void SWeatherSettingWidget::Construct(const FArguments& InArgs)
 				]
 
 				+ SVerticalBox::Slot()
+				.HAlign(HAlign_Fill)
+				.Padding(FMargin(0.0f, 10.0f, 0.0f, 18.0f))
+				[
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot()
+					[
+						SNew(STextBlock)
+						.Text(LOCTEXT("Wave", "Wave"))
+						.TextStyle(FArmySimStyle::Get(), "OceanBoats.DemoListCheckboxTextStyle")
+					]
+					+ SHorizontalBox::Slot()
+					[
+						SNew(SSlider)
+						.Value(this, &SWeatherSettingWidget::GetWaveValue)
+						.OnValueChanged(this, &SWeatherSettingWidget::OnSetWaveValue, /*bFromSlider =*/true)
+						.SliderBarColor(FLinearColor(0.48f, 0.48f, 0.48f))
+						.Style(FCoreStyle::Get(), "Slider")
+						//.MouseUsesStep(true)
+						.StepSize(0.1)
+						.OnMouseCaptureEnd(this, &SWeatherSettingWidget::OnWaveSliderMouseEnd)
+						.ToolTipText(this, &SWeatherSettingWidget::GetWaveText)
+					]
+					+ SHorizontalBox::Slot()
+					.HAlign(HAlign_Left)
+					[
+						SNew(STextBlock)
+						//.Text(FText::AsNumber(mDay))
+						.Text(this, &SWeatherSettingWidget::GetWaveText)
+						.TextStyle(FArmySimStyle::Get(), "OceanBoats.DemoListCheckboxTextStyle")
+					]
+				]
+
+				+ SVerticalBox::Slot()
+				.HAlign(HAlign_Fill)
+				.Padding(FMargin(0.0f, 10.0f, 0.0f, 18.0f))
+				[
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot()
+					[
+						SNew(STextBlock)
+						.Text(LOCTEXT("Wind", "Wind"))
+						.TextStyle(FArmySimStyle::Get(), "OceanBoats.DemoListCheckboxTextStyle")
+					]
+					+ SHorizontalBox::Slot()
+					[
+						SNew(SSlider)
+						.Value(this, &SWeatherSettingWidget::GetWindValue)
+						.OnValueChanged(this, &SWeatherSettingWidget::OnSetWindValue, /*bFromSlider =*/true)
+						.SliderBarColor(FLinearColor(0.48f, 0.48f, 0.48f))
+						.Style(FCoreStyle::Get(), "Slider")
+						//.MouseUsesStep(true)
+						.StepSize(0.1)
+						.OnMouseCaptureEnd(this, &SWeatherSettingWidget::OnWindSliderMouseEnd)
+						.ToolTipText(this, &SWeatherSettingWidget::GetWindText)
+					]
+					+ SHorizontalBox::Slot()
+					.HAlign(HAlign_Left)
+					[
+						SNew(STextBlock)
+						//.Text(FText::AsNumber(mDay))
+						.Text(this, &SWeatherSettingWidget::GetWindText)
+						.TextStyle(FArmySimStyle::Get(), "OceanBoats.DemoListCheckboxTextStyle")
+					]
+				]
+
+				+ SVerticalBox::Slot()
+				.HAlign(HAlign_Fill)
+				.Padding(FMargin(0.0f, 10.0f, 0.0f, 18.0f))
+				[
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot()
+					[
+						SNew(STextBlock)
+						.Text(LOCTEXT("WindDir", "WindDir"))
+						.TextStyle(FArmySimStyle::Get(), "OceanBoats.DemoListCheckboxTextStyle")
+					]
+					+ SHorizontalBox::Slot()
+					[
+						SNew(SSlider)
+						.Value(this, &SWeatherSettingWidget::GetWindDirValue)
+						.OnValueChanged(this, &SWeatherSettingWidget::OnSetWindDirValue, /*bFromSlider =*/true)
+						.SliderBarColor(FLinearColor(0.48f, 0.48f, 0.48f))
+						.Style(FCoreStyle::Get(), "Slider")
+						//.MouseUsesStep(true)
+						.StepSize(0.005)
+						.OnMouseCaptureEnd(this, &SWeatherSettingWidget::OnWindDirSliderMouseEnd)
+						.ToolTipText(this, &SWeatherSettingWidget::GetWindDirText)
+					]
+					+ SHorizontalBox::Slot()
+					.HAlign(HAlign_Left)
+					[
+						SNew(STextBlock)
+						//.Text(FText::AsNumber(mDay))
+						.Text(this, &SWeatherSettingWidget::GetWindDirText)
+						.TextStyle(FArmySimStyle::Get(), "OceanBoats.DemoListCheckboxTextStyle")
+					]
+				]
+
+
+				+ SVerticalBox::Slot()
 				.AutoHeight()
 				[
 					SNew(SOverlay)
@@ -175,7 +272,18 @@ FText SWeatherSettingWidget::GetDayText() const
 {
 	return FText::FromString(FString::SanitizeFloat(mDay));
 }
-
+FText SWeatherSettingWidget::GetWaveText() const
+{
+	return FText::FromString(FString::SanitizeFloat(mWave * 10));
+}
+FText SWeatherSettingWidget::GetWindText() const
+{	
+	return FText::FromString(FString::FromInt(mWind*10));
+}
+FText SWeatherSettingWidget::GetWindDirText() const
+{
+	return FText::FromString(FString::FromInt(mWindDir*360));
+}
 FText SWeatherSettingWidget::GetBottomText( ) const
 {
 	return StatusText;
@@ -237,4 +345,44 @@ void SWeatherSettingWidget::OnDaySliderMouseEnd()
 
 }
 
+float SWeatherSettingWidget::GetWaveValue() const
+{
+	return mWave;
+}
+void SWeatherSettingWidget::OnSetWaveValue(float NewValue, bool bFromSlider)
+{
+	NewValue = FMath::RoundToFloat(NewValue * 100.f) / 100.f;
+	mWave = NewValue;
+}
+void SWeatherSettingWidget::OnWaveSliderMouseEnd()
+{
+
+}
+float SWeatherSettingWidget::GetWindValue() const
+{
+	return mWind;
+}
+void SWeatherSettingWidget::OnSetWindValue(float NewValue, bool bFromSlider)
+{
+	NewValue = FMath::RoundToFloat(NewValue * 100.f) / 100.f;
+	mWind = NewValue;
+}
+void SWeatherSettingWidget::OnWindSliderMouseEnd()
+{
+
+}
+
+float SWeatherSettingWidget::GetWindDirValue() const
+{
+	return mWindDir;
+}
+void SWeatherSettingWidget::OnSetWindDirValue(float NewValue, bool bFromSlider)
+{
+	NewValue = FMath::RoundToFloat(NewValue * 100.f) / 100.f;
+	mWindDir = NewValue;
+}
+void SWeatherSettingWidget::OnWindDirSliderMouseEnd()
+{
+
+}
 #undef LOCTEXT_NAMESPACE
