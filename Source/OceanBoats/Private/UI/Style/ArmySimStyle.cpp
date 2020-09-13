@@ -144,7 +144,7 @@ TSharedRef< FSlateStyleSet > FArmySimStyle::Create()
 		);
 
 	Style.Set("OceanBoats.DemoListCheckboxTextStyle", FTextBlockStyle()
-		.SetFont(TTF_FONT("Fonts/msyh-Black", 12))
+		.SetFont(TTF_FONT("Fonts/msyh-Black", 14))
 		.SetColorAndOpacity(FLinearColor::White)
 		.SetShadowOffset(FIntPoint(-1,1))
 		);

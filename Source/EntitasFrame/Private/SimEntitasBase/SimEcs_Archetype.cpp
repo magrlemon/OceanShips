@@ -50,6 +50,16 @@ void ASimEcs_Archetype::AddResult(int type)
 	DamageResults.FindOrAdd(type)++;
 }
 
+float ASimEcs_Archetype::GetHealthRange()
+{
+	return FMath::Clamp<float>((Health - TotalDamage) / Health,0.0,1.0);
+}
+
+void ASimEcs_Archetype::HitDamge(float damage)
+{
+	TotalDamage += damage;
+}
+
 void ASimEcs_Archetype::EnableWaveForce_Implementation(bool enable)
 {
 	

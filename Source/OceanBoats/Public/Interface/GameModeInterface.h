@@ -44,4 +44,6 @@ public:
 		int GetKilledNumByKiller(int uid);*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void Killed(AActor* Killer, AActor* Victim);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void HitDamage(AActor* Victim, float Damage);
 };

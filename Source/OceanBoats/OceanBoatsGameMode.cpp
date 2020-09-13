@@ -641,3 +641,10 @@ void AOceanBoatsGameMode::Killed_Implementation(AActor* Killer, AActor* Victim)
 	if(Killer && Victim)
 		Cast<ASimEcs_Archetype>(Killer)->AddResult(Cast<ASimEcs_Archetype>(Victim)->ArchType);
 }
+
+void AOceanBoatsGameMode::HitDamage_Implementation(AActor* Victim, float Damage)
+{
+	ASimEcs_Archetype* vic = Cast<ASimEcs_Archetype>(Victim);
+	if(vic)
+		vic->HitDamge(Damage);
+}

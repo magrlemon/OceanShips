@@ -9,6 +9,8 @@
 #include "SoldierOptions.h"
 #include "ArmySimGameInstance.h"
 
+class SWeatherSettingWidget;
+
 class FSoldierMainMenu : public TSharedFromThis<FSoldierMainMenu>, public FTickableGameObject
 {
 public:	
@@ -50,6 +52,7 @@ public:
 
 	/** Show Scene Objects browser */
 	void OnShowSceneObjectsBrowser( );
+	void OnShowWeatherSettings();
 protected:
 
 	enum class EMap
@@ -73,7 +76,7 @@ protected:
 
 	/** shooter options */
 	TSharedPtr<class FSoldierOptions> SoldierOptions;
-
+	TSharedPtr<class FWeatherOptions> WeatherOptions;
 	/** menu widget */
 	TSharedPtr<class SSoldierMenuWidget> MenuWidget;
 
@@ -86,7 +89,7 @@ protected:
 	/* used for removing the SplitScreenLobby */
 	TSharedPtr<class SWeakWidget> SplitScreenLobbyWidgetContainer;
 
-
+	TSharedPtr<class SWeatherSettingWidget> WeatherSettingWidget;
 	/** demo list widget */
 	TSharedPtr<class SSceneObjectsList> SceneObjectsListWidget;
 
@@ -110,7 +113,7 @@ protected:
 
 	/** Custom demo browser menu */
 	TSharedPtr<class FSoldierMenuItem> SceneObjectsBrowserItem;
-
+	TSharedPtr<class FSoldierMenuItem> WeatherSettingsItem;
 	/** LAN Options */
 	TSharedPtr<class FSoldierMenuItem> HostLANItem;
 	TSharedPtr<class FSoldierMenuItem> JoinLANItem;	

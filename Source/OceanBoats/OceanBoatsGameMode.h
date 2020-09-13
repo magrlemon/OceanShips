@@ -62,6 +62,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void Killed(AActor* Killer, AActor* Victim);
 	virtual void Killed_Implementation(AActor* Killer, AActor* Victim);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void HitDamage(AActor* Victim, float Damage);
+	virtual void HitDamage_Implementation(AActor* Victim, float Damage);
 	UFUNCTION( exec )
 	void SetAllowBots( bool bInAllowBots, int32 InMaxBots = 8 );
 

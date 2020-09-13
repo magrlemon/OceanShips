@@ -18,6 +18,8 @@
 #include "Player/SoldierLocalPlayer.h"
 #include "OnlineSubsystemUtils.h"
 #include "SoldierHUD.h"
+#include "WeatherOptions.h"
+#include "Widgets/WeatherSettingWidget.h"
 
 #define LOCTEXT_NAMESPACE "OceanBoats.HUD.Menu"
 
@@ -115,6 +117,11 @@ void FSoldierMainMenu::Construct(TWeakObjectPtr<UArmySimGameInstance> _GameInsta
 	SoldierOptions->Construct(GetPlayerOwner());
 	SoldierOptions->TellInputAboutKeybindings();
 	SoldierOptions->OnApplyChanges.BindSP(this, &FSoldierMainMenu::CloseSubMenu);
+
+	//WeatherOptions = MakeShareable(new FWeatherOptions());
+	//WeatherOptions->Construct(GetPlayerOwner());
+	//WeatherOptions->TellInputAboutKeybindings();
+	//WeatherOptions->OnApplyChanges.BindSP(this, &FSoldierMainMenu::CloseSubMenu);
 
 	//Now that we are here, build our menu 
 	MenuWidget.Reset();
@@ -338,6 +345,9 @@ void FSoldierMainMenu::Construct(TWeakObjectPtr<UArmySimGameInstance> _GameInsta
 		{
 			MenuHelper::AddMenuItemSP( RootMenuItem, LOCTEXT( "Objects", "Scene Objects" ), this, &FSoldierMainMenu::OnShowSceneObjectsBrowser );
 			MenuHelper::AddCustomMenuItem( SceneObjectsBrowserItem,SAssignNew( SceneObjectsListWidget, SSceneObjectsList ).OwnerWidget( MenuWidget ).PlayerOwner( GetPlayerOwner( ) ) );
+
+			MenuHelper::AddMenuItemSP(RootMenuItem, LOCTEXT("Weather", "WeathSettings"), this, &FSoldierMainMenu::OnShowWeatherSettings);
+			MenuHelper::AddCustomMenuItem(WeatherSettingsItem, SAssignNew(WeatherSettingWidget, SWeatherSettingWidget).OwnerWidget(MenuWidget).PlayerOwner(GetPlayerOwner()));
 		}
 #endif
 
@@ -349,6 +359,8 @@ void FSoldierMainMenu::Construct(TWeakObjectPtr<UArmySimGameInstance> _GameInsta
 			TSharedPtr<FSoldierMenuItem> HelpSubMenu = MenuHelper::AddMenuItem(RootMenuItem, LOCTEXT("Help", "HELP"));
 			HelpSubMenu->OnConfirmMenuItem.BindStatic([](){ FSlateApplication::Get().ShowSystemHelp(); });
 		}
+
+		//MenuHelper::AddExistingMenuItem(RootMenuItem, WeatherOptions->OptionsItem.ToSharedRef());
 
 		// QUIT option (for PC)
 #if !SHOOTER_CONSOLE_UI
@@ -1290,7 +1302,12 @@ void FSoldierMainMenu::OnShowSceneObjectsBrowser( )
 	SceneObjectsListWidget->BuildSceneObjectsList( );
 	MenuWidget->EnterSubMenu( );
 }
-
+void FSoldierMainMenu::OnShowWeatherSettings()
+{
+	MenuWidget->NextMenu = WeatherSettingsItem->SubMenu;
+	//SceneObjectsListWidget->BuildSceneObjectsList();
+	MenuWidget->EnterSubMenu();
+}
 void FSoldierMainMenu::OnUIQuit()
 {
 	LockAndHideMenu();
@@ -1432,6 +1449,7 @@ void FSoldierMainMenu::ToggleGameMainMenu( ) {
 		}
 	}
 	else {
+		MenuWidget->MenuGoBack();
 		//Start hiding animation
 		MenuWidget->HideMenu( );
 		if (PCOwner) {
