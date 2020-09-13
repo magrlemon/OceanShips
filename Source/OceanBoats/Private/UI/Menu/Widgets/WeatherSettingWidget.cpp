@@ -15,15 +15,6 @@
 #define LOCTEXT_NAMESPACE "ArmySim.HUD.Menu"
 
 
-
-
-struct FSceneObjectsEntry {
-	FActorsStreamInfo StreamInfo;
-	FString		Date;
-	FString		Size;
-	int32		ResultsIndex;
-};
-
 void SWeatherSettingWidget::Construct(const FArguments& InArgs)
 {
 	PlayerOwner = InArgs._PlayerOwner;
