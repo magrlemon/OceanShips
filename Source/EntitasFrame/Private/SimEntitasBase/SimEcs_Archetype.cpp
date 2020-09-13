@@ -59,6 +59,22 @@ void ASimEcs_Archetype::HitDamge(float damage)
 {
 	TotalDamage += damage;
 }
+void ASimEcs_Archetype::RecordParticle(UParticleSystemComponent* particle)
+{
+	if (!mParticles.Find(particle))
+		mParticles.Add(particle, particle->GetComponentScale());
+}
+
+void ASimEcs_Archetype::ScaleParticleSize(UParticleSystemComponent* particle, float scale)
+{
+	if (particle == NULL)
+		return;
+	FVector* scaleVec = mParticles.Find(particle);
+	if(scaleVec)
+	{
+		particle->SetWorldScale3D((*scaleVec) * scale);
+	}
+}
 
 void ASimEcs_Archetype::EnableWaveForce_Implementation(bool enable)
 {
@@ -71,7 +87,12 @@ void ASimEcs_Archetype::EnableBoatEffect_Implementation(bool enable)
 }
 void ASimEcs_Archetype::StartFire_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "boat->Get( )->StartFire( );" );
+	//GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "boat->Get( )->StartFire( );" );
+}
+
+void ASimEcs_Archetype::ResetParticelSize_Implementation(float scale)
+{
+
 }
 
 void ASimEcs_Archetype::GrapBuoyancyComponent_Initialize( int32 ActorType ) {

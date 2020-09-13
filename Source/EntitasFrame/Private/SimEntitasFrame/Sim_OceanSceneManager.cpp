@@ -367,7 +367,7 @@ void  USimOceanSceneManager_Singleton::SetIdle( const EntityHandleId ehandleID, 
 	if (ehandleID > 0) {
 		GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode = BoatMoveMode::EBoatMoveMode_Idle;
 		GetSimRegistry( )->get<FOceanShip>( ehandleID ).ExpectSpeed = 0.0f;
-		m_MapArchetypes[ehandleID]->EnableBoatEffect( false );
+		//m_MapArchetypes[ehandleID]->EnableBoatEffect( false );
 		m_MapArchetypes[ehandleID]->EnableWaveForce( false );
 	}
 }

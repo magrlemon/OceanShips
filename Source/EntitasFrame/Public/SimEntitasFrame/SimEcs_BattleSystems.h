@@ -118,7 +118,8 @@ struct OceanShipSystem :public SystemT {
 
 	void CheckSpeedUp( FOceanShip& ship )
 	{
-		if (ship.MoveMode == EBoatMoveMode_On || ship.MoveMode == EBoatMoveMode_Back) {
+		//if (ship.MoveMode == EBoatMoveMode_On || ship.MoveMode == EBoatMoveMode_Back) 
+		{
 			if (abs( ship.CurrentSpeed - ship.ExpectSpeed ) > ship.StepSpeed*0.99) {
 				if (ship.CurrentSpeed > ship.ExpectSpeed) {
 					ship.bSpeedDown = true;
@@ -216,13 +217,13 @@ struct OceanShipSystem :public SystemT {
 				ship.MainMeshComponent->SetSimulatePhysics( true );
 		}
 		else if (ship.MoveMode == EBoatMoveMode_Idle) {
-			boat->EnableBoatEffect( false );
+			//boat->EnableBoatEffect( false );
 			boat->EnableWaveForce( false );
 		}
 		else if (ship.MoveMode == EBoatMoveMode_Fire) {
 			ship.ExpectSpeed = 0;
 			boat->EnableWaveForce( false );
-			boat->EnableBoatEffect( false );
+			//boat->EnableBoatEffect( false );
 			boat->StartFire( );
 			//ship.MoveMode = EBoatMoveMode_Idle;
 		}
@@ -271,6 +272,8 @@ struct OceanShipSystem :public SystemT {
 				MainLoopLogic( ship, boat->Get( )->ForceLocation, Cast<UStaticMeshComponent>( boat->Get( )->GetRootComponent( ) ) );
 
 				CheckState( ship, boat->Get( ) );
+
+				boat->Get()->ResetParticelSize(ship.CurrentSpeed);
 			}
 
 		} );

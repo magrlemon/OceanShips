@@ -45,11 +45,18 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void StartFire();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ResetParticelSize(float scale);
 
 	UFUNCTION(BlueprintCallable, Category = "Game")
 		void HitDamge(float damage);
 	UFUNCTION(BlueprintCallable, Category = "Game")
 		float GetHealthRange();
+	UFUNCTION(BlueprintCallable, Category = "Game")
+		void RecordParticle(UParticleSystemComponent* particle);
+
+	UFUNCTION(BlueprintCallable, Category = "Game")
+		void ScaleParticleSize(UParticleSystemComponent* particle, float scale);
 
 	virtual void StartFire_Implementation();
 
@@ -72,7 +79,7 @@ public:
 	float RollbackAngle;
 	UStaticMeshComponent* MainStaticMesh;
 	TMap<int, int> DamageResults;
-	
+	TMap<UParticleSystemComponent*, FVector> mParticles;
 	float Health;
 	float TotalDamage;
 	AActor* KilledBy;
