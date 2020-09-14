@@ -3,7 +3,7 @@
 
 #include "Cannon.h"
 #include "GameModeInterface.h"
-
+#include "Components/ArrowComponent.h"
 // Sets default values
 ACannon::ACannon()
 {
@@ -26,21 +26,31 @@ void ACannon::Tick(float DeltaTime)
 
 }
 
-void ACannon::AdjustFire_Implementation()
+void ACannon::AdjustFire_Implementation(UArrowComponent* arrow)
 {
-	//TargetLocation = pos;
-
+	USceneComponent* root = GetRootComponent();
+	FRotator meshRot = GetRootComponent()->GetComponentRotation();
 	SortDistances();
+	if (m_BoatDistances.Num() <= 0)
+		return;
 	AActor* boat = m_BoatDistances.begin().Key();
-	FVector fForward = RootComponent->GetForwardVector().GetSafeNormal();
+	if (boat == NULL)
+		return;
+
+	FVector fForward = root->GetForwardVector().GetSafeNormal();
 	float angleValue = fForward.CosineAngle2D((boat->GetActorLocation() - GetActorLocation()).GetSafeNormal());
 	//旋转炮台	
 	float leftOrRight = (FVector::CrossProduct(fForward, boat->GetActorLocation() - GetActorLocation()).Z > 0) ? -1.0f : 1.0f;
-	newRot = GetActorRotation();
-	newRot.Yaw += leftOrRight * angleValue;
+	meshRot.Yaw += leftOrRight * angleValue;
+	root->SetWorldRotation(meshRot);
+	GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, FString::SanitizeFloat(leftOrRight * angleValue));
+	//GetRootComponent()->GetComponentRotation().Add(0, 45/*leftOrRight * angleValue * 10*/, 0);
 	//调远近
 	float farHit = FVector::Dist2D(GetActorLocation(), LastHitPos) > FVector::Dist2D(GetActorLocation(), boat->GetActorLocation())?1:-1;
-	newRot.Pitch += farHit * 0.1;	
+	FRotator arrowRot = arrow->GetComponentRotation();
+	arrowRot.Pitch += farHit * 0.1;
+	arrow->SetWorldRotation(arrowRot);
+	//arrow->GetComponentRotation().Add(farHit * 0.1, 0, 0);
 }
 
 void ACannon::SortDistances()

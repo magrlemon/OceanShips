@@ -65,6 +65,13 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void HitDamage(AActor* Victim, float Damage);
 	virtual void HitDamage_Implementation(AActor* Victim, float Damage);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ShowRainy(bool show);
+	virtual void ShowRainy_Implementation(bool show);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ShowGloomy(bool show);
+	virtual void ShowGloomy_Implementation(bool show);
+
 	UFUNCTION( exec )
 	void SetAllowBots( bool bInAllowBots, int32 InMaxBots = 8 );
 
@@ -193,7 +200,7 @@ private:
 	AiImagineAgent *_AiImagineAgent = nullptr;
 	bool _wait = false;
 	bool _initilize = false;
-
+	AActor* mRain;
 
 };
 

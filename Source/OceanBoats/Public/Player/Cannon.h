@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Cannon.generated.h"
 
+class UArrowComponent;
+
 UCLASS()
 class OCEANBOATS_API ACannon : public AActor
 {
@@ -18,8 +20,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		void AdjustFire(/*FVector pos*/);
-	virtual void AdjustFire_Implementation(/*FVector pos*/);
+		void AdjustFire(UArrowComponent* arrow);
+	virtual void AdjustFire_Implementation(UArrowComponent* arrow);
 
 protected:
 	// Called when the game starts or when spawned

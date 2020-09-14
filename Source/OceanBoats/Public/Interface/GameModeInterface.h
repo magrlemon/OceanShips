@@ -46,4 +46,8 @@ public:
 		void Killed(AActor* Killer, AActor* Victim);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void HitDamage(AActor* Victim, float Damage);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ShowRainy(bool show);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ShowGloomy(bool show);
 };

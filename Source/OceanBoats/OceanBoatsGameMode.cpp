@@ -18,6 +18,8 @@
 #include "SimApi.h"
 //#include "ObstacleInterface.h"
 
+#define RAINCLASS "/Game/RainOcclusion/BP_AttachedRain.BP_AttachedRain_C"
+
 AOceanBoatsGameMode::AOceanBoatsGameMode( /*const FObjectInitializer& ObjectInitializer*/ ) //: Super( ObjectInitializer )
 {
 	// set default pawn class to our Blueprinted character
@@ -647,4 +649,22 @@ void AOceanBoatsGameMode::HitDamage_Implementation(AActor* Victim, float Damage)
 	ASimEcs_Archetype* vic = Cast<ASimEcs_Archetype>(Victim);
 	if(vic)
 		vic->HitDamge(Damage);
+}
+void AOceanBoatsGameMode::ShowRainy_Implementation(bool show)
+{
+	if(mRain == NULL)
+	{
+		UClass* RainClass = LoadClass<AActor>(NULL, TEXT(RAINCLASS));
+		if (RainClass != NULL)
+		{
+			FTransform const SpawnTransform(FRotator::ZeroRotator, FVector(0, 0, 0));
+			mRain = GWorld->SpawnActor<AActor>(RainClass, SpawnTransform);
+		}
+	}
+	if(mRain)
+		mRain->SetActorHiddenInGame(!show);
+}
+void AOceanBoatsGameMode::ShowGloomy_Implementation(bool show)
+{
+
 }
