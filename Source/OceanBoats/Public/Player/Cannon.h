@@ -33,7 +33,13 @@ public:
 		FVector LastHitPos;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Cannon)
 	FRotator newRot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Cannon)
+		float damage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Cannon)
+		bool DebugOutput = false;
 
 protected:
 	TMap<AActor*, float> m_BoatDistances;
+	float m_Elevation = 0.05;
+	float m_lastHitRange = 0;
 };

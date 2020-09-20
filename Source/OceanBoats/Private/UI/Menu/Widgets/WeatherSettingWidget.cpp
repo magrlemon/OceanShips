@@ -303,11 +303,19 @@ ECheckBoxState SWeatherSettingWidget::IsShowRainyChecked() const
 void SWeatherSettingWidget::OnShowGloomyChecked(ECheckBoxState NewCheckedState)
 {
 	mGloomyState = NewCheckedState;
+	if (mGloomyState == ECheckBoxState::Checked)
+		IGameModeInterface::Execute_ShowGloomy(UGameplayStatics::GetGameMode(GWorld), true);
+	else
+		IGameModeInterface::Execute_ShowGloomy(UGameplayStatics::GetGameMode(GWorld), false);
 }
 
 void SWeatherSettingWidget::OnShowRainyChecked(ECheckBoxState NewCheckedState)
 {
 	mRainyState = NewCheckedState;
+	if (mRainyState == ECheckBoxState::Checked)
+		IGameModeInterface::Execute_ShowRainy(UGameplayStatics::GetGameMode(GWorld), true);
+	else
+		IGameModeInterface::Execute_ShowRainy(UGameplayStatics::GetGameMode(GWorld), false);
 }
 float SWeatherSettingWidget::GetTimeOfDayValue() const
 {

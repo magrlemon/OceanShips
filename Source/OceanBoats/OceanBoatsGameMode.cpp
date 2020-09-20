@@ -652,17 +652,19 @@ void AOceanBoatsGameMode::HitDamage_Implementation(AActor* Victim, float Damage)
 }
 void AOceanBoatsGameMode::ShowRainy_Implementation(bool show)
 {
-	if(mRain == NULL)
+	/*if(mRain == NULL)
 	{
 		UClass* RainClass = LoadClass<AActor>(NULL, TEXT(RAINCLASS));
 		if (RainClass != NULL)
 		{
 			FTransform const SpawnTransform(FRotator::ZeroRotator, FVector(0, 0, 0));
 			mRain = GWorld->SpawnActor<AActor>(RainClass, SpawnTransform);
+
+			mRain->AttachToActor(UGameplayStatics::GetPlayerController(GWorld, 0)->GetPawn(), FAttachmentTransformRules::KeepRelativeTransform);
 		}
 	}
 	if(mRain)
-		mRain->SetActorHiddenInGame(!show);
+		mRain->SetActorHiddenInGame(!show);*/
 }
 void AOceanBoatsGameMode::ShowGloomy_Implementation(bool show)
 {
