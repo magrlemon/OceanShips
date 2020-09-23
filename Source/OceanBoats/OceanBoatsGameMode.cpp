@@ -14,6 +14,8 @@
 #include "Sim_OceanSceneManager.h"
 #include "SimDataStructure.h"
 #include "SimEcs_EntityManager.h"
+#include "UnInstallAnimation_DLT.h"
+#include "FSM\Sim_FsmStateDataBase.h"
 #include "SoldierPawn.h"
 #include "SimApi.h"
 //#include "ObstacleInterface.h"
@@ -71,6 +73,9 @@ void AOceanBoatsGameMode::InitBehaviac() {
 	BahaviacManager::GetInstance().GetBehaviacHandler().ReginsterHandler<AOceanBoatsGameMode>(ENUM_METHOD_ENTITY_MOVE, this, &AOceanBoatsGameMode::MoveEntity);
 	BahaviacManager::GetInstance().GetBehaviacHandler().ReginsterHandler<AOceanBoatsGameMode>(ENUM_METHOD_ENTITY_MOVE_BACK, this, &AOceanBoatsGameMode::MoveBackEntity);
 	BahaviacManager::GetInstance().GetBehaviacHandler().ReginsterHandler<AOceanBoatsGameMode>(ENUM_METHOD_ENTITY_FIRE, this, &AOceanBoatsGameMode::Fire);
+	BahaviacManager::GetInstance( ).GetBehaviacHandler( ).ReginsterHandler<AOceanBoatsGameMode>( ENUM_METHOD_OPEN_CABIN_ANIMATION, this, &AOceanBoatsGameMode::OpenCabinAnimation );
+	BahaviacManager::GetInstance( ).GetBehaviacHandler( ).ReginsterHandler<AOceanBoatsGameMode>( ENUM_METHOD_CLOSE_CABIN_ANIMATION, this, &AOceanBoatsGameMode::ClosedCabinAnimation );
+	BahaviacManager::GetInstance( ).GetBehaviacHandler( ).ReginsterHandler<AOceanBoatsGameMode>( ENUM_METHOD_UNINSTALL_BOAT_ANIMATION, this, &AOceanBoatsGameMode::UnInstallBoatAnimation );
 	_AiImagineAgent = behaviac::Agent::Create<AiImagineAgent>();
 	bool bRet = _AiImagineAgent->btload("RootBehavior");
 	_AiImagineAgent->btsetcurrent("RootBehavior");
@@ -153,6 +158,52 @@ RetVar AOceanBoatsGameMode::Fire(int argc, void ** argv) {
 		USimOceanSceneManager_Singleton::GetInstance( )->Firing( name, bFire );
 	}
 	ret.iRet = behaviac::BT_SUCCESS;
+	return ret;
+}
+
+RetVar AOceanBoatsGameMode::OpenCabinAnimation( int argc, void ** argv ) {
+	RetVar ret;
+	if (argc > 0 && argv) {
+		FString name;
+		name += FString( UTF8_TO_TCHAR( (char *)argv[0] ) );
+		bool bFire = *((bool*)(argv[1]));
+		//GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "Fire");
+		USimOceanSceneManager_Singleton::GetInstance( )->Firing( name, bFire );
+	}
+	ret.iRet = behaviac::BT_SUCCESS;
+	return ret;
+}
+
+RetVar AOceanBoatsGameMode::ClosedCabinAnimation( int argc, void ** argv ) {
+	RetVar ret;
+	if (argc > 0 && argv) {
+		FString name;
+		name += FString( UTF8_TO_TCHAR( (char *)argv[0] ) );
+		bool bFire = *((bool*)(argv[1]));
+		//GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "Fire");
+		USimOceanSceneManager_Singleton::GetInstance( )->Firing( name, bFire );
+	}
+	ret.iRet = behaviac::BT_SUCCESS;
+	return ret;
+}
+
+RetVar AOceanBoatsGameMode::UnInstallBoatAnimation( int argc, void ** argv ) {
+	RetVar ret;
+	if (argc > 0 && argv) {
+		FString name;
+		name += FString( UTF8_TO_TCHAR( (char *)argv[0] ) );
+		//bool bFire = *((bool*)(argv[1]));
+		auto interface = USimOceanSceneManager_Singleton::GetInstance( )->GetFsmManager()->GetFsm( *name );
+		if (interface->GetName( )== "") {
+
+			USimOceanSceneManager_Singleton::GetInstance( )->ChangeDLTAnimationState( *name );
+		}
+		if(interface->IsRunning())
+			ret.iRet = behaviac::BT_RUNNING;
+		else
+			ret.iRet = behaviac::BT_SUCCESS;
+	}
+	
 	return ret;
 }
 

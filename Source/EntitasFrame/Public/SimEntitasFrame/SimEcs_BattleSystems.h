@@ -141,7 +141,7 @@ struct OceanShipSystem :public SystemT {
 		/*if (ship.MoveMode != EBoatMoveMode_On || ship.MoveMode != EBoatMoveMode_Back)
 			return;*/
 
-		FRotator rot;
+		FRotator rot; 
 		FVector currentPos = ship.MainMeshComponent->GetComponentLocation( );
 		ship.MoveOnPos.Z = currentPos.Z;
 
@@ -234,19 +234,24 @@ struct OceanShipSystem :public SystemT {
 
 
 	}
-
+	//OceanShipSystem
 	void update( SimEcs_Registry &registry, float dt ) override
 	{
 		assert( OwnerActor );
 		SCOPE_CYCLE_COUNTER( STAT_OceanShip );
 		int NowPlatformTime = FPlatformTime::Seconds( );
-		registry.view<FOceanShip, FRotationComponent, FFormation, FVelocity>( ).each( [&, dt]( auto entity,
-			FOceanShip & ship, FRotationComponent & rotation, FFormation& formation, FVelocity&vel ) {
+		registry.view<FOceanShip, FRotationComponent, FFormation, FVelocity,FFaction>( ).each( [&, dt]( auto entity,
+			FOceanShip & ship, FRotationComponent & rotation, FFormation& formation, FVelocity&vel , FFaction &faction ) {
 
 			auto SimInstance = USimOceanSceneManager_Singleton::GetInstance( );
 			bool beJump = false; bool bLeaderIdle = false;
 			TSharedPtr<ASimEcs_Archetype>* boat = SimInstance->m_MapArchetypes.Find( entity );
 			if (boat) {
+				// 获取船艇和父装备关系
+				if (!faction.parentDevice.IsEmpty( )) {
+					SimInstance->AddParentDeviceMap( faction.parentDevice, entity, ship.DltLocate );
+				}
+
 				FVector boatPos = boat->Get( )->GetTransform( ).GetLocation( );
 				if (SimInstance->IsLeader( entity )) {
 					if (!NowPlatformTime - LastTime > CoolDownTime) {
@@ -705,7 +710,7 @@ struct BoatFormationSystem :public SystemT {
 		}
 		return FVector( 0, 0, 0 );
 	}
-
+	//BoatFormationSystem
 	void update( SimEcs_Registry &registry, float dt ) override
 	{
 		assert( OwnerActor );

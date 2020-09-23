@@ -57,7 +57,7 @@ static const FString bp_type_names[] = {
 	"/Game/TropicalIsland/BluePrints/BP_AirCraft",
 	"/Game/TropicalIsland/BluePrints/BP_Helicopter",
 	"/Game/ShipsAndExamples/BP_Boat",
-	"/Game/ShipsAndExamples/BP_Boat_DLT_271",
+	"/Game/ShipsAndExamples/BP_DengLT_271",
 
 
 	//-----------船艇-------------
@@ -148,6 +148,7 @@ enum   EComponentClass {
 	ECC_DEBUGSPHERE_COMPONENT,			//调试球组件 
 	ECC_ENT_FORCE_COMPONENT,			//物理作用力组件
 	ECC_ENT_FORMAION_COMPONENT,			//编队组件
+	ECC_ENT_DLT_ANIMATION_STATE_COMPONENT,	 //登陆艇动画状态机组件
 	ECC_COMPONENT_NUM = ECC_ENT_FORCE_COMPONENT
 };
 

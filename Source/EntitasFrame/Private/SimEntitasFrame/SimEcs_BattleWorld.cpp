@@ -34,6 +34,7 @@ void ASimEcs_WorldActor::BeginPlay()
 		ECSWorld->CreateAndRegisterSystem<LifetimeSystem>();
 		ECSWorld->CreateAndRegisterSystem<SwitchSimulatePhysicalSystem>( );
 		ECSWorld->CreateAndRegisterSystem<StaticMeshDrawSystem>();
+		ECSWorld->CreateAndRegisterSystem<FSMAnimationSystem>( );
 		//ECSWorld->CreateAndRegisterSystem<DebugDrawSystem>();
 		//ECSWorld->CreateAndRegisterSystem<CopyTransformToActorSystem>();
 		ECSWorld->CreateAndRegisterSystem<ArchetypeSpawnerSystem>();		

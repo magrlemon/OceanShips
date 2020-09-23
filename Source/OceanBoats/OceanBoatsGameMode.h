@@ -192,7 +192,12 @@ public:
 	RetVar MoveBackEntity(int argc, void ** argv);
 	RetVar Fire(int argc, void ** argv);
 	RetVar EndTask(int argc, void ** argv);
+	RetVar OpenCabinAnimation( int argc, void ** argv );
+	RetVar ClosedCabinAnimation( int argc, void ** argv );
+	RetVar UnInstallBoatAnimation( int argc, void ** argv );
+
 	RetVar MoveEntity(FString name,double PosX,double PosY,double dir);
+
 	void BehaviacExec();
 	//void InitObstacles();
 	//void AddObsctacleType(FString name, ObstacleType type);

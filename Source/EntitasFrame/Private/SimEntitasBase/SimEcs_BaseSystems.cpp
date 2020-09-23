@@ -341,7 +341,7 @@ void SwitchSimulatePhysicalSystem::update( SimEcs_Registry &registry, float dt )
 //////////////                                        //////////////////////            
 //////////////            Boat Formation             /////////////////////                                 
 //////////////                                        ////////////////////              
-/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////  
 
 #define COLLISION_TRACE ECC_GameTraceChannel4
 using  BoatFormationType = USimOceanSceneManager_Singleton::BoatFormationStruct;
@@ -415,5 +415,33 @@ void AvoidObstacleSystem::update( SimEcs_Registry &registry, float dt )
 				itemLafe->ExpectAvoidOffect.Z = 0.0f;
 			}
 		}
+	} );
+}
+
+
+
+
+void FSMAnimationSystem::update( SimEcs_Registry &registry, float dt )
+{
+	assert( OwnerActor );
+
+	SCOPE_CYCLE_COUNTER( STAT_FSMAnimationSystem );
+
+	//tick the FSMAnimation timers
+	registry.view<FOceanShip, FFSMAnimation, FPosition>( ).each( [&, dt]( auto entity, FOceanShip & ex, FFSMAnimation & fsmAnimation, FPosition& pos ) {
+
+		auto GInstance = USimOceanSceneManager_Singleton::GetInstance( );
+		auto archeType = USimOceanSceneManager_Singleton::GetInstance( )->FindArchetype( entity );
+		if (!archeType)return;
+		if (fsmAnimation.bFsmAnim && GInstance->GetFsmManager( )->GetFsm( *(archeType->GetName( )) )->GetName() == "IdleZJAnimationState") {
+
+		}
+		/*auto boatFormationInfo = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo.Find( formation.GroupName );
+		if (boatFormationInfo) {
+			USimOceanSceneManager_Singleton::BoatFormationStruct* itemLafe = boatFormationInfo->Find( entity );
+			if (ex.MainMeshComponent) {
+
+			}
+		}*/
 	} );
 }

@@ -334,9 +334,9 @@ struct FArchetypeSpawner {
 
 UENUM(BlueprintType)
 enum class EFaction :uint8 {
+	Neutral,
 	Red,
-	Blue,
-	Neutral
+	Blue
 };
 
 USTRUCT(BlueprintType)
@@ -344,11 +344,14 @@ struct FFaction {
 	GENERATED_BODY()
 
 		FFaction(EFaction _fact) : faction(_fact) {};
-		FFaction() : faction(EFaction::Neutral){};
+		FFaction() : faction(EFaction::Neutral), parentDevice(""){};
 
 	
 	UPROPERTY(EditAnywhere, Category = SimEcs)
 		EFaction faction;
+
+	UPROPERTY( EditAnywhere, Category = SimEcs )
+		FString parentDevice;
 };
 
 USTRUCT(BlueprintType)
@@ -407,6 +410,9 @@ struct FOceanShip {
 		FVector UnderwaterMin = FVector( -75.0, -200.0f, -75.0f );
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
 		float UnderwaterBoxLength = 450.0f;
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
+		int DltLocate = 0;   //´¬Î»
+	
 		
 	BoatMoveMode MoveMode = BoatMoveMode::EBoatMoveMode_Idle;
 	UStaticMeshComponent* MainMeshComponent;
@@ -469,24 +475,22 @@ USTRUCT( BlueprintType )
 struct FFormation {
 	GENERATED_BODY( )
 
-	UPROPERTY( EditAnywhere )
+		UPROPERTY( EditAnywhere )
 		int32 FormationValue = 1;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY( EditAnywhere )
 		FString GroupName;
 };
 
 
 USTRUCT( BlueprintType )
-struct FAnimation {
+struct FFSMAnimation {
 	GENERATED_BODY( )
 
 	UPROPERTY( EditAnywhere )
 		int32 Time = 10;
-	UPROPERTY( EditAnywhere )
-		FString AnimName;   //¶¯»­Ãû³Æ
-	UPROPERTY( EditAnywhere )
-		FString PartName;   //Ì«Ñô·«°å
 
-	    
+	UPROPERTY( EditAnywhere )
+		bool bFsmAnim;   //¿ªÆô¶¯»­×´Ì¬»úÆ÷
+
 };
 

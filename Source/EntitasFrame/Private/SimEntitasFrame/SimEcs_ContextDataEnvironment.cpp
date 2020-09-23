@@ -350,7 +350,6 @@ void ASimContextDataDroneBoatEnvironment::SerializeStructure( TMapScenario & ref
 		else if (key.Key.Compare( TEXT( "名字" ) ) == 0) {
 			m_STPropData.entName = (key.Value);
 			Writer->WriteValue( "name:", *(key.Value) );
-
 		}
 		else if (key.Key.Compare( TEXT( "类型" ) ) == 0) {
 			m_STPropData.entType = FCString::Atoi( *(key.Value) );
@@ -396,13 +395,26 @@ void ASimContextDataDroneBoatEnvironment::SerializeStructure( TMapScenario & ref
 			m_STPropData.entPos.Z = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
 		}
+		else if (key.Key.Compare( TEXT( "生命" ) ) == 0) {
+			Writer->WriteValue( "Health:", *(key.Value) );
+		}
 		else if (key.Key.Compare( TEXT( "队长" ) ) == 0) {
 			m_STPropData.entLader = FCString::Atoi( *(key.Value) );
-			Writer->WriteValue( "Leader:", (key.Value) );
+			Writer->WriteValue( "Leader:", *(key.Value) );
+		}
+		else if (key.Key.Compare( TEXT( "派别" ) ) == 0) {
+			Writer->WriteValue( "Faction:", *(key.Value) );
+		}
+		else if (key.Key.Compare( TEXT( "归属装备" ) ) == 0) {
+			Writer->WriteValue( "ParentDevice:", *(key.Value) );
+		}
+		else if (key.Key.Compare( TEXT( "船位" ) ) == 0) {
+			m_STPropData.entLader = FCString::Atoi( *(key.Value) );
+			Writer->WriteValue( "DltLocate:", *(key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "编组" ) ) == 0) {
 			m_STPropData.entGroupName = key.Value;
-			Writer->WriteValue( "FormationGroup:", (key.Value) );
+			Writer->WriteValue( "FormationGroup:", *(key.Value) );
 		}
 	}
 	Writer->WriteObjectEnd( );
@@ -444,14 +456,14 @@ void ASimContextDataNavalCraftEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine>
 #define  _GEN_COMPONENT_(TYPE)\
 	IComponentWrapper* p##TYPE##Component = pEnt->AddComponent<typename USimEcs_##TYPE##ComponentWrapper>( pEnt->GetEntityHandleId(),m_JsonValue );\
 
-		//_GEN_COMPONENT_( OceanShip )
-		/*	_GEN_COMPONENT_( Movement )
+		_GEN_COMPONENT_( OceanShip )
+			_GEN_COMPONENT_( Movement )
 			_GEN_COMPONENT_( Force )
 			_GEN_COMPONENT_( Rotation )
 			_GEN_COMPONENT_( Faction )
 			_GEN_COMPONENT_( Projectile )
 			_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_( DebugSphere )*/
+		_GEN_COMPONENT_( FSMAnimation )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -523,6 +535,9 @@ void ASimContextDataNavalCraftEnvironment::SerializeStructure( TMapScenario & re
 		else if (key.Key.Compare( TEXT( "旋转步率" ) ) == 0) {
 			m_STPropData.entPos.Z = FCString::Atof( *(key.Value) );
 			Writer->WriteValue( "TurnStep:", *(key.Value) );
+		}
+		else if (key.Key.Compare( TEXT( "派别" ) ) == 0) {
+			Writer->WriteValue( "Faction:", (key.Value) );
 		}
 		else if (key.Key.Compare( TEXT( "队长" ) ) == 0) {
 			m_STPropData.entLader = FCString::Atoi( *(key.Value) );

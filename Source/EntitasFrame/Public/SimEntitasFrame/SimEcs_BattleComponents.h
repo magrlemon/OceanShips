@@ -117,18 +117,18 @@ public:
 		FFormation Value;
 };
 
-//
-//UCLASS( ClassGroup = (SimEcs), meta = (BlueprintSpawnableComponent) )
-//class ENTITASFRAME_API USimEcs_AnimationComponentWrapper : public UActorComponent, public IComponentWrapper {
-//	GENERATED_BODY( )
-//protected:
-//	// Called when the Entity Generate successful
-//	virtual void BeginPlay( ) {};
-//	virtual void BeginDestory( ) {};
-//public:
-//	USimEcs_AnimationComponentWrapper( );
-//	virtual void AddToEntity( u64 uHandleID, FString& jsonValue );
-//	void ParseJson( FString& jsonValue );
-//	UPROPERTY( EditAnywhere, Category = SimEcs )
-//		FAnimation Value;
-//};
+
+UCLASS( ClassGroup = (SimEcs), meta = (BlueprintSpawnableComponent) )
+class ENTITASFRAME_API USimEcs_FSMAnimationComponentWrapper : public UActorComponent, public IComponentWrapper {
+	GENERATED_BODY( )
+protected:
+	// Called when the Entity Generate successful
+	virtual void BeginPlay( ) {};
+	virtual void BeginDestory( ) {};
+public:
+	USimEcs_FSMAnimationComponentWrapper( );
+	virtual void AddToEntity( u64 uHandleID, FString& jsonValue );
+	void ParseJson( FString& jsonValue );
+	UPROPERTY( EditAnywhere, Category = SimEcs )
+		FFSMAnimation Value;
+};

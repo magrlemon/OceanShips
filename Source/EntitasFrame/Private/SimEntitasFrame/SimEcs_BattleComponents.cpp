@@ -33,7 +33,8 @@ void USimEcs_FactionComponentWrapper::ParseJson( FString& jsonValue ) {
 	const TSharedRef< TJsonReader<> >& Reader = TJsonReaderFactory<>::Create( jsonValue );
 	if (FJsonSerializer::Deserialize(Reader,JsonObject))
 	{
-	    
+		Value.faction = (EFaction)(JsonObject->GetIntegerField( "Faction:" ));
+		Value.parentDevice = *(JsonObject->GetStringField( "ParentDevice:" ));
 	}
 }
 
@@ -58,7 +59,8 @@ void USimEcs_HealthComponentWrapper::ParseJson( FString& jsonValue ) {
 	TSharedPtr<FJsonObject> JsonObject;
 	const TSharedRef< TJsonReader<> >& Reader = TJsonReaderFactory<>::Create( jsonValue );
 	if (FJsonSerializer::Deserialize( Reader, JsonObject )) {
-
+		Value.Health = JsonObject->GetIntegerField( "Health:" );
+		
 	}
 }
 
@@ -95,6 +97,8 @@ void USimEcs_OceanShipComponentWrapper::ParseJson( FString& jsonValue ) {
 		Value.ForwardSpeed = JsonObject->GetIntegerField( "ForwardSpeed:" );
 		Value.TurnStep = JsonObject->GetIntegerField( "TurnStep:" );
 		Value.isLeader = JsonObject->GetBoolField( "Leader:" );
+		Value.DltLocate = JsonObject->GetBoolField( "DltLocate:" );
+
 	}
 }
 
@@ -201,31 +205,28 @@ void USimEcs_FormationComponentWrapper::ParseJson( FString& jsonValue ) {
 ////
 //
 ////* FExplosion
-//USimEcs_AnimationComponentWrapper::USimEcs_AnimationComponentWrapper( )
-//{
-//	PrimaryComponentTick.bCanEverTick = false;
-//	IComponentWrapper::STATIC_COMPONENT_TYPE_ID = EComponentClass::ECC_ENT_FORMAION_COMPONENT;
-//}
-//
-//void USimEcs_AnimationComponentWrapper::AddToEntity( u64 uHandleID, FString& jsonValue ) {
-//	auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
-//	if (simRegistry) {
-//		ParseJson( jsonValue );
-//		simRegistry->accommodate<FFormation>( uHandleID, Value );
-//	}
-//}
-//
-//void USimEcs_AnimationComponentWrapper::ParseJson( FString& jsonValue ) {
-//	if (jsonValue.IsEmpty( ))
-//		return;
-//	TSharedPtr<FJsonObject> JsonObject;
-//	const TSharedRef< TJsonReader<> >& Reader = TJsonReaderFactory<>::Create( jsonValue );
-//	if (FJsonSerializer::Deserialize( Reader, JsonObject )) {
-//
-//		Value.Time = JsonObject->GetIntegerField( "Time:" );
-//		Value.AnimName = JsonObject->GetStringField( "AnimName:" );
-//		Value.PartName = JsonObject->GetStringField( "PartName:" );
-//
-//	}
-//}
+USimEcs_FSMAnimationComponentWrapper::USimEcs_FSMAnimationComponentWrapper( )
+{
+	PrimaryComponentTick.bCanEverTick = false;
+	IComponentWrapper::STATIC_COMPONENT_TYPE_ID = EComponentClass::ECC_ENT_DLT_ANIMATION_STATE_COMPONENT;
+}
+
+void USimEcs_FSMAnimationComponentWrapper::AddToEntity( u64 uHandleID, FString& jsonValue ) {
+	auto simRegistry = USimOceanSceneManager_Singleton::GetInstance( )->GetSimRegistry( );
+	if (simRegistry) {
+		ParseJson( jsonValue );
+		simRegistry->accommodate<FFSMAnimation>( uHandleID, Value );
+	}
+}
+
+void USimEcs_FSMAnimationComponentWrapper::ParseJson( FString& jsonValue ) {
+	if (jsonValue.IsEmpty( ))
+		return;
+	TSharedPtr<FJsonObject> JsonObject;
+	const TSharedRef< TJsonReader<> >& Reader = TJsonReaderFactory<>::Create( jsonValue );
+	if (FJsonSerializer::Deserialize( Reader, JsonObject )) {
+		Value.Time = JsonObject->GetIntegerField( "Time:" );
+		Value.bFsmAnim = JsonObject->GetBoolField( "FsmAnim:" );  
+	}
+}
 

@@ -250,6 +250,13 @@ struct ArchetypeSpawnerSystem :public SystemT {
 					boatFormate.BoatTargetPosition = SpawnPosition;
 					boatFormate.ForwardVector = quatRot.GetForwardVector( );
 					boatFormate.IsLeader = spawner.isLeader;
+
+					if (spawner.ActorType == EEE_NAVALCRAFT_TYPE) {
+						USimOceanSceneManager_Singleton::GetInstance( )->CreateFsm( FoundArchetype.Get( ), spawner.Name , spawner.entHandleId );
+					}
+					else if (spawner.ActorType == EEE_DRONEBOAT_TYPE) {
+
+					}
 					
 					auto FoundGroup = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo.Find( spawner.GroupName );
 					if (!FoundGroup) {
@@ -408,5 +415,16 @@ struct AvoidObstacleSystem :public SystemT {
 	void update( SimEcs_Registry &registry, float dt ) override;
 
 };
+
+//////////////////////////////////////////////////////////////////////////
+// AvoidObstacle System
+//////////////////////////////////////////////////////////////////////////
+DECLARE_CYCLE_STAT( TEXT( "SimEcs: FSMAnimationSystem " ), STAT_FSMAnimationSystem, STATGROUP_ECS );
+struct FSMAnimationSystem :public SystemT {
+
+	void update( SimEcs_Registry &registry, float dt ) override;
+
+};
+
 
 

@@ -7,6 +7,8 @@
 #include "SimECS_BattleWorld.h"
 #include "Kismet/GameplayStatics.h"
 #include "SimEcs_BaseComponents.h"
+#include "UnInstallAnimation_DLT.h"
+#include "FSM\Sim_FSMManager.h"
  //USimOceanSceneManager_Singleton* USimOceanSceneManager_Singleton::gSingletonScene = nullptr;
 
 USimOceanSceneManager_Singleton::USimOceanSceneManager_Singleton( const FObjectInitializer& ObjectInitializer )
@@ -441,6 +443,71 @@ void USimOceanSceneManager_Singleton::Firing( const FString& strName, const bool
 		ship.MoveMode = EBoatMoveMode_Fire;
 		//GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, "boat->Get( )->StartFire( );" );
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////////
+
+IFsmManagerInterface* USimOceanSceneManager_Singleton::GetFsmManager( ) {
+
+	if (!m_FsmManager) {
+		m_FsmManager = new FsmManager( );
+	}
+	return 	m_FsmManager;
+
+}
+
+void USimOceanSceneManager_Singleton::AddParentDeviceMap( const FString& parentDev, const EntityHandleId eID ,int32 dltLocate) {
+	BindParentDeviceStruct* bpds =  m_MapParentDeviceData.Find( parentDev );
+	if (bpds) {
+		if (dltLocate == 1) {
+			(*bpds).eFroentID = eID;
+		}
+		else if (dltLocate == 2) {
+			(*bpds).eEndID = eID;
+		}
+	}
+	else {
+		BindParentDeviceStruct deviceData;
+		if (dltLocate == 1) {
+			deviceData.eFroentID = eID;
+		}
+		else if (dltLocate == 2) {
+			deviceData.eEndID = eID;
+		}
+
+		deviceData.eFroentID = eID;
+		m_MapParentDeviceData.Add( parentDev, deviceData );
+	}
+}
+
+void USimOceanSceneManager_Singleton::CreateFsm( AActor* pActor, FName name, EntityHandleId entHandleId ) {
+	if (!pActor)return;
+	GetFsmManager( )->CreateFsm( pActor, name, GenDLTUnInstallAnimationFsmState( ) );
+
+	FsmStateDataBase fsdb;
+	fsdb.name = name;
+	fsdb.entHandleId = entHandleId;
+	GetFsmManager( )->GetFsm( name )->ChangeState<IdleZJAnimationState>( fsdb );
+}
+//´´½¨µÇÂ½Í§Ð¶ÔØ´¬Í§×´Ì¬»ú¶¯»­
+TArray<IFsmStateInterface*>& USimOceanSceneManager_Singleton::GenDLTUnInstallAnimationFsmState( ) {
+	
+	m_listFsm.Add( new IdleZJAnimationState( ) );
+	m_listFsm.Add( new SliderFrontZJAnimationState( ) );
+	m_listFsm.Add( new UpWarpZJAnimationState( ) );
+	m_listFsm.Add( new UnInstallBoatAnimationState( ) );
+	m_listFsm.Add( new DowningZJAnimationState( ) );
+	m_listFsm.Add( new CheckoutEquipmentState( ) );
+	m_listFsm.Add( new SliderBackZJAnimationState( ) );
+
+	return m_listFsm;
+}
+
+void USimOceanSceneManager_Singleton::ChangeDLTAnimationState( FName name ) {
+	FsmStateDataBase fsdb;
+	GetFsmManager( )->GetFsm( name )->ChangeState<SliderFrontZJAnimationState>( fsdb );
 }
 
 USimOceanSceneManager_Singleton* USimOceanSceneManager_Singleton::gSingletonScene = nullptr;

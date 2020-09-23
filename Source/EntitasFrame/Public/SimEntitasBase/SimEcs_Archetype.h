@@ -14,6 +14,7 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/Info.h"
 #include "SimEcs_Core.h"
+#include "Sim_FsmStateDataBase.h"
 #include "SimApi.h"
 #include "SimEcs_Archetype.generated.h"
 
@@ -62,6 +63,7 @@ public:
 
 	void GrapBuoyancyComponent_Initialize( int32 ActorType);
 
+	TSharedPtr<UStaticMeshComponent> GetSubUStaticMeshComponentByName(FString& strComponentName) ;
 public:
 	int GetDamageResult(int type);
 	int GetTotalDamage();
@@ -83,4 +85,6 @@ public:
 	float Health;
 	float TotalDamage;
 	AActor* KilledBy;
+
+
 };

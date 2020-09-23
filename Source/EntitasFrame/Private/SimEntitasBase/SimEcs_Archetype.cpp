@@ -112,3 +112,18 @@ void ASimEcs_Archetype::GrapBuoyancyComponent_Initialize( int32 ActorType ) {
 		pUBuoyancyComponent->AddLocalOffset(FVector::ZeroVector );
 
 }
+
+
+TSharedPtr<UStaticMeshComponent> ASimEcs_Archetype::GetSubUStaticMeshComponentByName( FString& strComponentName )
+{
+	if (strComponentName.IsEmpty( ))return nullptr;
+	TSet<UActorComponent*> arrSpot = GetComponents( );
+	for (auto part : arrSpot) {
+		if (!part || part->GetName( ).Compare( strComponentName ) != 0) {
+			continue;
+		}
+		return MakeShareable(Cast< UStaticMeshComponent >( part ));
+	}
+
+	return nullptr;
+}

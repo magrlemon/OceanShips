@@ -18,6 +18,7 @@
 #include "util/GpsDataTransfer.h"
 #include "SimEcs_CameraManager.h"
 #include "SimDataStructure.h"
+#include "FSM/Sim_IFsmManager.h"
 #include "Sim_OceanSceneManager.generated.h"
 
 
@@ -56,6 +57,17 @@ public:
 	using EntityHandleId = uint64_t;
 	TMap<EntityHandleId, TSharedPtr<ASimEcs_Archetype>> m_MapArchetypes;
 
+	struct BindParentDeviceStruct {
+		BindParentDeviceStruct( ) {
+			eFroentID = 0;
+			eEndID = 0;
+		}
+		EntityHandleId   eFroentID;
+		EntityHandleId   eEndID;
+	};
+
+	TMap<FString, BindParentDeviceStruct>  m_MapParentDeviceData; //FVector.x 船前部仓位 FVector.y 船后部仓位
+	
     /* per group'leader*/
 	TMap<FString, EntityHandleId> m_MapLeaderArchetypes;
 
@@ -178,7 +190,11 @@ public:
 	/* get leader by group name*/
 	EntityHandleId GetGroupLeader( const FString& strGroup );
 
+	void AddParentDeviceMap( const FString& parentDev, const EntityHandleId eID, int32 dltLocate );
 
+	void CreateFsm( AActor* pActor, FName name , EntityHandleId entHandleId );
+
+	TArray<IFsmStateInterface*>& GenDLTUnInstallAnimationFsmState( );
 	/**
 	 * Retrieves the Objects streams that are available for object list. May execute asynchronously.
 	 *
@@ -187,6 +203,10 @@ public:
 	//virtual void EnumerateObjectsStreams( const FNetworkReplayVersion& ReplayVersion, const FString& UserString, const FString& MetaString, const FEnumerateStreamsCallback& Delegate ) = 0;
 
 	void EnumerateObjectsStreams( const FEnumerateObjectsStreamsCallback& Delegate );
+
+	IFsmManagerInterface* GetFsmManager( );
+
+	void ChangeDLTAnimationState( FName name );
 protected:
 	/* initialize Scenario xml data */
 	void InitialzieScenarioData( );
@@ -233,5 +253,9 @@ private:
 	TArray<FString> m_arrSimMessage;
 
 	AActor* m_oceanActor;
+
+
+	IFsmManagerInterface* m_FsmManager;
+	TArray<IFsmStateInterface*> m_listFsm;
 
 };
