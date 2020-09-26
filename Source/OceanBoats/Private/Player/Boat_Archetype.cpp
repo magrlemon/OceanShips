@@ -62,58 +62,58 @@ void ABoat_Archetype::TickMove(FVector loc, UPrimitiveComponent* root)
 
 	//BoatRoot = root;
 	
-	if (Tags.Num( ) > 0) {
-		if (Tags[0].Compare( TEXT( "Sim_BoatArchetype" ) ) == 0) {
-		
-			FVector curPos = MainMeshComponent->GetComponentLocation( );
-			DVector2 vecLatLon =  USimOceanSceneManager_Singleton::GetInstance()->ConvertWorldPositonToLatLon( curPos );
-			int id = 0;
-			FString fName = GetName( );
-			if (GetName( ).Compare( "BP_Boats_XLT5_2" ) == 0) {
-				id = 1;
-			}
-			else if (GetName( ).Compare( "BP_Boats_XLT_EX4_5" ) == 0)
-			{
-				id = 2;
-			}
-			else if (GetName( ).Compare( "BP_Boats_GCZYJT_2" ) == 0) {
-				id = 3;
-			}
-			else if (GetName( ).Compare( "BP_Boats_XLT_EX_2" ) == 0) {
-				id = 4;
-			}
-			else if (GetName( ).Compare( "BP_Boats_XLT_EX2_5" ) == 0) {
-				id = 5;
-			}
-			
-		//	GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, vecLatLon.ToString() );
-			time_t now = FDateTime::Now().GetTicks() / ETimespan::TicksPerMillisecond;
-			static time_t _last_beat = 0;
-			static time_t run_time = 0;
-			static time_t max_time = 100;
-			run_time += now - _last_beat;
-			if (run_time>max_time) 
-			{
-				FString  jsonstr;
-				TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&jsonstr);
-				Writer->WriteObjectStart();
-				Writer->WriteValue("Num", id);
-				Writer->WriteValue("J", vecLatLon.X);
-				Writer->WriteValue("W", vecLatLon.Y);
-				Writer->WriteValue("Speed", 0);
-				Writer->WriteObjectEnd();
-				Writer->Close();
-				NetWork::SendMsg(TCHAR_TO_UTF8(*jsonstr));
-				run_time = 0;
-			}
+	//if (Tags.Num( ) > 0) {
+	//	if (Tags[0].Compare( TEXT( "Sim_BoatArchetype" ) ) == 0) {
+	//	
+	//		FVector curPos = MainMeshComponent->GetComponentLocation( );
+	//		DVector2 vecLatLon =  USimOceanSceneManager_Singleton::GetInstance()->ConvertWorldPositonToLatLon( curPos );
+	//		int id = 0;
+	//		FString fName = GetName( );
+	//		if (GetName( ).Compare( "BP_Boats_XLT5_2" ) == 0) {
+	//			id = 1;
+	//		}
+	//		else if (GetName( ).Compare( "BP_Boats_XLT_EX4_5" ) == 0)
+	//		{
+	//			id = 2;
+	//		}
+	//		else if (GetName( ).Compare( "BP_Boats_GCZYJT_2" ) == 0) {
+	//			id = 3;
+	//		}
+	//		else if (GetName( ).Compare( "BP_Boats_XLT_EX_2" ) == 0) {
+	//			id = 4;
+	//		}
+	//		else if (GetName( ).Compare( "BP_Boats_XLT_EX2_5" ) == 0) {
+	//			id = 5;
+	//		}
+	//		
+	//	//	GEngine->AddOnScreenDebugMessage( -1, 8.f, FColor::Red, vecLatLon.ToString() );
+	//		time_t now = FDateTime::Now().GetTicks() / ETimespan::TicksPerMillisecond;
+	//		static time_t _last_beat = 0;
+	//		static time_t run_time = 0;
+	//		static time_t max_time = 100;
+	//		run_time += now - _last_beat;
+	//		if (run_time>max_time) 
+	//		{
+	//			FString  jsonstr;
+	//			TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&jsonstr);
+	//			Writer->WriteObjectStart();
+	//			Writer->WriteValue("Num", id);
+	//			Writer->WriteValue("J", vecLatLon.X);
+	//			Writer->WriteValue("W", vecLatLon.Y);
+	//			Writer->WriteValue("Speed", 0);
+	//			Writer->WriteObjectEnd();
+	//			Writer->Close();
+	//			NetWork::SendMsg(TCHAR_TO_UTF8(*jsonstr));
+	//			run_time = 0;
+	//		}
 
-			_last_beat = now;
-			
-		}
-	}
+	//		_last_beat = now;
+	//		
+	//	}
+	//}
 
-	root->AddForceAtLocation(root->GetRightVector() * RightAxisValue * root->GetMass() * SteeringSpeed, loc);
-	root->AddForce(root->GetForwardVector() * root->GetMass() * ForwardAxisValue * ForwardSpeed);
+	//root->AddForceAtLocation(root->GetRightVector() * RightAxisValue * root->GetMass() * SteeringSpeed, loc);
+	//root->AddForce(root->GetForwardVector() * root->GetMass() * ForwardAxisValue * ForwardSpeed);
 }
 
 void ABoat_Archetype::MainLoopLogic()
@@ -436,3 +436,6 @@ float ABoat_Archetype::GetRollbackAngle_Implementation()
 {
 	return 0.0f;
 }
+
+
+

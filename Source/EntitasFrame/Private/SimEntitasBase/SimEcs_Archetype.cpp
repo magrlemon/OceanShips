@@ -113,7 +113,16 @@ void ASimEcs_Archetype::GrapBuoyancyComponent_Initialize( int32 ActorType ) {
 
 }
 
+void ASimEcs_Archetype::Avoid()
+{
+	AVoided = true;
+	GetWorldTimerManager().SetTimer(AvoidHandler, this, &ASimEcs_Archetype::Active_AvoidStop, AvoidDelay);
+}
 
+void ASimEcs_Archetype::Active_AvoidStop()
+{
+	AVoided = false;
+}
 TSharedPtr<UStaticMeshComponent> ASimEcs_Archetype::GetSubUStaticMeshComponentByName( FString& strComponentName )
 {
 	if (strComponentName.IsEmpty( ))return nullptr;

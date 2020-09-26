@@ -112,8 +112,13 @@ struct OceanShipSystem :public SystemT {
 			return;
 
 		ship.MainMeshComponent = root;
-		root->AddForceAtLocation( root->GetRightVector( ) * ship.RightAxisValue * root->GetMass( ) * ship.SteeringSpeed, forceLocation );
-		root->AddForce( root->GetForwardVector( ) * root->GetMass( ) * ship.ForwardAxisValue * ship.ForwardSpeed );
+		FVector moveDir = FVector::ZeroVector;
+		if (ship.bAvoid)
+			moveDir = root->GetRightVector() + root->GetForwardVector();
+		else
+			moveDir = root->GetForwardVector();
+		/*root->AddForceAtLocation( root->GetRightVector( ) * ship.RightAxisValue * root->GetMass( ) * ship.SteeringSpeed, forceLocation );*/
+		root->AddForce( /*root->GetForwardVector( )*/moveDir * root->GetMass( ) * ship.ForwardAxisValue * ship.ForwardSpeed );
 	}
 
 	void CheckSpeedUp( FOceanShip& ship )
@@ -141,7 +146,7 @@ struct OceanShipSystem :public SystemT {
 		/*if (ship.MoveMode != EBoatMoveMode_On || ship.MoveMode != EBoatMoveMode_Back)
 			return;*/
 
-		FRotator rot; 
+		FRotator rot;
 		FVector currentPos = ship.MainMeshComponent->GetComponentLocation( );
 		ship.MoveOnPos.Z = currentPos.Z;
 
@@ -155,7 +160,7 @@ struct OceanShipSystem :public SystemT {
 			ship.ForwardAxisValue = -ship.CurrentSpeed;
 			rot.Yaw = FindLookAtRotation( currentPos, ship.MoveOnPos ).Yaw;
 		}
-
+				
 		if (ship.MainMeshComponent != NULL) {
 			ship.MainMeshComponent->SetWorldRotation( rot );
 		}
@@ -273,7 +278,7 @@ struct OceanShipSystem :public SystemT {
 					return;
 				}
 				RecordBoatDetail( ship, boat->Get( ) );
-
+				ship.bAvoid = boat->Get()->AVoided;
 				MainLoopLogic( ship, boat->Get( )->ForceLocation, Cast<UStaticMeshComponent>( boat->Get( )->GetRootComponent( ) ) );
 
 				CheckState( ship, boat->Get( ) );

@@ -248,15 +248,21 @@ void BarrierFixedRaycastSystem::update( SimEcs_Registry &registry, float dt )
 		bool const bHadBlockingHit = World->LineTraceMultiByChannel( OutHitResults, actorLocation, forwardVector, ECC_WorldStatic, Line );
 		if (!bHadBlockingHit)return;
 		int32 findHitIdx = -1;
+		bool bHitLandScape = false;
 		for (int32 HitIdx = 0; HitIdx < OutHitResults.Num( ); HitIdx++) {
 			const FHitResult& Check = OutHitResults[HitIdx];
 			if (Check.GetActor( ) && Check.GetActor( )->Tags.Num()>0 &&  Check.GetActor( )->Tags[0].Compare( "Landscape" ) == 0) {
 				findHitIdx = HitIdx;
+				bHitLandScape = true;
 				break;
 			}
-			else {
+			else if (Check.GetActor() && Check.GetActor()->Tags.Num() > 0 && Check.GetActor()->Tags[0].Compare("sim_ocean") == 0) {
 				findHitIdx = HitIdx;
+				break;
 			}
+			/*else {
+				findHitIdx = HitIdx;
+			}*/
 		}
 		if (findHitIdx < 0)return;
 		if (OutHitResults[findHitIdx].GetActor( )) {
@@ -265,7 +271,14 @@ void BarrierFixedRaycastSystem::update( SimEcs_Registry &registry, float dt )
 			auto  SceneComponent = archeType.Get( )->GetRootComponent( );
 			if (archeType && SceneComponent) {
 				pos.pos = OutHitResults[findHitIdx].Location + dir * -10.0f;
-				
+				if (!bHitLandScape)
+				{
+					if (World->LineTraceMultiByChannel(OutHitResults, pos.pos, forwardVector, ECC_WorldStatic, Line))
+					{
+						pos.pos = OutHitResults[0].Location + dir * -10.0f;
+					}
+				}				
+
 				if (ray.Distance < 15.0f) {
 					FSimulatePhysical fsp;
 					fsp.LifeLeft = 0.5f;
@@ -277,14 +290,16 @@ void BarrierFixedRaycastSystem::update( SimEcs_Registry &registry, float dt )
 					return;
 				}
 				DrawDebugLine( World, archeType->GetTransform( ).GetTranslation( ), pos.pos, FColor::Green, true, 5.0f );
+				//DrawDebugPoint(World, pos.pos, 10, FColor::Red, false, 1);
+				//archeType.Get( )->SetActorEnableCollision( true );
+				
+				//archeType.Get()->SetActorLocation(pos.pos);
 
-				archeType.Get( )->SetActorEnableCollision( true );
-
-				for (int32 ChildIndex = 0; ChildIndex < SceneComponent->GetNumChildrenComponents( ); ++ChildIndex) {
-					if (UDestructibleComponent* ChildComponent = Cast<UDestructibleComponent>( SceneComponent->GetChildComponent( ChildIndex ) )) {
-						ChildComponent->SetWorldLocation( pos.pos );
-						FVector fCurPos = ChildComponent->GetComponentLocation( );
-						ray.Distance = FVector::Dist( fCurPos, pos.pos );
+				for (int32 ChildIndex = 0; ChildIndex < SceneComponent->GetNumChildrenComponents(); ++ChildIndex) {
+					if (UDestructibleComponent* ChildComponent = Cast<UDestructibleComponent>(SceneComponent->GetChildComponent(ChildIndex))) {
+						ChildComponent->SetWorldLocation(pos.pos);
+						FVector fCurPos = ChildComponent->GetComponentLocation();
+						ray.Distance = FVector::Dist(fCurPos, pos.pos);
 					}
 				}
 			}

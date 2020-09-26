@@ -31,6 +31,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OceanShip")
 		FVector ForceLocation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Normal")
+		bool AVoided = false;
+
+	UFUNCTION(BlueprintCallable, Category = "Game")
+		void Avoid();
 
 	UFUNCTION(BlueprintCallable, Category = "Game")
 		void GrapMesh(UStaticMeshComponent* mainMesh);
@@ -68,7 +73,8 @@ public:
 	int GetDamageResult(int type);
 	int GetTotalDamage();
 	void AddResult(int type);
-	
+	void Active_AvoidStop();
+
 public:
 	int32 ArchType;
 	uint64 EntId;
@@ -86,5 +92,6 @@ public:
 	float TotalDamage;
 	AActor* KilledBy;
 
-
+	FTimerHandle AvoidHandler;
+	float AvoidDelay = 2.0f;
 };

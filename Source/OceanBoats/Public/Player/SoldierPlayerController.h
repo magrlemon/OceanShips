@@ -354,6 +354,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Game")
 	TSubclassOf<UClass> m_LightType;
 
+	void  SetReservedViewTarget( AActor* selActor);
 private:
 
 	/** Handle for efficient management of ClientStartOnlineGame timer */

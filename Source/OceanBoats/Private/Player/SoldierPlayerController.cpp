@@ -951,6 +951,11 @@ void ASoldierPlayerController::ResetView()
 	SwitchBoatIndex = 0;
 }
 
+
+void ASoldierPlayerController::SetReservedViewTarget( AActor* selActor ) {
+	ReservedViewTarget = selActor;
+}
+
 void ASoldierPlayerController::Turn(float val)
 {
 	AddYawInput(val);
