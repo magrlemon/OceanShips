@@ -184,7 +184,7 @@ struct ArchetypeSpawnerSystem :public SystemT {
 			SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			FoundArchetype = MakeShareable( OwnerActor->GetWorld()->SpawnActor<ASimEcs_Archetype>(ArchetypeClass, SpawnPosition , quatRot.Rotator(), SpawnInfo ));
 			if (!FoundArchetype.IsValid( ))return;
-			FoundArchetype->SetActorLabel( *GetNameSafe( FoundArchetype.Get() ) );
+		//	FoundArchetype->SetActorLabel( *GetNameSafe( FoundArchetype.Get() ) );
 			UE_LOG(LogFlying, Warning, TEXT("Spawned archetype: %s"), *GetNameSafe( FoundArchetype.Get( ) ));
 			if (!FoundArchetype)
 			{   
@@ -252,26 +252,27 @@ struct ArchetypeSpawnerSystem :public SystemT {
 					boatFormate.IsLeader = spawner.isLeader;
 
 					if (spawner.ActorType == EEE_NAVALCRAFT_TYPE) {
-						USimOceanSceneManager_Singleton::GetInstance( )->CreateFsm( FoundArchetype.Get( ), spawner.Name , spawner.entHandleId );
+						//USimOceanSceneManager_Singleton::GetInstance( )->CreateFsm( FoundArchetype.Get( ), spawner.Name , spawner.entHandleId );
 					}
 					else if (spawner.ActorType == EEE_DRONEBOAT_TYPE) {
-
+						FoundArchetype->SetActorHiddenInGame( false );
 					}
-					
-					auto FoundGroup = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo.Find( spawner.GroupName );
-					if (!FoundGroup) {
-						USimOceanSceneManager_Singleton::TMapFormation mapBoatsFormation;
-						//TMap<EntityHandleId, BoatFormationStruct>
-						mapBoatsFormation.Add( spawner.entHandleId, boatFormate );
-						USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo.Add( spawner.GroupName, mapBoatsFormation );
-					}
-					else {
-						FoundGroup->Add( spawner.entHandleId, boatFormate );
+					if (!spawner.GroupName.IsEmpty( )) {
+						auto FoundGroup = USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo.Find( spawner.GroupName );
+						if (!FoundGroup) {
+							USimOceanSceneManager_Singleton::TMapFormation mapBoatsFormation;
+							//TMap<EntityHandleId, BoatFormationStruct>
+							mapBoatsFormation.Add( spawner.entHandleId, boatFormate );
+							USimOceanSceneManager_Singleton::GetInstance( )->m_TTMapBoatFormationInfo.Add( spawner.GroupName, mapBoatsFormation );
+						}
+						else {
+							FoundGroup->Add( spawner.entHandleId, boatFormate );
+						}
 					}
 					USimOceanSceneManager_Singleton::GetInstance( )->m_MapArchetypesName.Add( spawner.entHandleId, spawner.Name );
 					/* per group'leader*/
-					if(spawner.isLeader)
-						USimOceanSceneManager_Singleton::GetInstance( )->m_MapLeaderArchetypes.Add( spawner.GroupName, spawner.entHandleId );
+					if(spawner.isLeader)   
+						USimOceanSceneManager_Singleton::GetInstance( )->m_MapLeaderArchetypes.Add( spawner.entHandleId ,spawner.GroupName);
 
 
 				}

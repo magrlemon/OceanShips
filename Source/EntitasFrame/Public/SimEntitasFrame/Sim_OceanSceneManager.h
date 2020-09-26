@@ -59,17 +59,19 @@ public:
 
 	struct BindParentDeviceStruct {
 		BindParentDeviceStruct( ) {
-			eFroentID = 0;
-			eEndID = 0;
+			strParentDeviceName = "";
+			iLocator = 0;
+			bUnstalled = false;
 		}
-		EntityHandleId   eFroentID;
-		EntityHandleId   eEndID;
+		FString			strParentDeviceName;
+		int32			iLocator;
+		bool			bUnstalled;
 	};
-
-	TMap<FString, BindParentDeviceStruct>  m_MapParentDeviceData; //FVector.x 船前部仓位 FVector.y 船后部仓位
+	bool			bIgnore = false;
+	TMap<EntityHandleId, BindParentDeviceStruct>  m_MapParentDeviceData; //FVector.x 船前部仓位 FVector.y 船后部仓位
 	
     /* per group'leader*/
-	TMap<FString, EntityHandleId> m_MapLeaderArchetypes;
+	TMap<EntityHandleId, FString> m_MapLeaderArchetypes;
 
 	struct BoatFormationStruct {
 		BoatFormationStruct( ) {
@@ -190,9 +192,13 @@ public:
 	/* get leader by group name*/
 	EntityHandleId GetGroupLeader( const FString& strGroup );
 
+	//破障艇绑定关系
 	void AddParentDeviceMap( const FString& parentDev, const EntityHandleId eID, int32 dltLocate );
-
+	const FString GetParentDeviceMap( const EntityHandleId eID );
+	const EntityHandleId  GetUnstallDroneBoatIDByParentDeviceName( const FString& strName, int32 iLocate );
 	void CreateFsm( AActor* pActor, FName name , EntityHandleId entHandleId );
+	void SetDroneShipDeviceSignalLineVisable( FName name, bool bVisiable );
+
 
 	TArray<IFsmStateInterface*>& GenDLTUnInstallAnimationFsmState( );
 	/**

@@ -237,7 +237,7 @@ namespace behaviac
 
 		virtual bool load()
 		{
-			AgentMeta::SetTotalSignature(3124246202u);
+			AgentMeta::SetTotalSignature(1943110904u);
 
 			AgentMeta* meta = NULL;
 			BEHAVIAC_UNUSED_VAR(meta);
@@ -253,18 +253,19 @@ namespace behaviac
 			meta->RegisterMethod(502968959u, BEHAVIAC_NEW CMethod_behaviac_Agent_VectorRemove());
 
 			// AiImagineAgent
-			meta = BEHAVIAC_NEW AgentMeta(1322961505u);
+			meta = BEHAVIAC_NEW AgentMeta(4005166046u);
 			AgentMeta::GetAgentMetas()[3057674494u] = meta;
-			meta->RegisterMethod(3949698916u, BEHAVIAC_NEW CAgentMethodVoid_4<double, double, double, int>(FunctionPointer_AiImagineAgent_CreateCamera));
+			meta->RegisterMethod(1421172750u, BEHAVIAC_NEW CAgentMethod_2< behaviac::EBTStatus, behaviac::string, int >(FunctionPointer_AiImagineAgent_ClosedCabinAnimation));
 			meta->RegisterMethod(2829095391u, BEHAVIAC_NEW CAgentMethodVoid(FunctionPointer_AiImagineAgent_End));
 			meta->RegisterMethod(3771923015u, BEHAVIAC_NEW CAgentMethodVoid_2<behaviac::string, bool>(FunctionPointer_AiImagineAgent_Fire));
 			meta->RegisterMethod(1045109914u, BEHAVIAC_NEW CAgentStaticMethodVoid_1<char*>(FunctionPointer_AiImagineAgent_LogMessage));
-			meta->RegisterMethod(303193437u, BEHAVIAC_NEW CAgentMethodVoid_5<behaviac::string, double, double, double, int>(FunctionPointer_AiImagineAgent_MoveBackEntity));
+			meta->RegisterMethod(303193437u, BEHAVIAC_NEW CAgentMethodVoid_5<behaviac::string, double, double, double, double>(FunctionPointer_AiImagineAgent_MoveBackEntity));
 			meta->RegisterMethod(2442883289u, BEHAVIAC_NEW CAgentMethod_4< behaviac::EBTStatus, behaviac::string, double, double, double >(FunctionPointer_AiImagineAgent_MoveEntity));
-			meta->RegisterMethod(605181692u, BEHAVIAC_NEW CAgentMethodVoid_2<behaviac::string, behaviac::string>(FunctionPointer_AiImagineAgent_PlayAnimation));
+			meta->RegisterMethod(1839651425u, BEHAVIAC_NEW CAgentMethod_2< behaviac::EBTStatus, behaviac::string, int >(FunctionPointer_AiImagineAgent_OpenCabinAnimation));
 			meta->RegisterMethod(1505908390u, BEHAVIAC_NEW CAgentMethodVoid(FunctionPointer_AiImagineAgent_SayHello));
 			meta->RegisterMethod(4046605448u, BEHAVIAC_NEW CAgentMethodVoid(FunctionPointer_AiImagineAgent_SayHelloWorld));
 			meta->RegisterMethod(664995375u, BEHAVIAC_NEW CAgentMethodVoid(FunctionPointer_AiImagineAgent_Start));
+			meta->RegisterMethod(3868996755u, BEHAVIAC_NEW CAgentMethod< behaviac::EBTStatus >(FunctionPointer_AiImagineAgent_UnInstallBoatAnimation));
 			meta->RegisterMethod(2521019022u, BEHAVIAC_NEW CMethod_behaviac_Agent_VectorAdd());
 			meta->RegisterMethod(2306090221u, BEHAVIAC_NEW CMethod_behaviac_Agent_VectorClear());
 			meta->RegisterMethod(3483755530u, BEHAVIAC_NEW CMethod_behaviac_Agent_VectorContains());

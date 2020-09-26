@@ -98,7 +98,7 @@ void USimEcs_OceanShipComponentWrapper::ParseJson( FString& jsonValue ) {
 		Value.TurnStep = JsonObject->GetIntegerField( "TurnStep:" );
 		Value.isLeader = JsonObject->GetBoolField( "Leader:" );
 		Value.DltLocate = JsonObject->GetBoolField( "DltLocate:" );
-
+		Value.bInitializeParentDevice = Value.DltLocate;  
 	}
 }
 

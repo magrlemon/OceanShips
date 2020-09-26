@@ -14,8 +14,8 @@ IFSMInterface* FsmManager::CreateFsm( AActor* owner, FName fsmName, TArray<IFsmS
 {
 	if (!fsmName.IsValid()) return nullptr;
 	auto fsm = m_Fsms.Find( fsmName );
-	if (!fsm) {
-		return nullptr;
+	if (fsm) {
+		return *fsm;
 	}
 	FSMachine* pFsm = new FSMachine( );
 	pFsm->InitFsm( owner, fsmName, states );

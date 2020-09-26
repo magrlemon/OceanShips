@@ -216,7 +216,7 @@ void USimOceanSceneManager_Singleton::DebugLogger( FString strMode ) {
 // is leader by eID
 bool USimOceanSceneManager_Singleton::IsLeader( const EntityHandleId eID ) {
 	for (auto item : m_MapLeaderArchetypes) {
-		return (item.Value == eID ? true : false);
+		return (item.Key == eID ? true : false);
 	}
 	return false;
 }
@@ -224,14 +224,19 @@ bool USimOceanSceneManager_Singleton::IsLeader( const EntityHandleId eID ) {
 // is leader by eID
 EntityHandleId USimOceanSceneManager_Singleton::GetGroupLeader( const FString& strGroup ) {
 
-	EntityHandleId* handID = m_MapLeaderArchetypes.Find( strGroup );
-	return *handID;
+	for (auto item: m_MapLeaderArchetypes)
+	{
+		if (item.Value.Compare( strGroup ) == 0) {
+			return item.Key;
+		}
+	}
+	return 0;
 }
 
 
 void USimOceanSceneManager_Singleton::UpdateLeader( const EntityHandleId eID, FVector& posRef ) {
-	const FString* grouName = m_MapLeaderArchetypes.FindKey( eID );
-	if ((*grouName).IsEmpty( ))return;
+	const FString* grouName = m_MapLeaderArchetypes.Find( eID );
+	if (!grouName || (*grouName).IsEmpty( ))return;
 	if (eID <= 0)return;
 
 	FVector leaderPosition = m_MapArchetypes[eID]->GetTransform( ).GetTranslation( );
@@ -376,6 +381,7 @@ void  USimOceanSceneManager_Singleton::SetIdle( const EntityHandleId ehandleID, 
 
 void  USimOceanSceneManager_Singleton::MoveEntity( const FString& strName, const FVector& posRef ) {
 	if (strName.IsEmpty( ))return;
+	if (bIgnore)return;
 	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
 	if (ehandleID > 0 ) {
 		FVector relativePos = GetCovertScenePosition( posRef, ESceneRelevantConv::E_SENERAIO_POINT );
@@ -398,13 +404,13 @@ void  USimOceanSceneManager_Singleton::MoveEntity( const FString& strName, const
 
 void  USimOceanSceneManager_Singleton::MoveEntity( const FString& GroupName, EntityHandleId ehandleID, const FVector& posRef ) {
 	if (ehandleID <= 0 || GroupName.IsEmpty( ))return;
-	EntityHandleId leaderID = m_MapLeaderArchetypes[GroupName];
-	if (leaderID <= 0) return;
+	//EntityHandleId leaderID = m_MapLeaderArchetypes[GroupName];
+	//if (leaderID <= 0) return;
 
 	//if (GetSimRegistry( )->get<FOceanShip>( leaderID ).MoveMode > BoatMoveMode::EBoatMoveMode_On ) {
 	//	return;
 	//}
-
+	if (bIgnore)return;
 	auto& simRegistryActor = GetSimRegistry( )->get<FOceanShip>( ehandleID );
 	GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveOnPos = posRef;
 	GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode = BoatMoveMode::EBoatMoveMode_On;
@@ -422,6 +428,7 @@ void  USimOceanSceneManager_Singleton::MoveEntity( const FString& GroupName, Ent
 
 void  USimOceanSceneManager_Singleton::MoveBackEntity( const FString& strName, const FVector& posRef ) {
 	if (strName.IsEmpty( ))return;
+	bIgnore = true;
 	EntityHandleId ehandleID = GetSimHandleIDWithName( strName );
 	if (ehandleID > 0 && GetSimRegistry( )->get<FOceanShip>( ehandleID ).MoveMode != BoatMoveMode::EBoatMoveMode_Back) {
 		FVector relativePos = GetCovertScenePosition( posRef, ESceneRelevantConv::E_SENERAIO_POINT );
@@ -457,30 +464,60 @@ IFsmManagerInterface* USimOceanSceneManager_Singleton::GetFsmManager( ) {
 	return 	m_FsmManager;
 
 }
+//* 获取船艇和登陆艇装备绑定关系
+const FString USimOceanSceneManager_Singleton::GetParentDeviceMap( const EntityHandleId eID ) {
+	if (eID <= 0)return "";
+	if (BindParentDeviceStruct* bpds = m_MapParentDeviceData.Find( eID )) {
+		return (*bpds).strParentDeviceName;
+	}
+	return "";
+}
 
-void USimOceanSceneManager_Singleton::AddParentDeviceMap( const FString& parentDev, const EntityHandleId eID ,int32 dltLocate) {
-	BindParentDeviceStruct* bpds =  m_MapParentDeviceData.Find( parentDev );
-	if (bpds) {
-		if (dltLocate == 1) {
-			(*bpds).eFroentID = eID;
-		}
-		else if (dltLocate == 2) {
-			(*bpds).eEndID = eID;
+
+
+const EntityHandleId  USimOceanSceneManager_Singleton::GetUnstallDroneBoatIDByParentDeviceName( const FString& strName ,int32 iLocate) {
+	if (strName.IsEmpty())return 0 ;
+	for (auto item : m_MapParentDeviceData) {
+		if (item.Value.strParentDeviceName == strName && item.Value.iLocator == iLocate) {
+			return item.Key;
 		}
 	}
-	else {
-		BindParentDeviceStruct deviceData;
-		if (dltLocate == 1) {
-			deviceData.eFroentID = eID;
-		}
-		else if (dltLocate == 2) {
-			deviceData.eEndID = eID;
-		}
 
-		deviceData.eFroentID = eID;
-		m_MapParentDeviceData.Add( parentDev, deviceData );
+	return 0;
+}
+
+
+void USimOceanSceneManager_Singleton::AddParentDeviceMap( const FString& parentDev, const EntityHandleId eID, int32 dltLocate ) {
+	if (parentDev.IsEmpty( ))return;
+	BindParentDeviceStruct* bpds = m_MapParentDeviceData.Find( eID );
+	if (!bpds) {
+		BindParentDeviceStruct deviceData;
+		deviceData.strParentDeviceName = parentDev;
+		deviceData.iLocator = dltLocate;
+		deviceData.bUnstalled = false;
+		m_MapParentDeviceData.Add( eID, deviceData );
 	}
 }
+
+void USimOceanSceneManager_Singleton::SetDroneShipDeviceSignalLineVisable( FName name, bool bVisiable ) {
+	if (name.IsNone( ))return;
+	//FString strName = name.ToString();
+	auto archeType = GetSimActorWithName( name.ToString( ) );
+	if (archeType) {
+		FString BackComponentName = FString( "BackSignalLine" );
+		if (auto SubBackSignalLineStaticMesh = archeType->GetSubUStaticMeshComponentByName( BackComponentName )) {
+
+			SubBackSignalLineStaticMesh->SetHiddenInGame( bVisiable );
+		}
+		FString FrontComponentName = FString( "FrontSignalLine" );
+		if (auto SubFrontBackSignalLineStaticMesh = archeType->GetSubUStaticMeshComponentByName( FrontComponentName )) {
+
+			SubFrontBackSignalLineStaticMesh->SetHiddenInGame( bVisiable );
+		}
+	}
+
+}
+
 
 void USimOceanSceneManager_Singleton::CreateFsm( AActor* pActor, FName name, EntityHandleId entHandleId ) {
 	if (!pActor)return;
@@ -489,6 +526,7 @@ void USimOceanSceneManager_Singleton::CreateFsm( AActor* pActor, FName name, Ent
 	FsmStateDataBase fsdb;
 	fsdb.name = name;
 	fsdb.entHandleId = entHandleId;
+	fsdb.iLocation = 0;
 	GetFsmManager( )->GetFsm( name )->ChangeState<IdleZJAnimationState>( fsdb );
 }
 //创建登陆艇卸载船艇状态机动画
@@ -496,10 +534,9 @@ TArray<IFsmStateInterface*>& USimOceanSceneManager_Singleton::GenDLTUnInstallAni
 	
 	m_listFsm.Add( new IdleZJAnimationState( ) );
 	m_listFsm.Add( new SliderFrontZJAnimationState( ) );
-	m_listFsm.Add( new UpWarpZJAnimationState( ) );
+	m_listFsm.Add( new UpWarpZJAnimationState( ) ); 
 	m_listFsm.Add( new UnInstallBoatAnimationState( ) );
 	m_listFsm.Add( new DowningZJAnimationState( ) );
-	m_listFsm.Add( new CheckoutEquipmentState( ) );
 	m_listFsm.Add( new SliderBackZJAnimationState( ) );
 
 	return m_listFsm;

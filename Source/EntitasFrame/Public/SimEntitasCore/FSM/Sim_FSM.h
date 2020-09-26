@@ -116,7 +116,6 @@ public:
 	}*/
 	virtual void ChangeState( IFsmStateInterface* state, FsmStateDataBase data ) ;
 
-
 	virtual void PauseFsm( ) ;
 
 	virtual void ResetFsm( ) ;

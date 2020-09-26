@@ -413,7 +413,8 @@ struct FOceanShip {
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "OceanShip" )
 		int DltLocate = 0;   //´¬Î»
 	
-		
+	bool bInitializeParentDevice = false;
+	bool bAttachedParentDevice = false;
 	BoatMoveMode MoveMode = BoatMoveMode::EBoatMoveMode_Idle;
 	UStaticMeshComponent* MainMeshComponent;
 	float ForwardAxisValue;

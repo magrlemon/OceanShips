@@ -12,9 +12,13 @@ using EntityHandleId = uint64_t;
 class FsmStateDataBase {
 public:
 	EntityHandleId   entHandleId;
+	EntityHandleId   entFirstId;
+	EntityHandleId   entSecondId;
 	bool bAnimation;
 	int32 iType;
+	int32 iLocation = 0;
 	FName name;
+
 
 	FsmStateDataBase( );
 	void Copy( FsmStateDataBase SData )
@@ -23,6 +27,7 @@ public:
 		entHandleId = SData.entHandleId;    //index
 		name = "";
 		bAnimation = false;
+		iLocation = 0;
 	}
 };
 

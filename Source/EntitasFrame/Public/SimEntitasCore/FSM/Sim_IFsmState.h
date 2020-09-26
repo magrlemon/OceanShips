@@ -21,6 +21,8 @@ public:
 		/// <param name="fsm">状态属于的状态机</param>
 	virtual void Init( IFSMInterface* fsm ) abstract;
 
+	virtual FName GetType( ) abstract;
+
 	/// <summary>
 	/// 状态开始接口
 	/// </summary>

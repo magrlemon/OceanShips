@@ -52,7 +52,7 @@ void SSceneObjectsList::Construct( const FArguments& InArgs )
 				SNew( SVerticalBox )
 				+ SVerticalBox::Slot( )
 				.HAlign( HAlign_Left )
-				.Padding( FMargin( 0.0f, 0.0f, 0.0f, 18.0f ) )
+				.Padding( FMargin( 0.0f, 50.0f, 0.0f, 18.0f ) )
 				[
 					SNew( SCheckBox )
 					.IsChecked( this, &SSceneObjectsList::IsShowAllReplaysChecked )
@@ -230,6 +230,7 @@ void SSceneObjectsList::LocateObjects( )
 			if (camMgr) {
 				TSharedPtr<ASimEcs_Archetype> boat = USimOceanSceneManager_Singleton::GetInstance()->GetSimActorWithName( ActorName );
 				if (boat.IsValid()) {
+					PrimaryPC->SetReservedViewTarget( boat.Get( ) );
 					FViewTargetTransitionParams TransitionParams;
 					TransitionParams.BlendTime = 2.0f;
 					PrimaryPC->SetViewTarget( boat.Get(), TransitionParams );

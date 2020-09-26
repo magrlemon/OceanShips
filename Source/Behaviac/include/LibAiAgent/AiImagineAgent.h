@@ -35,6 +35,10 @@ public:
 	void PlayAnimation(behaviac::string EntityName, behaviac::string ActionName);
 	void Fire(behaviac::string EntityName, bool IsFire);
 	void CreateCamera(double posx, double posy, double posz, int dir);
+	behaviac::EBTStatus OpenCabinAnimation(behaviac::string EntityName, int EntityType);
+	behaviac::EBTStatus UnInstallBoatAnimation();
+	behaviac::EBTStatus ClosedCabinAnimation(behaviac::string EntityName, int EntityType);
+	
 ///<<< BEGIN WRITING YOUR CODE CLASS_PART
 
 ///<<< END WRITING YOUR CODE

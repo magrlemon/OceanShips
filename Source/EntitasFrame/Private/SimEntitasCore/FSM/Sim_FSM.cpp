@@ -23,7 +23,7 @@ FSMachine::~FSMachine( ) {
 void FSMachine::AddState( IFsmStateInterface* state )
 {
 	if (state == nullptr) return;
-	FName typeName = typeid(state).name( );
+	FName typeName = state->GetType( );
 	if (m_States.Contains( typeName ))
 		return;
 	state->Init( this );

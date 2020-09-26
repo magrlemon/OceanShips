@@ -331,7 +331,7 @@ void ASimContextDataDroneBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> 
 			_GEN_COMPONENT_( Faction )
 			_GEN_COMPONENT_( Projectile )
 			_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -661,7 +661,7 @@ void ASimContextDataPatrolBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine>
 			_GEN_COMPONENT_( Faction )
 			_GEN_COMPONENT_( Projectile )
 			_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -778,7 +778,7 @@ void ASimContextDataTrafficBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine
 			_GEN_COMPONENT_( Faction )
 			_GEN_COMPONENT_( Projectile )
 			_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -895,7 +895,7 @@ void ASimContextDataEngineeringBoatEnvironment::CreateEntity( TWeakPtr<SimEcs_En
 			_GEN_COMPONENT_( Faction )
 			_GEN_COMPONENT_( Projectile )
 			_GEN_COMPONENT_( Health )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -1010,7 +1010,7 @@ void ASimContextDataGTZEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Rotation )
-			_GEN_COMPONENT_( DebugSphere )
+			////_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -1103,7 +1103,7 @@ void ASimContextDataHLSEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -1192,7 +1192,7 @@ void ASimContextDataSJZEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -1280,7 +1280,7 @@ void ASimContextDataGCWEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 		_GEN_COMPONENT_( Health )
 			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -1372,7 +1372,7 @@ void ASimContextDataTSWSFEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSim
 			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -1463,7 +1463,7 @@ void ASimContextDataTSWYLEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSim
 			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -1552,7 +1552,7 @@ void ASimContextDataZGQEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -1642,7 +1642,7 @@ void ASimContextDataHHLCEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimE
 			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -1731,7 +1731,7 @@ void ASimContextDataBLDSEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimE
 			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -1820,7 +1820,7 @@ void ASimContextDataGTZSUIJIEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> p
 			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}
@@ -1908,7 +1908,7 @@ void ASimContextDataZJHEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEc
 			_GEN_COMPONENT_( BarrierFixedRaycast )
 			_GEN_COMPONENT_( Position )
 			_GEN_COMPONENT_( Rotation )
-			_GEN_COMPONENT_( DebugSphere )
+			//_GEN_COMPONENT_( DebugSphere )
 
 #undef  _GEN_COMPONENT_	
 	}

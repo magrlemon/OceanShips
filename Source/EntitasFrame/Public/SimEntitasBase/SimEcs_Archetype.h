@@ -51,6 +51,8 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void StartFire();
+	virtual void StartFire_Implementation( );
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void ResetParticelSize(float scale);
 
@@ -64,7 +66,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Game")
 		void ScaleParticleSize(UParticleSystemComponent* particle, float scale);
 
-	virtual void StartFire_Implementation();
 
 	void GrapBuoyancyComponent_Initialize( int32 ActorType);
 
@@ -88,7 +89,7 @@ public:
 	UStaticMeshComponent* MainStaticMesh;
 	TMap<int, int> DamageResults;
 	TMap<UParticleSystemComponent*, FVector> mParticles;
-	float Health;
+	float Health;    
 	float TotalDamage;
 	AActor* KilledBy;
 

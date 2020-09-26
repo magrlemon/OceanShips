@@ -118,11 +118,6 @@ void FSoldierMainMenu::Construct(TWeakObjectPtr<UArmySimGameInstance> _GameInsta
 	SoldierOptions->TellInputAboutKeybindings();
 	SoldierOptions->OnApplyChanges.BindSP(this, &FSoldierMainMenu::CloseSubMenu);
 
-	//WeatherOptions = MakeShareable(new FWeatherOptions());
-	//WeatherOptions->Construct(GetPlayerOwner());
-	//WeatherOptions->TellInputAboutKeybindings();
-	//WeatherOptions->OnApplyChanges.BindSP(this, &FSoldierMainMenu::CloseSubMenu);
-
 	//Now that we are here, build our menu 
 	MenuWidget.Reset();
 	MenuWidgetContainer.Reset();
@@ -359,8 +354,6 @@ void FSoldierMainMenu::Construct(TWeakObjectPtr<UArmySimGameInstance> _GameInsta
 			TSharedPtr<FSoldierMenuItem> HelpSubMenu = MenuHelper::AddMenuItem(RootMenuItem, LOCTEXT("Help", "HELP"));
 			HelpSubMenu->OnConfirmMenuItem.BindStatic([](){ FSlateApplication::Get().ShowSystemHelp(); });
 		}
-
-		//MenuHelper::AddExistingMenuItem(RootMenuItem, WeatherOptions->OptionsItem.ToSharedRef());
 
 		// QUIT option (for PC)
 #if !SHOOTER_CONSOLE_UI

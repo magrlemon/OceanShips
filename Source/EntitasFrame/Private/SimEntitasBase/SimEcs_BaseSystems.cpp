@@ -289,7 +289,7 @@ void BarrierFixedRaycastSystem::update( SimEcs_Registry &registry, float dt )
 					registry.accommodate<FSimulatePhysical>( entity, fsp );
 					return;
 				}
-				DrawDebugLine( World, archeType->GetTransform( ).GetTranslation( ), pos.pos, FColor::Green, true, 5.0f );
+				//DrawDebugLine( World, archeType->GetTransform( ).GetTranslation( ), pos.pos, FColor::Green, true, 5.0f );
 				//DrawDebugPoint(World, pos.pos, 10, FColor::Red, false, 1);
 				//archeType.Get( )->SetActorEnableCollision( true );
 				

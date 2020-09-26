@@ -166,9 +166,9 @@ RetVar AOceanBoatsGameMode::OpenCabinAnimation( int argc, void ** argv ) {
 	if (argc > 0 && argv) {
 		FString name;
 		name += FString( UTF8_TO_TCHAR( (char *)argv[0] ) );
-		bool bFire = *((bool*)(argv[1]));
+		//bool bFire = *((bool*)(argv[1]));
 		//GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "Fire");
-		USimOceanSceneManager_Singleton::GetInstance( )->Firing( name, bFire );
+		//USimOceanSceneManager_Singleton::GetInstance( )->Firing( name, bFire );
 	}
 	ret.iRet = behaviac::BT_SUCCESS;
 	return ret;
@@ -181,7 +181,7 @@ RetVar AOceanBoatsGameMode::ClosedCabinAnimation( int argc, void ** argv ) {
 		name += FString( UTF8_TO_TCHAR( (char *)argv[0] ) );
 		bool bFire = *((bool*)(argv[1]));
 		//GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, "Fire");
-		USimOceanSceneManager_Singleton::GetInstance( )->Firing( name, bFire );
+		//USimOceanSceneManager_Singleton::GetInstance( )->Firing( name, bFire );
 	}
 	ret.iRet = behaviac::BT_SUCCESS;
 	return ret;
@@ -193,14 +193,14 @@ RetVar AOceanBoatsGameMode::UnInstallBoatAnimation( int argc, void ** argv ) {
 		FString name;
 		name += FString( UTF8_TO_TCHAR( (char *)argv[0] ) );
 		//bool bFire = *((bool*)(argv[1]));
-		auto interface = USimOceanSceneManager_Singleton::GetInstance( )->GetFsmManager()->GetFsm( *name );
-		if (interface->GetName( )== "") {
+		//auto interface = USimOceanSceneManager_Singleton::GetInstance( )->GetFsmManager()->GetFsm( *name );
+		//if (interface->GetName( )== "") {
 
-			USimOceanSceneManager_Singleton::GetInstance( )->ChangeDLTAnimationState( *name );
-		}
-		if(interface->IsRunning())
-			ret.iRet = behaviac::BT_RUNNING;
-		else
+		//	USimOceanSceneManager_Singleton::GetInstance( )->ChangeDLTAnimationState( *name );
+		//}
+		//if(interface->IsRunning())
+		//	ret.iRet = behaviac::BT_RUNNING;
+		//else
 			ret.iRet = behaviac::BT_SUCCESS;
 	}
 	

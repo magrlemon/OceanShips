@@ -153,7 +153,7 @@
 			if (!typeClass.Get( ))
 				return;
 			EntityHandle eh = sysLink_WeakPtr->GenHandEntityID( );
-			EntityHandleId handleID = m_eHandleID = eh.handle;
+			EntityHandleId handleID  = eh.handle;
 
 			auto simRegistry = osmSingleton->GetSimRegistry();
 			simRegistry->assign<FPrePosition>( handleID );

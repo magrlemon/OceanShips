@@ -3,14 +3,14 @@
 
 #include "SimEcs_BoatArchetype.h"
 
-FRotator MakeRotFromX(const FVector& X)
-{
-	return FRotationMatrix::MakeFromX(X).Rotator();
-}
-FRotator FindLookAtRotation(const FVector& Start, const FVector& Target)
-{
-	return MakeRotFromX(Target - Start);
-}
+//FRotator MakeRotFromX(const FVector& X)
+//{
+//	return FRotationMatrix::MakeFromX(X).Rotator();
+//}
+//FRotator FindLookAtRotation(const FVector& Start, const FVector& Target)
+//{
+//	return MakeRotFromX(Target - Start);
+//}
 
 
 ///
@@ -74,6 +74,7 @@ void ASimEcs_BoatArchetype::CheckSpeedUp()
 void ASimEcs_BoatArchetype::RuntimeStateLoop()
 {
 	//record Move Speed
+	if (!MainMeshComponent)return;
 	MoveSpeed = MainMeshComponent ? MainMeshComponent->GetPhysicsLinearVelocity().Size() : 0.0f;
 
 	//record move distance		
@@ -96,59 +97,7 @@ void ASimEcs_BoatArchetype::RuntimeStateLoop()
 
 void ASimEcs_BoatArchetype::MoveLoopImpl(ATargetPoint* target)
 {
-	ForwardAxisValue = CurrentSpeed;
-	CheckSpeedUp();
-	if(MoveMode == ESimMoveMode_On)
-	{
-		bRollBack = false;
-
-		FRotator rot;
-		rot.Yaw = FindLookAtRotation(GetActorLocation(), target->GetActorLocation()).Yaw;
-		//SetActorRotation(rot);
-		if(MainMeshComponent != NULL)
-		{
-			MainMeshComponent->SetWorldRotation(rot);
-		}
-	}
-	else if(MoveMode == ESimMoveMode_Back)
-	{
-		bRollBack = true;
-
-		if (!ReverseMoveEnd)//径直后退
-		{
-			ForwardAxisValue = -CurrentSpeed;
-			FRotator rot = FindLookAtRotation(target->GetActorLocation(), GetActorLocation());
-			//SetActorRotation(rot);
-			if (MainMeshComponent != NULL)
-			{
-				MainMeshComponent->SetWorldRotation(rot);
-			}
-		}
-		else
-		{
-			FRotator rot;
-			float newYaw = FindLookAtRotation(target->GetActorLocation(), GetActorLocation()).Yaw;
-			if (TurnIndex * TurnStep < 180)//逐渐转向180度
-			{
-				rot.Yaw =  newYaw + TurnIndex * TurnStep;
-				//SetActorRotation(rot);
-				if (MainMeshComponent != NULL)
-				{
-					MainMeshComponent->SetWorldRotation(rot);
-				}
-				TurnIndex++;
-			}
-			else //径直转向180度
-			{
-				rot.Yaw = newYaw + 180;
-				//SetActorRotation(rot);
-				if (MainMeshComponent != NULL)
-				{
-					MainMeshComponent->SetWorldRotation(rot);
-				}
-			}
-		}
-	}
+	
 }
 
 void ASimEcs_BoatArchetype::Active_Turn()
@@ -184,7 +133,7 @@ void ASimEcs_BoatArchetype::Active_Attack()
 	AttackPos = AttackTarget->GetActorLocation();
 
 	FRotator rot;
-	rot.Yaw = /*GetActorRotation().Yaw + */FindLookAtRotation(GetActorLocation(), AttackPos).Yaw;
+	//rot.Yaw = /*GetActorRotation().Yaw + */FindLookAtRotation(GetActorLocation(), AttackPos).Yaw;
 	SetActorRotation(rot);
 
 	/*if(!FireEnd)
