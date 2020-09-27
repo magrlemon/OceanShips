@@ -25,11 +25,10 @@ void AExploder::Tick(float DeltaTime)
 
 }
 
-void AExploder::SwitchColor_Implementation(UStaticMeshComponent* root, FColor baseColor, bool left)
+void AExploder::SwitchColor_Implementation(UStaticMeshComponent* root, FColor baseColor)
 {
-	m_baseColor = baseColor;	
-	mainRoot = root;
-	m_left = left;
+	m_baseColor = baseColor;
+	m_mat = root->GetMaterial(0);
 	GetWorldTimerManager().SetTimer(m_SwitchHandler, this, &AExploder::ChangeColor,0.5f);
 }
 bool AExploder::IsKilled_Implementation()
@@ -51,29 +50,21 @@ void AExploder::ChangeColor()
 {		
 	FName paramName("SwitchColor");
 	FLinearColor color;
-
-	UMaterialParameterCollectionInstance* Instance = NULL;
-	if (m_left)
-		Instance = GWorld->GetParameterCollectionInstance(CollectionLeft);
+	FMaterialParameterInfo info;
+	info.Name = paramName;
+	m_mat->GetVectorParameterValue(info, color);
+	FColor paramValue;
+	if (color.GetMax() <= 0)
+		paramValue = m_baseColor;		
 	else
-		Instance = GWorld->GetParameterCollectionInstance(CollectionRight);
-	if (Instance)
+		paramValue = FColor(0, 0, 0, 0);
+
+	UMaterialInstanceDynamic* matDyn = Cast<UMaterialInstanceDynamic>(m_mat);
+	if(matDyn)
 	{
-		Instance->GetVectorParameterValue(paramName, color);
-		FColor paramValue;
-		if (color.GetMax() <= 0)
-		{
-			paramValue = m_baseColor;
-			//paramValue.R = m_baseColor.R;
-			//paramValue.G = m_baseColor.G;
-			//paramValue.A = m_baseColor.A;
-		}	//
-		else
-			paramValue = FColor(0, 0, 0, 0);
-
-		const bool bFoundParameter = Instance->SetVectorParameterValue(paramName, paramValue);		
+		matDyn->SetVectorParameterValue(paramName, paramValue);
 	}
-
+	
 	GetWorldTimerManager().SetTimer(m_SwitchHandler, this, &AExploder::ChangeColor, 0.5f);
 	
 }

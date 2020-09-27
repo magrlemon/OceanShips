@@ -71,6 +71,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void ShowGloomy(bool show);
 	virtual void ShowGloomy_Implementation(bool show);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ArrivedLandscape(AActor* boat);
+	virtual void ArrivedLandscape_Implementation(AActor* boat);
 
 	UFUNCTION( exec )
 	void SetAllowBots( bool bInAllowBots, int32 InMaxBots = 8 );

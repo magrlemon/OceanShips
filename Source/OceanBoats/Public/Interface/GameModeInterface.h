@@ -50,4 +50,6 @@ public:
 		void ShowRainy(bool show);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void ShowGloomy(bool show);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ArrivedLandscape(AActor* boat);
 };

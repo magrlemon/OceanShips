@@ -15,14 +15,14 @@ class OCEANBOATS_API AExploder : public AActor, public IExplodeInterface
 public:	
 	// Sets default values for this actor's properties
 	AExploder();
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game")
-	UMaterialParameterCollection* CollectionLeft;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game")
-	UMaterialParameterCollection* CollectionRight;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game")
+	//UMaterialParameterCollection* CollectionLeft;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game")
+	//UMaterialParameterCollection* CollectionRight;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		void SwitchColor(UStaticMeshComponent* root, FColor baseColor, bool left);
-	virtual void SwitchColor_Implementation(UStaticMeshComponent* root, FColor baseColor, bool left);
+		void SwitchColor(UStaticMeshComponent* root, FColor baseColor);
+	virtual void SwitchColor_Implementation(UStaticMeshComponent* root, FColor baseColor);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void SetKiller(AActor* killer);
 	virtual void SetKiller_Implementation(AActor* killer);
@@ -46,6 +46,6 @@ public:
 protected:
 	FTimerHandle m_SwitchHandler;
 	FColor m_baseColor;
-	UStaticMeshComponent* mainRoot;
-	bool m_left;
+	//UStaticMeshComponent* mainRoot;
+	UMaterialInterface* m_mat;
 };
