@@ -17,7 +17,7 @@
 #include "SimEcs_BaseComponents.h"
 #include "SimEcs_Archetype.h"
 #include "SimEcs_BattleComponents.h"
-#include "Engine/Console.h"
+//#include "Engine/Console.h"
 #include "LinearMemory.h"
 #include "SimEcs_FormationArithmetic.h"
 
