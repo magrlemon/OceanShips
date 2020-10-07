@@ -18,9 +18,11 @@
 #include "FSM\Sim_FsmStateDataBase.h"
 #include "SoldierPawn.h"
 #include "SimApi.h"
+#include "OceanManager.h"
 //#include "ObstacleInterface.h"
 
 #define RAINCLASS "/Game/RainOcclusion/BP_AttachedRain.BP_AttachedRain_C"
+#define OCEANCLASS "/Game/Ocean/BP_Ocean.BP_Ocean_C"
 
 AOceanBoatsGameMode::AOceanBoatsGameMode( /*const FObjectInitializer& ObjectInitializer*/ ) //: Super( ObjectInitializer )
 {
@@ -724,4 +726,37 @@ void AOceanBoatsGameMode::ShowGloomy_Implementation(bool show)
 void AOceanBoatsGameMode::ArrivedLandscape_Implementation(AActor* boat)
 {
 	USimOceanSceneManager_Singleton::GetInstance()->SetIdle(boat->GetName(), boat->GetActorLocation());
+}
+
+void AOceanBoatsGameMode::SetWaveStrength_Implementation(float strength)
+{
+	if(m_ocean == NULL)
+	{
+		TArray<AActor*> oceans;
+		UGameplayStatics::GetAllActorsOfClass(GWorld, AOceanManager::StaticClass(), oceans);
+		if (oceans.Num() > 0)
+		{
+			m_ocean = Cast<AOceanManager>(oceans[0]);
+		}
+	}
+
+	if (m_ocean)
+	{
+		m_ocean->GlobalWaveAmplitude = strength;
+	}		
+}
+
+void AOceanBoatsGameMode::ReStartSimulate_Implementation()
+{
+	//USimOceanSceneManager_Singleton::GetInstance()
+}
+
+void AOceanBoatsGameMode::PauseSimulate_Implementation()
+{
+	//USimOceanSceneManager_Singleton::GetInstance()
+}
+
+void AOceanBoatsGameMode::ExitSimulate_Implementation()
+{
+	//USimOceanSceneManager_Singleton::GetInstance()
 }

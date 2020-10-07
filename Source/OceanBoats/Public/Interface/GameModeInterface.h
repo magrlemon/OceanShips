@@ -52,4 +52,12 @@ public:
 		void ShowGloomy(bool show);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void ArrivedLandscape(AActor* boat);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void SetWaveStrength(float strength);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ReStartSimulate();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void PauseSimulate();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ExitSimulate();
 };

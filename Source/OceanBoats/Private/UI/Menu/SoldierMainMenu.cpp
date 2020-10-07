@@ -133,10 +133,7 @@ void FSoldierMainMenu::Construct(TWeakObjectPtr<UArmySimGameInstance> _GameInsta
 			.IsGameMenu(false);
 
 		SAssignNew(MenuWidgetContainer, SWeakWidget)
-			.PossiblyNullContent(MenuWidget);		
-
-		TSharedPtr<FSoldierMenuItem> RootMenuItem;
-
+			.PossiblyNullContent(MenuWidget);	
 				
 		SAssignNew(SplitScreenLobbyWidget, SSoldierSplitScreenLobby)
 			.PlayerOwner(GetPlayerOwner())
@@ -1418,6 +1415,12 @@ void FSoldierMainMenu::ToggleGameMainMenu( ) {
 		return;
 	}
 
+	if (bIsGameMainMenuUp && MenuWidget->CurrentMenu != RootMenuItem->SubMenu)
+	{
+		MenuWidget->MenuGoBack();
+		return;
+	}
+
 	ASoldierPlayerController* const PCOwner = PlayerOwner.Get() ? Cast<ASoldierPlayerController>( PlayerOwner->PlayerController ) : nullptr;
 	if (!bIsGameMainMenuUp) {
 		// Hide the scoreboard
@@ -1428,7 +1431,7 @@ void FSoldierMainMenu::ToggleGameMainMenu( ) {
 			}
 		}
 		AddMenuToGameViewport( );
-
+		
 		MenuWidget->BuildAndShowMenu( );
 		bIsGameMainMenuUp = true;
 

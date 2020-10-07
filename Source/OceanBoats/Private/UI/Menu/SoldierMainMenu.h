@@ -74,6 +74,8 @@ protected:
 	/** Owning player */
 	TWeakObjectPtr<ULocalPlayer> PlayerOwner;
 
+	TSharedPtr<FSoldierMenuItem> RootMenuItem;
+
 	/** shooter options */
 	TSharedPtr<class FSoldierOptions> SoldierOptions;
 	TSharedPtr<class FWeatherOptions> WeatherOptions;

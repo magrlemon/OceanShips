@@ -352,6 +352,8 @@ void SWeatherSettingWidget::OnSetWaveValue(float NewValue, bool bFromSlider)
 {
 	NewValue = FMath::RoundToFloat(NewValue * 100.f) / 100.f;
 	mWave = NewValue;
+
+	IGameModeInterface::Execute_SetWaveStrength(UGameplayStatics::GetGameMode(GWorld), NewValue);
 }
 void SWeatherSettingWidget::OnWaveSliderMouseEnd()
 {

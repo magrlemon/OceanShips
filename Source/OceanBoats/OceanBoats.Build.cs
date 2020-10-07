@@ -61,7 +61,8 @@ public class OceanBoats : ModuleRules
                 "ApplicationCore",
                 "ReplicationGraph",
                 "PakFile",
-                "RHI"
+                "RHI",
+                "OceanPlugin"
            }
        );
         DynamicallyLoadedModuleNames.AddRange(
