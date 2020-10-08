@@ -13,7 +13,11 @@
 #include "ArmySimStyle.h"
 
 class UBehaviorTreeComponent;
+#ifdef ensure
+	#undef ensure
+#endif //  ensure(expression)
 #define ensure(expression) bool(expression)
+
 //DECLARE_LOG_CATEGORY_EXTERN( LogShooter, Log, All );
 //DECLARE_LOG_CATEGORY_EXTERN( LogShooterWeapon, Log, All );
 //
