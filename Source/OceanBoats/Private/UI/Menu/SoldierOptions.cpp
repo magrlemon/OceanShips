@@ -121,7 +121,7 @@ void FSoldierOptions::Construct(ULocalPlayer* InPlayerOwner)
 	{
 		APlayerController* BaseController = Cast<APlayerController>(UGameplayStatics::GetPlayerController(PlayerOwner->GetWorld(), GetOwnerUserIndex()));
 		ASoldierPlayerController* SoldierPlayerController = Cast<ASoldierPlayerController>(UGameplayStatics::GetPlayerController(PlayerOwner->GetWorld(), GetOwnerUserIndex()));
-		ensure(BaseController);
+		ensure(BaseController!=NULL);
 		if (BaseController)
 		{
 			if (SoldierPlayerController)
@@ -386,7 +386,7 @@ void FSoldierOptions::ToggleVibration(TSharedPtr<FSoldierMenuItem> MenuItem, int
 	bVibrationOpt = MultiOptionIndex > 0 ? true : false;
 	APlayerController* BaseController = Cast<APlayerController>(UGameplayStatics::GetPlayerController(PlayerOwner->GetWorld(), GetOwnerUserIndex()));
 	ASoldierPlayerController* SoldierPlayerController = Cast<ASoldierPlayerController>(UGameplayStatics::GetPlayerController(PlayerOwner->GetWorld(), GetOwnerUserIndex()));
-	ensure(BaseController);
+	ensure(BaseController!=NULL);
     if(BaseController)
     {
 		if (SoldierPlayerController)

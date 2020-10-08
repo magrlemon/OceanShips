@@ -12,7 +12,7 @@ void SoldierHUDPCTrackerBase::Init( const FLocalPlayerContext& InContext )
 
 TWeakObjectPtr<ASoldierPlayerController> SoldierHUDPCTrackerBase::GetPlayerController() const
 {
-	if ( ensureMsgf( Context.IsValid(), TEXT("Game context must be initialized!") ) )
+	if ( ensureMsgf( bool(Context.IsValid()), TEXT("Game context must be initialized!") ) )
 	{
 		APlayerController* PC = Context.GetPlayerController();
 		ASoldierPlayerController* SoldierPC = Cast<ASoldierPlayerController>(PC);
@@ -27,7 +27,7 @@ TWeakObjectPtr<ASoldierPlayerController> SoldierHUDPCTrackerBase::GetPlayerContr
 
 UWorld* SoldierHUDPCTrackerBase::GetWorld() const
 {
-	if ( ensureMsgf( Context.IsValid(), TEXT("Game context must be initialized!") ) )
+	if ( ensureMsgf( bool(Context.IsValid()), TEXT("Game context must be initialized!") ) )
 	{
 		return Context.GetWorld();
 	}
@@ -39,7 +39,7 @@ UWorld* SoldierHUDPCTrackerBase::GetWorld() const
 
 ASoldierGameState* SoldierHUDPCTrackerBase::GetGameState() const
 {
-	if ( ensureMsgf( Context.IsValid(), TEXT("Game context must be initialized!") ) )
+	if ( ensureMsgf( bool(Context.IsValid()), TEXT("Game context must be initialized!") ) )
 	{
 		return Context.GetWorld()->GetGameState<ASoldierGameState>();
 	}
