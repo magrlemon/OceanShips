@@ -17,8 +17,8 @@ class ASoldierAIController;
 //class ASoldierPlayerState;
 class ASoldierPickup;
 class FUniqueNetId;
-struct OceanObstacleCls;
 class AOceanManager;
+struct OceanObstacleCls;
 
 UCLASS( config = Game )
 class AOceanBoatsGameMode : public AGameMode, public IGameModeInterface
@@ -33,8 +33,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GameMode)
 		TArray<AActor*> boats;
-
-	
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void StartMove();
@@ -88,7 +86,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void ExitSimulate();
 	virtual void ExitSimulate_Implementation();
-
 	UFUNCTION( exec )
 	void SetAllowBots( bool bInAllowBots, int32 InMaxBots = 8 );
 
@@ -201,7 +198,6 @@ protected:
 
 	//TArray<OceanObstacleCls> ObstacleCollection;
 	//TMap<int, int> DestroyCollection;
-	AOceanManager* m_ocean;
 
 public:
 	void InitBehaviac();
@@ -224,7 +220,7 @@ private:
 	bool _wait = false;
 	bool _initilize = false;
 	AActor* mRain;
-
+	AOceanManager* m_ocean;
 };
 
 

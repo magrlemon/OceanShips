@@ -22,7 +22,6 @@
 //#include "ObstacleInterface.h"
 
 #define RAINCLASS "/Game/RainOcclusion/BP_AttachedRain.BP_AttachedRain_C"
-#define OCEANCLASS "/Game/Ocean/BP_Ocean.BP_Ocean_C"
 
 AOceanBoatsGameMode::AOceanBoatsGameMode( /*const FObjectInitializer& ObjectInitializer*/ ) //: Super( ObjectInitializer )
 {
@@ -727,10 +726,9 @@ void AOceanBoatsGameMode::ArrivedLandscape_Implementation(AActor* boat)
 {
 	USimOceanSceneManager_Singleton::GetInstance()->SetIdle(boat->GetName(), boat->GetActorLocation());
 }
-
 void AOceanBoatsGameMode::SetWaveStrength_Implementation(float strength)
 {
-	if(m_ocean == NULL)
+	if (m_ocean == NULL)
 	{
 		TArray<AActor*> oceans;
 		UGameplayStatics::GetAllActorsOfClass(GWorld, AOceanManager::StaticClass(), oceans);
@@ -743,7 +741,7 @@ void AOceanBoatsGameMode::SetWaveStrength_Implementation(float strength)
 	if (m_ocean)
 	{
 		m_ocean->GlobalWaveAmplitude = strength;
-	}		
+	}
 }
 
 void AOceanBoatsGameMode::ReStartSimulate_Implementation()
