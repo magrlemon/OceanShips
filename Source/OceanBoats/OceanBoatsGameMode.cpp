@@ -19,7 +19,6 @@
 #include "SoldierPawn.h"
 #include "SimApi.h"
 #include "OceanManager.h"
-//#include "ObstacleInterface.h"
 
 #define RAINCLASS "/Game/RainOcclusion/BP_AttachedRain.BP_AttachedRain_C"
 
@@ -45,7 +44,7 @@ AOceanBoatsGameMode::AOceanBoatsGameMode( /*const FObjectInitializer& ObjectInit
 	DefaultPawnClass = ASoldierPawn::StaticClass();
 
 	bAllowBots = true;
-	bNeedsBotCreation = true;
+	bNeedsBotCreation = true; 
 	bUseSeamlessTravel = FParse::Param( FCommandLine::Get( ), TEXT( "NoSeamlessTravel" ) ) ? false : true;
 }
 
@@ -742,19 +741,4 @@ void AOceanBoatsGameMode::SetWaveStrength_Implementation(float strength)
 	{
 		m_ocean->GlobalWaveAmplitude = strength;
 	}
-}
-
-void AOceanBoatsGameMode::ReStartSimulate_Implementation()
-{
-	//USimOceanSceneManager_Singleton::GetInstance()
-}
-
-void AOceanBoatsGameMode::PauseSimulate_Implementation()
-{
-	//USimOceanSceneManager_Singleton::GetInstance()
-}
-
-void AOceanBoatsGameMode::ExitSimulate_Implementation()
-{
-	//USimOceanSceneManager_Singleton::GetInstance()
 }

@@ -77,15 +77,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void SetWaveStrength(float strength);
 	virtual void SetWaveStrength_Implementation(float strength);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		void ReStartSimulate();
-	virtual void ReStartSimulate_Implementation();
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		void PauseSimulate();
-	virtual void PauseSimulate_Implementation();
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
-		void ExitSimulate();
-	virtual void ExitSimulate_Implementation();
+
 	UFUNCTION( exec )
 	void SetAllowBots( bool bInAllowBots, int32 InMaxBots = 8 );
 
