@@ -279,10 +279,11 @@ struct OceanShipSystem :public SystemT {
 
 					//
 				}
+#if WITH_EDITOR
 				else if ((*boat).Get( )->IsHiddenEd( )) {
 					(*boat).Get( )->SetActorHiddenInGame( false );
 				}
-
+#endif
 				FVector boatPos = boat->Get( )->GetTransform( ).GetLocation( );
 				if (SimInstance->IsLeader( entity )) {
 					if (!NowPlatformTime - LastTime > CoolDownTime) {

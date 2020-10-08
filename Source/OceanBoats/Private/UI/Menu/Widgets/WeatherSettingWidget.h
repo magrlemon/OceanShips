@@ -49,23 +49,23 @@ private:
 	void OnShowRainyChecked(ECheckBoxState NewCheckedState);
 
 	float GetTimeOfDayValue() const;
-	void OnSetTimeOfDayValue(float NewValue, bool bFromSlider);	
+	void OnSetTimeOfDayValue(float NewValue/*, bool bFromSlider*/);	
 	void OnTimeOfDaySliderMouseEnd();
 
 	float GetDayValue() const;
-	void OnSetDayValue(float NewValue, bool bFromSlider);
+	void OnSetDayValue(float NewValue);
 	void OnDaySliderMouseEnd();
 
 	float GetWaveValue() const;
-	void OnSetWaveValue(float NewValue, bool bFromSlider);
+	void OnSetWaveValue(float NewValue);
 	void OnWaveSliderMouseEnd();
 
 	float GetWindValue() const;
-	void OnSetWindValue(float NewValue, bool bFromSlider);
+	void OnSetWindValue(float NewValue);
 	void OnWindSliderMouseEnd();
 
 	float GetWindDirValue() const;
-	void OnSetWindDirValue(float NewValue, bool bFromSlider);
+	void OnSetWindDirValue(float NewValue);
 	void OnWindDirSliderMouseEnd();
 
 

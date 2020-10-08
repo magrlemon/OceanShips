@@ -79,7 +79,7 @@ void SWeatherSettingWidget::Construct(const FArguments& InArgs)
 					[
 						SNew(SSlider)
 						.Value(this, &SWeatherSettingWidget::GetTimeOfDayValue)
-						.OnValueChanged(this, &SWeatherSettingWidget::OnSetTimeOfDayValue, /*bFromSlider =*/true)
+						.OnValueChanged(this, &SWeatherSettingWidget::OnSetTimeOfDayValue /*bFromSlider =*/)
 						.SliderBarColor(FLinearColor(0.48f, 0.48f, 0.48f))
 						.Style(FCoreStyle::Get(), "Slider")
 						//.MouseUsesStep(true)
@@ -112,7 +112,7 @@ void SWeatherSettingWidget::Construct(const FArguments& InArgs)
 					[
 						SNew(SSlider)
 						.Value(this, &SWeatherSettingWidget::GetDayValue)
-						.OnValueChanged(this, &SWeatherSettingWidget::OnSetDayValue, /*bFromSlider =*/true)
+						.OnValueChanged(this, &SWeatherSettingWidget::OnSetDayValue)
 						.SliderBarColor(FLinearColor(0.48f, 0.48f, 0.48f))
 						.Style(FCoreStyle::Get(), "Slider")
 						//.MouseUsesStep(true)
@@ -145,7 +145,7 @@ void SWeatherSettingWidget::Construct(const FArguments& InArgs)
 					[
 						SNew(SSlider)
 						.Value(this, &SWeatherSettingWidget::GetWaveValue)
-						.OnValueChanged(this, &SWeatherSettingWidget::OnSetWaveValue, /*bFromSlider =*/true)
+						.OnValueChanged(this, &SWeatherSettingWidget::OnSetWaveValue)
 						.SliderBarColor(FLinearColor(0.48f, 0.48f, 0.48f))
 						.Style(FCoreStyle::Get(), "Slider")
 						//.MouseUsesStep(true)
@@ -178,7 +178,7 @@ void SWeatherSettingWidget::Construct(const FArguments& InArgs)
 					[
 						SNew(SSlider)
 						.Value(this, &SWeatherSettingWidget::GetWindValue)
-						.OnValueChanged(this, &SWeatherSettingWidget::OnSetWindValue, /*bFromSlider =*/true)
+						.OnValueChanged(this, &SWeatherSettingWidget::OnSetWindValue)
 						.SliderBarColor(FLinearColor(0.48f, 0.48f, 0.48f))
 						.Style(FCoreStyle::Get(), "Slider")
 						//.MouseUsesStep(true)
@@ -211,7 +211,7 @@ void SWeatherSettingWidget::Construct(const FArguments& InArgs)
 					[
 						SNew(SSlider)
 						.Value(this, &SWeatherSettingWidget::GetWindDirValue)
-						.OnValueChanged(this, &SWeatherSettingWidget::OnSetWindDirValue, /*bFromSlider =*/true)
+						.OnValueChanged(this, &SWeatherSettingWidget::OnSetWindDirValue)
 						.SliderBarColor(FLinearColor(0.48f, 0.48f, 0.48f))
 						.Style(FCoreStyle::Get(), "Slider")
 						//.MouseUsesStep(true)
@@ -321,7 +321,7 @@ float SWeatherSettingWidget::GetTimeOfDayValue() const
 {
 	return mTimeOfDay;
 }
-void SWeatherSettingWidget::OnSetTimeOfDayValue(float NewValue, bool bFromSlider)
+void SWeatherSettingWidget::OnSetTimeOfDayValue(float NewValue)
 {
 	NewValue = FMath::RoundToFloat(NewValue * 100.f) / 100.f;
 	mTimeOfDay = NewValue;
@@ -334,7 +334,7 @@ float SWeatherSettingWidget::GetDayValue() const
 {
 	return mDay;
 }
-void SWeatherSettingWidget::OnSetDayValue(float NewValue, bool bFromSlider)
+void SWeatherSettingWidget::OnSetDayValue(float NewValue)
 {
 	NewValue = FMath::RoundToFloat(NewValue * 100.f) / 100.f;
 	mDay = NewValue;
@@ -348,7 +348,7 @@ float SWeatherSettingWidget::GetWaveValue() const
 {
 	return mWave;
 }
-void SWeatherSettingWidget::OnSetWaveValue(float NewValue, bool bFromSlider)
+void SWeatherSettingWidget::OnSetWaveValue(float NewValue)
 {
 	NewValue = FMath::RoundToFloat(NewValue * 100.f) / 100.f;
 	mWave = NewValue;
@@ -363,7 +363,7 @@ float SWeatherSettingWidget::GetWindValue() const
 {
 	return mWind;
 }
-void SWeatherSettingWidget::OnSetWindValue(float NewValue, bool bFromSlider)
+void SWeatherSettingWidget::OnSetWindValue(float NewValue)
 {
 	NewValue = FMath::RoundToFloat(NewValue * 100.f) / 100.f;
 	mWind = NewValue;
@@ -377,7 +377,7 @@ float SWeatherSettingWidget::GetWindDirValue() const
 {
 	return mWindDir;
 }
-void SWeatherSettingWidget::OnSetWindDirValue(float NewValue, bool bFromSlider)
+void SWeatherSettingWidget::OnSetWindDirValue(float NewValue)
 {
 	NewValue = FMath::RoundToFloat(NewValue * 100.f) / 100.f;
 	mWindDir = NewValue;
