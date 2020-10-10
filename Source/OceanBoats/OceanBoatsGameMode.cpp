@@ -721,6 +721,16 @@ void AOceanBoatsGameMode::ShowGloomy_Implementation(bool show)
 {
 
 }
+
+void AOceanBoatsGameMode::ShowThunder_Implementation(bool show)
+{
+
+}
+
+void AOceanBoatsGameMode::ShowSnow_Implementation(bool show)
+{
+
+}
 void AOceanBoatsGameMode::ArrivedLandscape_Implementation(AActor* boat)
 {
 	USimOceanSceneManager_Singleton::GetInstance()->SetIdle(boat->GetName(), boat->GetActorLocation());

@@ -38,7 +38,7 @@ void SWeatherSettingWidget::Construct(const FArguments& InArgs)
 				.Padding(FMargin(0.0f, 10.0f, 0.0f, 18.0f))
 				[
 					SNew(SCheckBox)
-					.IsChecked(this, &SWeatherSettingWidget::IsShowGloomyChecked)
+					.IsChecked(this, &SWeatherSettingWidget::IsGloomyChecked)
 					.OnCheckStateChanged(this, &SWeatherSettingWidget::OnShowGloomyChecked)
 					.Style(FCoreStyle::Get(), "Checkbox")	
 					[
@@ -53,12 +53,42 @@ void SWeatherSettingWidget::Construct(const FArguments& InArgs)
 				.Padding(FMargin(0.0f, 10.0f, 0.0f, 18.0f))
 				[
 					SNew(SCheckBox)
-					.IsChecked(this, &SWeatherSettingWidget::IsShowRainyChecked)
+					.IsChecked(this, &SWeatherSettingWidget::IsRainyChecked)
 					.OnCheckStateChanged(this, &SWeatherSettingWidget::OnShowRainyChecked)
 					.Style(FCoreStyle::Get(), "Checkbox")
 					[
 						SNew(STextBlock)
 						.Text(LOCTEXT("Rainy", "Show Rainy"))
+						.TextStyle(FArmySimStyle::Get(), "OceanBoats.DemoListCheckboxTextStyle")
+					]
+				]
+
+				+ SVerticalBox::Slot()
+				.HAlign(HAlign_Left)
+				.Padding(FMargin(0.0f, 10.0f, 0.0f, 18.0f))
+				[
+					SNew(SCheckBox)
+					.IsChecked(this, &SWeatherSettingWidget::IsSnowChecked)
+					.OnCheckStateChanged(this, &SWeatherSettingWidget::OnShowSnowChecked)
+					.Style(FCoreStyle::Get(), "Checkbox")
+					[
+						SNew(STextBlock)
+						.Text(LOCTEXT("Snow", "Show Snow"))
+						.TextStyle(FArmySimStyle::Get(), "OceanBoats.DemoListCheckboxTextStyle")
+					]
+				]
+
+				+ SVerticalBox::Slot()
+				.HAlign(HAlign_Left)
+				.Padding(FMargin(0.0f, 10.0f, 0.0f, 18.0f))
+				[
+					SNew(SCheckBox)
+					.IsChecked(this, &SWeatherSettingWidget::IsThunderChecked)
+					.OnCheckStateChanged(this, &SWeatherSettingWidget::OnShowThunderChecked)
+					.Style(FCoreStyle::Get(), "Checkbox")
+					[
+						SNew(STextBlock)
+						.Text(LOCTEXT("Thunder", "Show Thunder"))
 						.TextStyle(FArmySimStyle::Get(), "OceanBoats.DemoListCheckboxTextStyle")
 					]
 				]
@@ -291,15 +321,22 @@ void SWeatherSettingWidget::Tick( const FGeometry& AllottedGeometry, const doubl
 	SCompoundWidget::Tick( AllottedGeometry, InCurrentTime, InDeltaTime );
 }
 
-ECheckBoxState SWeatherSettingWidget::IsShowGloomyChecked() const
+ECheckBoxState SWeatherSettingWidget::IsGloomyChecked() const
 {
 	return mGloomyState;
 }
-ECheckBoxState SWeatherSettingWidget::IsShowRainyChecked() const
+ECheckBoxState SWeatherSettingWidget::IsRainyChecked() const
 {
 	return mRainyState;
 }
-
+ECheckBoxState SWeatherSettingWidget::IsThunderChecked() const
+{
+	return mThunderState;
+}
+ECheckBoxState SWeatherSettingWidget::IsSnowChecked() const
+{
+	return mSnowState;
+}
 void SWeatherSettingWidget::OnShowGloomyChecked(ECheckBoxState NewCheckedState)
 {
 	mGloomyState = NewCheckedState;
@@ -316,6 +353,23 @@ void SWeatherSettingWidget::OnShowRainyChecked(ECheckBoxState NewCheckedState)
 		IGameModeInterface::Execute_ShowRainy(UGameplayStatics::GetGameMode(GWorld), true);
 	else
 		IGameModeInterface::Execute_ShowRainy(UGameplayStatics::GetGameMode(GWorld), false);
+}
+
+void SWeatherSettingWidget::OnShowThunderChecked(ECheckBoxState NewCheckedState)
+{
+	mThunderState = NewCheckedState;
+	if (mRainyState == ECheckBoxState::Checked)
+		IGameModeInterface::Execute_ShowThunder(UGameplayStatics::GetGameMode(GWorld), true);
+	else
+		IGameModeInterface::Execute_ShowThunder(UGameplayStatics::GetGameMode(GWorld), false);
+}
+void SWeatherSettingWidget::OnShowSnowChecked(ECheckBoxState NewCheckedState)
+{
+	mSnowState = NewCheckedState;
+	if (mRainyState == ECheckBoxState::Checked)
+		IGameModeInterface::Execute_ShowSnow(UGameplayStatics::GetGameMode(GWorld), true);
+	else
+		IGameModeInterface::Execute_ShowSnow(UGameplayStatics::GetGameMode(GWorld), false);
 }
 float SWeatherSettingWidget::GetTimeOfDayValue() const
 {

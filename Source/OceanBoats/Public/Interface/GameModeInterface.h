@@ -51,6 +51,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void ShowGloomy(bool show);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ShowThunder(bool show);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ShowSnow(bool show);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void ArrivedLandscape(AActor* boat);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void SetWaveStrength(float strength);

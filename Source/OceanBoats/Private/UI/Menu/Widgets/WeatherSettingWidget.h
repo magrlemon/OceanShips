@@ -41,12 +41,16 @@ public:
 
 private:
 	/** Callback for "show all replay versions" checkbox */
-	ECheckBoxState IsShowGloomyChecked() const;
-	ECheckBoxState IsShowRainyChecked() const;
+	ECheckBoxState IsGloomyChecked() const;
+	ECheckBoxState IsRainyChecked() const;
+	ECheckBoxState IsThunderChecked() const;
+	ECheckBoxState IsSnowChecked() const;
 	/** Callback fired when "show all replay versions" checkbox is changed */
 	void OnShowAllReplaysChecked(ECheckBoxState NewCheckedState);
 	void OnShowGloomyChecked(ECheckBoxState NewCheckedState);
 	void OnShowRainyChecked(ECheckBoxState NewCheckedState);
+	void OnShowThunderChecked(ECheckBoxState NewCheckedState);
+	void OnShowSnowChecked(ECheckBoxState NewCheckedState);
 
 	float GetTimeOfDayValue() const;
 	void OnSetTimeOfDayValue(float NewValue/*, bool bFromSlider*/);	
@@ -93,6 +97,8 @@ protected:
 
 	ECheckBoxState mGloomyState;
 	ECheckBoxState mRainyState;
+	ECheckBoxState mThunderState;
+	ECheckBoxState mSnowState;
 	float mTimeOfDay;
 	float mDay;
 	float mWave;

@@ -72,6 +72,12 @@ public:
 		void ShowGloomy(bool show);
 	virtual void ShowGloomy_Implementation(bool show);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ShowThunder(bool show);
+	virtual void ShowThunder_Implementation(bool show);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ShowSnow(bool show);
+	virtual void ShowSnow_Implementation(bool show);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void ArrivedLandscape(AActor* boat);
 	virtual void ArrivedLandscape_Implementation(AActor* boat);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
