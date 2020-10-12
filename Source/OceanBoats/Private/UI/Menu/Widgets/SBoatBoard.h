@@ -34,6 +34,8 @@ struct FBoatboardRow
 
 	FString RollbackAngle;
 
+	FString DistAttack;
+
 	/** Unique Id for the player at this rank */
 	const TSharedPtr<const FUniqueNetId> PlayerId;
 

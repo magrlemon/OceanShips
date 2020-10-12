@@ -416,6 +416,18 @@ void ASimContextDataDroneBoatEnvironment::SerializeStructure( TMapScenario & ref
 			m_STPropData.entGroupName = key.Value;
 			Writer->WriteValue( "FormationGroup:", *(key.Value) );
 		}
+		else if (key.Key.Compare(TEXT("攻击位置X")) == 0) {
+			m_STPropData.entAttackPos.X = FCString::Atof(*(key.Value));
+			Writer->WriteValue("AttackPosX:", *(key.Value));
+		}
+		else if (key.Key.Compare(TEXT("攻击位置Y")) == 0) {
+			m_STPropData.entAttackPos.Y = FCString::Atof(*(key.Value));
+			Writer->WriteValue("AttackPosY:", *(key.Value));
+		}
+		else if (key.Key.Compare(TEXT("攻击位置Z")) == 0) {
+			m_STPropData.entAttackPos.Z = FCString::Atof(*(key.Value));
+			Writer->WriteValue("AttackPosZ:", *(key.Value));
+		}
 	}
 	Writer->WriteObjectEnd( );
 	Writer->Close( );

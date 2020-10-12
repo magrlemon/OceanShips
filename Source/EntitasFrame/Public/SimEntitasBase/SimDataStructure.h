@@ -30,6 +30,7 @@ public:
 	FString		 entName;
 	FVector		 entPos;
 	FString		 entGroupName;
+	FVector      entAttackPos;
 	bool		 entLader;
 };
 

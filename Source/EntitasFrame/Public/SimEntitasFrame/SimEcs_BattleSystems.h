@@ -284,6 +284,8 @@ struct OceanShipSystem :public SystemT {
 					(*boat).Get( )->SetActorHiddenInGame( false );
 				}
 #endif
+				(*boat).Get()->AttackPos = ship.AttackPos;
+
 				FVector boatPos = boat->Get( )->GetTransform( ).GetLocation( );
 				if (SimInstance->IsLeader( entity )) {
 					if (!NowPlatformTime - LastTime > CoolDownTime) {

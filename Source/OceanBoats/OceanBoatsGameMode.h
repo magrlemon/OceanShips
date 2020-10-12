@@ -218,6 +218,7 @@ private:
 	bool _wait = false;
 	bool _initilize = false;
 	AActor* mRain;
+	AActor* mSnow;
 	AOceanManager* m_ocean;
 };
 

@@ -21,6 +21,7 @@
 #include "OceanManager.h"
 
 #define RAINCLASS "/Game/RainOcclusion/BP_AttachedRain.BP_AttachedRain_C"
+#define SNOWCLASS "/Game/Snow/BP_Snow.BP_Snow_C"
 
 AOceanBoatsGameMode::AOceanBoatsGameMode( /*const FObjectInitializer& ObjectInitializer*/ ) //: Super( ObjectInitializer )
 {
@@ -729,7 +730,20 @@ void AOceanBoatsGameMode::ShowThunder_Implementation(bool show)
 
 void AOceanBoatsGameMode::ShowSnow_Implementation(bool show)
 {
-
+	if(mSnow == NULL)
+	{
+		UClass* SnowClass = LoadClass<AActor>(NULL, TEXT(SNOWCLASS));
+		if (SnowClass != NULL)
+		{
+			FTransform const SpawnTransform(FRotator::ZeroRotator, FVector(0, 0, 0));
+			mSnow = GWorld->SpawnActor<AActor>(SnowClass, SpawnTransform);
+			AActor* mainActor = UGameplayStatics::GetPlayerController(GWorld, 0)->GetPawn();
+			mSnow->AttachToActor(mainActor, FAttachmentTransformRules::KeepRelativeTransform);
+			mSnow->SetActorLocation(mainActor->GetActorLocation() + FVector(0, 0, 1000));
+		}
+	}
+	if(mSnow)
+		mSnow->SetActorHiddenInGame(!show);
 }
 void AOceanBoatsGameMode::ArrivedLandscape_Implementation(AActor* boat)
 {

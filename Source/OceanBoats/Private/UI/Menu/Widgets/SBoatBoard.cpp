@@ -11,6 +11,7 @@
 #include "SimEcs_Archetype.h"
 #include "ArmySimMenuItemWidgetStyle.h"
 #include "Sim_OceanSceneManager.h"
+#include "SoldierMenuWidgetStyle.h"
 
 #define TSHIP_FONT( RelativePath, ... ) FSlateFontInfo( FPaths::ProjectContentDir() / "Slate"/ RelativePath + TEXT(".ttf"), __VA_ARGS__ )
 //FBoatboardRow::FBoatboardRow(const FOnlineStatsRow& Row)
@@ -79,6 +80,7 @@ void SBoatBoard::Construct(const FArguments& InArgs)
 						+ SHeaderRow::Column("HorizontalDistance").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "HorizontalDistanceColumn", "Horizontal Distance"))
 						+ SHeaderRow::Column("FlashingLocation").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "FlashingLocationColumn", "Flashing Location"))
 						+ SHeaderRow::Column("FlashingTime").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "FlashingTimeColumn", "Flashing Time"))
+						+ SHeaderRow::Column("AttackDistance").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "AttackDistance", "Distance to AttackPos"))
 					)
 				]
 				
@@ -224,7 +226,9 @@ void SBoatBoard::OnStatsRead(bool bWasSuccessful)
 		NewRow->HorizontalDistance = FString::SanitizeFloat(boat->HorizontalDistance * 0.01f);
 		NewRow->RollbackDistance = FText::AsNumber(boat->RollbackDistance * 0.01f, &NumberFormatOptions).ToString() + FString("m");
 			//FString::SanitizeFloat(IBoatInterface::Execute_GetRollbackDistance(boat) * 0.01f,3) + FString("m");
-		NewRow->RollbackAngle = FString::SanitizeFloat(boat->RollbackAngle);
+		NewRow->RollbackAngle = FString::SanitizeFloat(boat->RollbackAngle);		
+		NewRow->DistAttack = FString::SanitizeFloat(FVector::Dist2D(boat->AttackPos, boat->GetActorLocation()));
+
 		StatRows.Add(NewRow);
 	}
 	RowListWidget->RequestListRefresh();
@@ -370,6 +374,10 @@ TSharedRef<ITableRow> SBoatBoard::MakeListViewWidget(TSharedPtr<FBoatboardRow> I
 			else if (ColumnName == "RollbackAngle")
 			{
 				ItemText = FText::FromString(Item->RollbackAngle);
+			}
+			else if (ColumnName == "AttackDistance")
+			{
+				ItemText = FText::FromString(Item->DistAttack);
 			}
 			return SNew(STextBlock)
 				.Text(ItemText)

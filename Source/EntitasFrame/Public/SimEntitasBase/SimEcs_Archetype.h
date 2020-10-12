@@ -95,4 +95,5 @@ public:
 
 	FTimerHandle AvoidHandler;
 	float AvoidDelay = 2.0f;
+	FVector AttackPos;
 };
