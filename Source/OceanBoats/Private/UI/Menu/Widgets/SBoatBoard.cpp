@@ -38,7 +38,7 @@ void SBoatBoard::Construct(const FArguments& InArgs)
 {
 	PlayerOwner = InArgs._PlayerOwner;
 	//OwnerWidget = InArgs._OwnerWidget;
-	const int32 BoxWidth = 1600;
+	const int32 BoxWidth = 1500;
 	bReadingStats = false;
 
 	//LeaderboardReadCompleteDelegate = FOnLeaderboardReadCompleteDelegate::CreateRaw(this, &SBoatBoard::OnStatsRead);
@@ -72,15 +72,15 @@ void SBoatBoard::Construct(const FArguments& InArgs)
 					.HeaderRow(
 						SNew(SHeaderRow)
 						.Style(FArmySimStyle::Get(), "OceanBoats.Row.HeaderRowStyle")
-						+ SHeaderRow::Column("PlayerName").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "PlayerNameColumn", "BoatName"))
-						+ SHeaderRow::Column("Speed").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "PlayerSpeedColumn", "Speed"))
-						+ SHeaderRow::Column("SailAngle").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "SailAngleColumn", "Sail Angle"))
-						+ SHeaderRow::Column("SailDistance").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "SailDistanceColumn", "Sail Distance"))
-						+ SHeaderRow::Column("SpeedDownDistance").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "SpeedDownDistanceColumn", "SpeedDown Distance"))
-						+ SHeaderRow::Column("HorizontalDistance").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "HorizontalDistanceColumn", "Horizontal Distance"))
-						+ SHeaderRow::Column("FlashingLocation").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "FlashingLocationColumn", "Flashing Location"))
-						+ SHeaderRow::Column("FlashingTime").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "FlashingTimeColumn", "Flashing Time"))
-						+ SHeaderRow::Column("AttackDistance").FixedWidth(BoxWidth / 8).DefaultLabel(NSLOCTEXT("LeaderBoard", "AttackDistance", "Distance to AttackPos"))
+						+ SHeaderRow::Column("PlayerName").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "PlayerNameColumn", "BoatName"))
+						+ SHeaderRow::Column("Speed").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "PlayerSpeedColumn", "Speed"))
+						+ SHeaderRow::Column("SailAngle").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "SailAngleColumn", "Sail Angle"))
+						+ SHeaderRow::Column("SailDistance").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "SailDistanceColumn", "Sail Distance"))
+						+ SHeaderRow::Column("SpeedDownDistance").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "SpeedDownDistanceColumn", "SpeedDown Distance"))
+						+ SHeaderRow::Column("HorizontalDistance").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "HorizontalDistanceColumn", "Horizontal Distance"))
+						+ SHeaderRow::Column("FlashingLocation").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "FlashingLocationColumn", "Flashing Location"))
+						+ SHeaderRow::Column("FlashingTime").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "FlashingTimeColumn", "Flashing Time"))
+						+ SHeaderRow::Column("AttackDistance").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "AttackDistance", "Distance to AttackPos"))
 					)
 				]
 				
