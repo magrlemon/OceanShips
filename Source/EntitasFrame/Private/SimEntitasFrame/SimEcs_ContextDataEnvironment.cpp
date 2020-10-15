@@ -428,6 +428,14 @@ void ASimContextDataDroneBoatEnvironment::SerializeStructure( TMapScenario & ref
 			m_STPropData.entAttackPos.Z = FCString::Atof(*(key.Value));
 			Writer->WriteValue("AttackPosZ:", *(key.Value));
 		}
+		else if (key.Key.Compare(TEXT("准备时间")) == 0) {
+			m_STPropData.PrepareTime = FCString::Atof(*(key.Value));
+			Writer->WriteValue("PrepareTime:", *(key.Value));
+		}
+		else if (key.Key.Compare(TEXT("泛水时间")) == 0) {
+			m_STPropData.FlashTime = FCString::Atof(*(key.Value));
+			Writer->WriteValue("FlashTime:", *(key.Value));
+		}
 	}
 	Writer->WriteObjectEnd( );
 	Writer->Close( );

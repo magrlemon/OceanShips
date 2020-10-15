@@ -221,6 +221,7 @@ struct OceanShipSystem :public SystemT {
 	void CheckState( FOceanShip& ship, ASimEcs_Archetype* boat )
 	{
 		if (ship.MoveMode == EBoatMoveMode_On || ship.MoveMode == EBoatMoveMode_Back) {
+			boat->RecordMissionTime();
 			boat->EnableWaveForce( true );
 			boat->EnableBoatEffect( true );
 			if (ship.MainMeshComponent)
@@ -237,6 +238,13 @@ struct OceanShipSystem :public SystemT {
 			boat->StartFire( );
 			//ship.MoveMode = EBoatMoveMode_Idle;
 		}
+	}
+
+	void SyncData(ASimEcs_Archetype* boat, const FOceanShip& ship)
+	{
+		boat->AttackPos = ship.AttackPos;
+		boat->PrepareTime = ship.PrepareTime;
+		boat->FlashTime = ship.FlashTime;
 	}
 
 	void HoldOn( FVector nextTargetPos = FVector::ZeroVector )
@@ -284,7 +292,8 @@ struct OceanShipSystem :public SystemT {
 					(*boat).Get( )->SetActorHiddenInGame( false );
 				}
 #endif
-				(*boat).Get()->AttackPos = ship.AttackPos;
+
+				SyncData((*boat).Get(), ship);
 
 				FVector boatPos = boat->Get( )->GetTransform( ).GetLocation( );
 				if (SimInstance->IsLeader( entity )) {

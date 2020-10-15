@@ -101,6 +101,8 @@ void USimEcs_OceanShipComponentWrapper::ParseJson( FString& jsonValue ) {
 		Value.AttackPos.X = JsonObject->GetNumberField("AttackPosX:");
 		Value.AttackPos.Y = JsonObject->GetNumberField("AttackPosY:");
 		Value.AttackPos.Z = JsonObject->GetNumberField("AttackPosZ:");
+		Value.PrepareTime = JsonObject->GetNumberField("PrepareTime:");
+		Value.FlashTime = JsonObject->GetNumberField("FlashTime:");
 		Value.bInitializeParentDevice = Value.DltLocate;  
 	}
 }

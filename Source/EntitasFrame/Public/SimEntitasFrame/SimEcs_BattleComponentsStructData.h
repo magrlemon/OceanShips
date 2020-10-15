@@ -434,6 +434,8 @@ struct FOceanShip {
 	FVector MoveOnPos;
 	FVector MoveBackPos;
 	FVector AttackPos;
+	float PrepareTime;
+	float FlashTime;
 	FTimerHandle DelayHandler;
 };
 

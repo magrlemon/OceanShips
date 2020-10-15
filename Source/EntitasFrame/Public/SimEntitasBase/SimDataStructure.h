@@ -31,6 +31,8 @@ public:
 	FVector		 entPos;
 	FString		 entGroupName;
 	FVector      entAttackPos;
+	float		 PrepareTime;
+	float		 FlashTime;
 	bool		 entLader;
 };
 

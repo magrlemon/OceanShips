@@ -65,7 +65,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Game")
 		void ScaleParticleSize(UParticleSystemComponent* particle, float scale);
-
+	UFUNCTION(BlueprintCallable, Category = "Game")
+		bool IsPreparedAttack();
 
 	void GrapBuoyancyComponent_Initialize( int32 ActorType);
 
@@ -75,6 +76,7 @@ public:
 	int GetTotalDamage();
 	void AddResult(int type);
 	void Active_AvoidStop();
+	void RecordMissionTime(bool start = true);
 
 public:
 	int32 ArchType;
@@ -86,14 +88,20 @@ public:
 	float HorizontalDistance;
 	float RollbackDistance;
 	float RollbackAngle;
+	FVector AttackPos;
+	float PrepareTime;
+	float FlashTime;
+	float TotalDamage;
 	UStaticMeshComponent* MainStaticMesh;
 	TMap<int, int> DamageResults;
-	TMap<UParticleSystemComponent*, FVector> mParticles;
-	float Health;    
-	float TotalDamage;
-	AActor* KilledBy;
 
+protected:
+	TMap<UParticleSystemComponent*, FVector> mParticles;
+	float Health;    	
+	float AttackDistance = 100000;
+	AActor* KilledBy;
+	float MissionStartTime = 0;
+	float MissionEndTime = 0;
 	FTimerHandle AvoidHandler;
-	float AvoidDelay = 2.0f;
-	FVector AttackPos;
+	float AvoidDelay = 2.0f;	
 };

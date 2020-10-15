@@ -76,6 +76,11 @@ void ASimEcs_Archetype::ScaleParticleSize(UParticleSystemComponent* particle, fl
 	}
 }
 
+bool ASimEcs_Archetype::IsPreparedAttack()
+{
+	return FVector::Dist2D(AttackPos,GetActorLocation()) <= AttackDistance;
+}
+
 void ASimEcs_Archetype::EnableWaveForce_Implementation(bool enable)
 {
 	
@@ -123,6 +128,19 @@ void ASimEcs_Archetype::Active_AvoidStop()
 {
 	AVoided = false;
 }
+
+void ASimEcs_Archetype::RecordMissionTime(bool start)
+{
+	if(start && MissionEndTime > 0)
+	{
+		MissionStartTime = UGameplayStatics::GetRealTimeSeconds(GWorld);
+	}
+	else if(!start)
+	{
+		MissionEndTime = UGameplayStatics::GetRealTimeSeconds(GWorld);
+	}
+}
+
 TSharedPtr<UStaticMeshComponent> ASimEcs_Archetype::GetSubUStaticMeshComponentByName( FString& strComponentName )
 {
 	if (strComponentName.IsEmpty( ))return nullptr;
