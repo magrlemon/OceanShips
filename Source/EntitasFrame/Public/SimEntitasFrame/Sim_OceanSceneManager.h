@@ -213,6 +213,10 @@ public:
 	IFsmManagerInterface* GetFsmManager( );
 
 	void ChangeDLTAnimationState( FName name );
+
+	void SetMissionState(EMissionState state) { m_MissionState = state; }
+	EMissionState GetMissionState() { return m_MissionState; };
+
 protected:
 	/* initialize Scenario xml data */
 	void InitialzieScenarioData( );
@@ -264,4 +268,5 @@ private:
 	IFsmManagerInterface* m_FsmManager;
 	TArray<IFsmStateInterface*> m_listFsm;
 
+	EMissionState m_MissionState;
 };

@@ -76,6 +76,12 @@ static const FString bp_type_names[] = {
 
 };
 
+enum EMissionState
+{
+	E_MissionStart,
+	E_MissionPause,
+	E_MissionStop
+};
 
 
 enum   ESceneRelevantConv {

@@ -769,13 +769,13 @@ void AOceanBoatsGameMode::SetWaveStrength_Implementation(float strength)
 
 void AOceanBoatsGameMode::ReStartMission_Implementation()
 {
-
+	USimOceanSceneManager_Singleton::GetInstance()->SetMissionState(EMissionState::E_MissionStart);
 }
 void AOceanBoatsGameMode::PauseMission_Implementation()
 {
-
+	USimOceanSceneManager_Singleton::GetInstance()->SetMissionState(EMissionState::E_MissionPause);
 }
 void AOceanBoatsGameMode::StopMission_Implementation()
 {
-
+	USimOceanSceneManager_Singleton::GetInstance()->SetMissionState(EMissionState::E_MissionStop);
 }

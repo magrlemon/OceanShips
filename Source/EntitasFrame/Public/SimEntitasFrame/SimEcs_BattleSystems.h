@@ -170,9 +170,9 @@ struct OceanShipSystem :public SystemT {
 		}
 	}
 
-	void MainLoopLogic( FOceanShip& ship, FVector forceLocation, UStaticMeshComponent* root )
+	void MainLoopLogic( FOceanShip& ship, FVector forceLocation, UStaticMeshComponent* root,const EMissionState& state )
 	{
-		if (!root)return;
+		if (!root || state != E_MissionStart)return;
 		AddForce( ship, forceLocation, root );
 
 		root->AddForce( root->GetForwardVector( ) * root->GetMass( ) * ship.ForwardAxisValue * ship.ForwardSpeed );
@@ -262,6 +262,9 @@ struct OceanShipSystem :public SystemT {
 			FOceanShip & ship, FRotationComponent & rotation, FFormation& formation, FVelocity&vel, FFaction &faction ) {
 
 			auto SimInstance = USimOceanSceneManager_Singleton::GetInstance( );
+			
+			EMissionState missionState = SimInstance->GetMissionState();
+
 			bool beJump = false; bool bLeaderIdle = false;
 			TSharedPtr<ASimEcs_Archetype>* boat = SimInstance->m_MapArchetypes.Find( entity );
 			if (boat) {
@@ -317,7 +320,7 @@ struct OceanShipSystem :public SystemT {
 				}
 				RecordBoatDetail( ship, boat->Get( ) );
 				ship.bAvoid = boat->Get()->AVoided;
-				MainLoopLogic( ship, boat->Get( )->ForceLocation, Cast<UStaticMeshComponent>( boat->Get( )->GetRootComponent( ) ) );
+				MainLoopLogic( ship, boat->Get( )->ForceLocation, Cast<UStaticMeshComponent>( boat->Get( )->GetRootComponent( ) ), missionState );
 
 				CheckState( ship, boat->Get( ) );
 
