@@ -20,7 +20,7 @@
 #include "SimApi.h"
 #include "OceanManager.h"
 
-#define RAINCLASS "/Game/RainOcclusion/BP_AttachedRain.BP_AttachedRain_C"
+#define RAINCLASS "/Game/GoodRain/Blueprints/BP_GR_GoodRain_Environment.BP_GR_GoodRain_Environment_C"
 #define SNOWCLASS "/Game/Snow/BP_Snow.BP_Snow_C"
 
 AOceanBoatsGameMode::AOceanBoatsGameMode( /*const FObjectInitializer& ObjectInitializer*/ ) //: Super( ObjectInitializer )
@@ -704,7 +704,7 @@ void AOceanBoatsGameMode::HitDamage_Implementation(AActor* Victim, float Damage)
 }
 void AOceanBoatsGameMode::ShowRainy_Implementation(bool show)
 {
-	/*if(mRain == NULL)
+	if(mRain == NULL)
 	{
 		UClass* RainClass = LoadClass<AActor>(NULL, TEXT(RAINCLASS));
 		if (RainClass != NULL)
@@ -716,7 +716,7 @@ void AOceanBoatsGameMode::ShowRainy_Implementation(bool show)
 		}
 	}
 	if(mRain)
-		mRain->SetActorHiddenInGame(!show);*/
+		mRain->SetActorHiddenInGame(!show);
 }
 void AOceanBoatsGameMode::ShowGloomy_Implementation(bool show)
 {
@@ -765,4 +765,17 @@ void AOceanBoatsGameMode::SetWaveStrength_Implementation(float strength)
 	{
 		m_ocean->GlobalWaveAmplitude = strength;
 	}
+}
+
+void AOceanBoatsGameMode::ReStartMission_Implementation()
+{
+
+}
+void AOceanBoatsGameMode::PauseMission_Implementation()
+{
+
+}
+void AOceanBoatsGameMode::StopMission_Implementation()
+{
+
 }

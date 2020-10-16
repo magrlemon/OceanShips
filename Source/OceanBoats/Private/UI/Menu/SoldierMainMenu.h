@@ -118,7 +118,10 @@ protected:
 	TSharedPtr<class FSoldierMenuItem> WeatherSettingsItem;
 	/** LAN Options */
 	TSharedPtr<class FSoldierMenuItem> HostLANItem;
-	TSharedPtr<class FSoldierMenuItem> JoinLANItem;	
+	TSharedPtr<class FSoldierMenuItem> JoinLANItem;
+
+	//process Start,Pause,Stop
+	TSharedPtr<class FSoldierMenuItem> MenuStateItem;
 
 	/** Dedicated Server Option */
 	TSharedPtr<class FSoldierMenuItem> DedicatedItem;
@@ -194,6 +197,8 @@ protected:
 
 	/** lan match option changed callback */
 	void LanMatchChanged(TSharedPtr<FSoldierMenuItem> MenuItem, int32 MultiOptionIndex);
+
+	void ProcessStateChanged(TSharedPtr<FSoldierMenuItem> MenuItem, int32 MultiOptionIndex);
 
 	/** dedicated server option changed callback */
 	void DedicatedServerChanged(TSharedPtr<FSoldierMenuItem> MenuItem, int32 MultiOptionIndex);
@@ -329,7 +334,7 @@ protected:
 
 	/** Recording demos? */
 	bool bIsRecordingDemo;
-
+	
 	/** Are we currently animating the Searching for a QuickMatch UI? */
 	bool bAnimateQuickmatchSearchingUI;
 

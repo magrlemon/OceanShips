@@ -113,6 +113,11 @@ void FSoldierMainMenu::Construct(TWeakObjectPtr<UArmySimGameInstance> _GameInsta
 	OnOffList.Add( LOCTEXT("Off","OFF") );
 	OnOffList.Add( LOCTEXT("On","ON") );
 
+	TArray<FText> StateList;
+	StateList.Add(LOCTEXT("Start", "START"));
+	StateList.Add(LOCTEXT("Pause", "PAUSE"));
+	StateList.Add(LOCTEXT("Stop", "STOP"));
+
 	SoldierOptions = MakeShareable(new FSoldierOptions()); 
 	SoldierOptions->Construct(GetPlayerOwner());
 	SoldierOptions->TellInputAboutKeybindings();
@@ -307,6 +312,9 @@ void FSoldierMainMenu::Construct(TWeakObjectPtr<UArmySimGameInstance> _GameInsta
 
 		RecordDemoItem = MenuHelper::AddMenuOptionSP(MenuItem, LOCTEXT("RecordDemo", "Record Demo"), OnOffList, this, &FSoldierMainMenu::RecordDemoChanged);
 		RecordDemoItem->SelectedMultiChoice = bIsRecordingDemo;
+
+		MenuStateItem = MenuHelper::AddMenuOptionSP(MenuItem, LOCTEXT("State", "State"), StateList, this, &FSoldierMainMenu::ProcessStateChanged);
+		MenuStateItem->SelectedMultiChoice = bIsRecordingDemo;
 
 		// JOIN menu option
 		//MenuItem = MenuHelper::AddMenuItem(RootMenuItem, LOCTEXT("Join", "JOIN"));
@@ -997,6 +1005,23 @@ void FSoldierMainMenu::LanMatchChanged(TSharedPtr<FSoldierMenuItem> MenuItem, in
 	{
 		//GameInstance->SetOnlineMode(NewOnlineMode);
 	}*/
+}
+
+//¿ªÊ¼£¬ÔÝÍ££¬½áÊø
+void FSoldierMainMenu::ProcessStateChanged(TSharedPtr<FSoldierMenuItem> MenuItem, int32 MultiOptionIndex)
+{
+	if (MultiOptionIndex == 0)
+	{
+		IGameModeInterface::Execute_ReStartMission(UGameplayStatics::GetGameMode(GWorld));
+	}
+	else if (MultiOptionIndex == 1)
+	{
+		IGameModeInterface::Execute_PauseMission(UGameplayStatics::GetGameMode(GWorld));
+	}
+	else if (MultiOptionIndex == 2)
+	{
+		IGameModeInterface::Execute_StopMission(UGameplayStatics::GetGameMode(GWorld));
+	}
 }
 
 void FSoldierMainMenu::DedicatedServerChanged(TSharedPtr<FSoldierMenuItem> MenuItem, int32 MultiOptionIndex)

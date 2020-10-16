@@ -58,4 +58,10 @@ public:
 		void ArrivedLandscape(AActor* boat);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void SetWaveStrength(float strength);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ReStartMission();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void PauseMission();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void StopMission();
 };

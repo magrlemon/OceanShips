@@ -83,7 +83,15 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void SetWaveStrength(float strength);
 	virtual void SetWaveStrength_Implementation(float strength);
-
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void ReStartMission();
+	virtual void ReStartMission_Implementation();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void PauseMission();
+	virtual void PauseMission_Implementation();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void StopMission();
+	virtual void StopMission_Implementation();
 	UFUNCTION( exec )
 	void SetAllowBots( bool bInAllowBots, int32 InMaxBots = 8 );
 
