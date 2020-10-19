@@ -36,6 +36,8 @@ struct FBoatboardRow
 
 	FString DistAttack;
 
+	FString AverageSpeed;
+
 	/** Unique Id for the player at this rank */
 	const TSharedPtr<const FUniqueNetId> PlayerId;
 

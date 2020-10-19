@@ -76,14 +76,17 @@ public:
 	int GetTotalDamage();
 	void AddResult(int type);
 	void Active_AvoidStop();
-	void RecordMissionTime(bool start = true);
+	void RecordMissionTime();
+	float GetMissionTime() { return MissionEndTime - MissionStartTime; }
 
 public:
 	int32 ArchType;
 	uint64 EntId;
 	float Speed;
+	float AverageSpeed;
 	float SailDistance;
 	float SailAngle;
+	float SailTime;
 	float SpeedDownDistance;
 	float HorizontalDistance;
 	float RollbackDistance;
@@ -104,4 +107,5 @@ protected:
 	float MissionEndTime = 0;
 	FTimerHandle AvoidHandler;
 	float AvoidDelay = 2.0f;	
+	bool m_bStartMission=true;
 };

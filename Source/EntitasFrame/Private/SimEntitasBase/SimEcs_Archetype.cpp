@@ -129,13 +129,14 @@ void ASimEcs_Archetype::Active_AvoidStop()
 	AVoided = false;
 }
 
-void ASimEcs_Archetype::RecordMissionTime(bool start)
+void ASimEcs_Archetype::RecordMissionTime()
 {
-	if(start && MissionEndTime > 0)
+	if(m_bStartMission)
 	{
 		MissionStartTime = UGameplayStatics::GetRealTimeSeconds(GWorld);
+		m_bStartMission = false;
 	}
-	else if(!start)
+	else
 	{
 		MissionEndTime = UGameplayStatics::GetRealTimeSeconds(GWorld);
 	}

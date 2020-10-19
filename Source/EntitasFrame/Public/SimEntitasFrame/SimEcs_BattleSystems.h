@@ -196,25 +196,39 @@ struct OceanShipSystem :public SystemT {
 
 	}
 
-	void RecordBoatDetail( FOceanShip& ship, ASimEcs_Archetype* boat )
+	void RecordBoatDetail( FOceanShip& ship, ASimEcs_Archetype* boat, const EMissionState& state, float dt)
 	{
-		//record Move Speed
-		boat->Speed = boat->MainStaticMesh ? boat->MainStaticMesh->GetPhysicsLinearVelocity( ).Size( ) : 0.0f;
+		////record Move Speed
+		//boat->Speed = boat->MainStaticMesh ? boat->MainStaticMesh->GetPhysicsLinearVelocity( ).Size( ) : 0.0f;
 
 		//record move distance		
 		if (ship.LastPos.Equals( FVector::ZeroVector ))
 			ship.LastPos = boat->GetActorLocation( );
-		else if (boat->MainStaticMesh) {
+		else if (boat->MainStaticMesh) 
+		{
 			float move = (ship.LastPos - boat->MainStaticMesh->GetComponentLocation( )).Size2D( );
 
-			if (ship.MoveMode == EBoatMoveMode_On)
-				boat->SailDistance += move;
-			if (ship.bSpeedDown)
-				boat->SpeedDownDistance += move;
-			if (ship.bRollBack)
-				boat->RollbackDistance += move;
+			if (state == E_MissionStart)
+			{
+				if (ship.MoveMode == EBoatMoveMode_On)
+					boat->SailDistance += move;
+				if (ship.bSpeedDown)
+					boat->SpeedDownDistance += move;
+				if (ship.bRollBack)
+					boat->RollbackDistance += move;
+			}
 
-			ship.LastPos = boat->MainStaticMesh->GetComponentLocation( );
+			ship.LastPos = boat->MainStaticMesh->GetComponentLocation();
+			boat->Speed = move * 0.01f / dt;			
+			boat->SailTime += dt;
+			if (boat->AverageSpeed <= 0)
+				boat->AverageSpeed = boat->Speed;
+			else
+				boat->AverageSpeed = (boat->AverageSpeed + boat->Speed) * 0.5f;
+			//FString simMsg = FString::Printf(TEXT(" Move dt : %f"), dt);
+			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, *simMsg);
+			//simMsg = FString::Printf(TEXT(" Move  : %f"), move);
+			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, *simMsg);
 		}
 	}
 
@@ -247,11 +261,6 @@ struct OceanShipSystem :public SystemT {
 		boat->FlashTime = ship.FlashTime;
 	}
 
-	void HoldOn( FVector nextTargetPos = FVector::ZeroVector )
-	{
-
-
-	}
 	//OceanShipSystem
 	void update( SimEcs_Registry &registry, float dt ) override
 	{
@@ -318,7 +327,7 @@ struct OceanShipSystem :public SystemT {
 					USimOceanSceneManager_Singleton::GetInstance( )->SetIdle( entity, boatPos );
 					return;
 				}
-				RecordBoatDetail( ship, boat->Get( ) );
+				RecordBoatDetail( ship, boat->Get( ), missionState , dt);
 				ship.bAvoid = boat->Get()->AVoided;
 				MainLoopLogic( ship, boat->Get( )->ForceLocation, Cast<UStaticMeshComponent>( boat->Get( )->GetRootComponent( ) ), missionState );
 

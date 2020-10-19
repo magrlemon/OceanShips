@@ -14,6 +14,7 @@
 #include "SoldierMenuWidgetStyle.h"
 
 #define TSHIP_FONT( RelativePath, ... ) FSlateFontInfo( FPaths::ProjectContentDir() / "Slate"/ RelativePath + TEXT(".ttf"), __VA_ARGS__ )
+#define DEFRANGE 1
 //FBoatboardRow::FBoatboardRow(const FOnlineStatsRow& Row)
 //	: Rank(FString::FromInt(Row.Rank))
 //	, PlayerName(Row.NickName)
@@ -72,15 +73,16 @@ void SBoatBoard::Construct(const FArguments& InArgs)
 					.HeaderRow(
 						SNew(SHeaderRow)
 						.Style(FArmySimStyle::Get(), "OceanBoats.Row.HeaderRowStyle")
-						+ SHeaderRow::Column("PlayerName").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "PlayerNameColumn", "BoatName"))
-						+ SHeaderRow::Column("Speed").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "PlayerSpeedColumn", "Speed"))
-						+ SHeaderRow::Column("SailAngle").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "SailAngleColumn", "Sail Angle"))
-						+ SHeaderRow::Column("SailDistance").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "SailDistanceColumn", "Sail Distance"))
-						+ SHeaderRow::Column("SpeedDownDistance").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "SpeedDownDistanceColumn", "SpeedDown Distance"))
-						+ SHeaderRow::Column("HorizontalDistance").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "HorizontalDistanceColumn", "Horizontal Distance"))
-						+ SHeaderRow::Column("FlashingLocation").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "FlashingLocationColumn", "Flashing Location"))
-						+ SHeaderRow::Column("FlashingTime").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "FlashingTimeColumn", "Flashing Time"))
-						+ SHeaderRow::Column("AttackDistance").FixedWidth(BoxWidth / 9).DefaultLabel(NSLOCTEXT("LeaderBoard", "AttackDistance", "Distance to AttackPos"))
+						+ SHeaderRow::Column("PlayerName").FixedWidth(BoxWidth / 10).DefaultLabel(NSLOCTEXT("LeaderBoard", "PlayerNameColumn", "BoatName"))
+						+ SHeaderRow::Column("Speed").FixedWidth(BoxWidth / 10).DefaultLabel(NSLOCTEXT("LeaderBoard", "PlayerSpeedColumn", "Speed"))
+						+ SHeaderRow::Column("AverageSpeed").FixedWidth(BoxWidth / 10).DefaultLabel(NSLOCTEXT("LeaderBoard", "AverageSpeed", "AverageSpeed"))
+						+ SHeaderRow::Column("SailDistance").FixedWidth(BoxWidth / 10).DefaultLabel(NSLOCTEXT("LeaderBoard", "SailDistanceColumn", "Sail Distance"))
+						+ SHeaderRow::Column("SpeedDownDistance").FixedWidth(BoxWidth / 10).DefaultLabel(NSLOCTEXT("LeaderBoard", "SpeedDownDistanceColumn", "SpeedDown Distance"))
+						+ SHeaderRow::Column("SailAngle").FixedWidth(BoxWidth / 10).DefaultLabel(NSLOCTEXT("LeaderBoard", "SailAngleColumn", "Sail Angle"))
+						+ SHeaderRow::Column("HorizontalDistance").FixedWidth(BoxWidth / 10).DefaultLabel(NSLOCTEXT("LeaderBoard", "HorizontalDistanceColumn", "Horizontal Distance"))
+						+ SHeaderRow::Column("FlashingLocation").FixedWidth(BoxWidth / 10).DefaultLabel(NSLOCTEXT("LeaderBoard", "FlashingLocationColumn", "Flashing Location"))
+						+ SHeaderRow::Column("FlashingTime").FixedWidth(BoxWidth / 10).DefaultLabel(NSLOCTEXT("LeaderBoard", "FlashingTimeColumn", "Flashing Time"))
+						+ SHeaderRow::Column("AttackDistance").FixedWidth(BoxWidth / 10).DefaultLabel(NSLOCTEXT("LeaderBoard", "AttackDistance", "Distance to AttackPos"))						
 					)
 				]
 				
@@ -216,7 +218,7 @@ void SBoatBoard::OnStatsRead(bool bWasSuccessful)
 		TSharedPtr<FBoatboardRow> NewRow = MakeShareable(new FBoatboardRow(boat->GetName()));
 		//NewRow->Kills = FString::FromInt(playerState->GetKilledBy(boat->GetUniqueID()));
 
-		NewRow->Speed = FText::AsNumber(boat->Speed * 0.01f, &NumberFormatOptions).ToString() + FString("m");
+		NewRow->Speed = FText::AsNumber(boat->Speed * 0.01f * DEFRANGE, &NumberFormatOptions).ToString() + FString("m");
 		//FString::SanitizeFloat(IBoatInterface::Execute_GetSpeed(boat) * 0.01f,3) + FString("m/s");
 		NewRow->SailAngle = FString::SanitizeFloat(boat->SailAngle);
 		NewRow->SailDistance = FText::AsNumber(boat->SailDistance * 0.01f, &NumberFormatOptions).ToString() + FString("m");
@@ -228,9 +230,13 @@ void SBoatBoard::OnStatsRead(bool bWasSuccessful)
 			//FString::SanitizeFloat(IBoatInterface::Execute_GetRollbackDistance(boat) * 0.01f,3) + FString("m");
 		NewRow->RollbackAngle = FString::SanitizeFloat(boat->RollbackAngle);		
 		NewRow->DistAttack = FString::SanitizeFloat(FVector::Dist2D(boat->AttackPos, boat->GetActorLocation()));
-
+		NewRow->AverageSpeed = FString::SanitizeFloat(boat->AverageSpeed * 0.01 * DEFRANGE/*boat->SailDistance * 0.01f * DEFRANGE /boat->SailTime*/);
 		StatRows.Add(NewRow);
+
+		//FString simMsg = FString::Printf(TEXT(" GetMissionTime : %f"), boat->GetMissionTime());
+		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, *simMsg);
 	}
+	
 	RowListWidget->RequestListRefresh();
 }
 
@@ -378,6 +384,10 @@ TSharedRef<ITableRow> SBoatBoard::MakeListViewWidget(TSharedPtr<FBoatboardRow> I
 			else if (ColumnName == "AttackDistance")
 			{
 				ItemText = FText::FromString(Item->DistAttack);
+			}
+			else if (ColumnName == "AverageSpeed")
+			{
+				ItemText = FText::FromString(Item->AverageSpeed);
 			}
 			return SNew(STextBlock)
 				.Text(ItemText)
