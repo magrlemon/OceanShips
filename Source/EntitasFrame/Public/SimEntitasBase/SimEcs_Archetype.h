@@ -68,7 +68,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Game")
 		bool IsPreparedAttack();
 
-	void GrapBuoyancyComponent_Initialize( int32 ActorType);
+<<<<<<< .mine
+=======>>>>>>> .theirs	void GrapBuoyancyComponent_Initialize( int32 ActorType);
 
 	TSharedPtr<UStaticMeshComponent> GetSubUStaticMeshComponentByName(FString& strComponentName) ;
 public:
@@ -100,7 +101,9 @@ public:
 
 protected:
 	TMap<UParticleSystemComponent*, FVector> mParticles;
-	float Health;    	
+<<<<<<< .mine	float Health;    
+=======	float Health;    	
+>>>>>>> .theirs	float TotalDamage;
 	float AttackDistance = 100000;
 	AActor* KilledBy;
 	float MissionStartTime = 0;

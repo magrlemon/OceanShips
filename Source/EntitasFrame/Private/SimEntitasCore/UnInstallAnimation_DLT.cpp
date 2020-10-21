@@ -82,6 +82,7 @@ void IdleZJAnimationState::Update( float frameTime, float realTime ) {
 
 	auto archeType = USimOceanSceneManager_Singleton::GetInstance( )->FindArchetype( entHandleId );
 	if (!archeType)return;
+
 	FsmStateDataBase fsdb;
 	fsdb.entHandleId = entHandleId;
 	fsdb.bAnimation = bAnimation;
@@ -152,7 +153,7 @@ void SliderFrontZJAnimationState::Exit( IFSMInterface* fsm ) {
 void SliderFrontZJAnimationState::Destroy( IFSMInterface* fsm ) {
 }
 /// <summary>
-/// 状态更新函数
+/// 活动前向支架到船头
 /// </summary>
 /// <param name="frameTime">逻辑一帧时间</param>
 /// <param name="realTime">实际一帧时间</param>
