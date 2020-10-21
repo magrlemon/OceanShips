@@ -122,7 +122,8 @@ protected:
 
 	//process Start,Pause,Stop
 	TSharedPtr<class FSoldierMenuItem> MenuStateItem;
-
+	//switch day/night light
+	TSharedPtr<class FSoldierMenuItem> LightItem;
 	/** Dedicated Server Option */
 	TSharedPtr<class FSoldierMenuItem> DedicatedItem;
 
@@ -199,6 +200,8 @@ protected:
 	void LanMatchChanged(TSharedPtr<FSoldierMenuItem> MenuItem, int32 MultiOptionIndex);
 
 	void ProcessStateChanged(TSharedPtr<FSoldierMenuItem> MenuItem, int32 MultiOptionIndex);
+	
+	void LightChanged(TSharedPtr<FSoldierMenuItem> MenuItem, int32 MultiOptionIndex);
 
 	/** dedicated server option changed callback */
 	void DedicatedServerChanged(TSharedPtr<FSoldierMenuItem> MenuItem, int32 MultiOptionIndex);

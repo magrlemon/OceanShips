@@ -67,6 +67,8 @@ public:
 		void ScaleParticleSize(UParticleSystemComponent* particle, float scale);
 	UFUNCTION(BlueprintCallable, Category = "Game")
 		bool IsPreparedAttack();
+	UFUNCTION(BlueprintCallable, Category = "Game")
+		float GetRuinedPercent();
 
 	void GrapBuoyancyComponent_Initialize( int32 ActorType);
 

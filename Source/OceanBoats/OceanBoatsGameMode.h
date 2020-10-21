@@ -92,6 +92,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void StopMission();
 	virtual void StopMission_Implementation();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void SwitchSceneLight(bool night = false);
+	virtual void SwitchSceneLight_Implementation(bool night = false);
+
+
 	UFUNCTION( exec )
 	void SetAllowBots( bool bInAllowBots, int32 InMaxBots = 8 );
 

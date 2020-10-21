@@ -64,4 +64,6 @@ public:
 		void PauseMission();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
 		void StopMission();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game")
+		void SwitchSceneLight(bool night = false);
 };

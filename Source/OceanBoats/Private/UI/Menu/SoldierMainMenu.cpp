@@ -316,6 +316,8 @@ void FSoldierMainMenu::Construct(TWeakObjectPtr<UArmySimGameInstance> _GameInsta
 		MenuStateItem = MenuHelper::AddMenuOptionSP(MenuItem, LOCTEXT("State", "State"), StateList, this, &FSoldierMainMenu::ProcessStateChanged);
 		MenuStateItem->SelectedMultiChoice = bIsRecordingDemo;
 
+		LightItem = MenuHelper::AddMenuOptionSP(MenuItem, LOCTEXT("Light", "Light"), OnOffList, this, &FSoldierMainMenu::LightChanged);
+
 		// JOIN menu option
 		//MenuItem = MenuHelper::AddMenuItem(RootMenuItem, LOCTEXT("Join", "JOIN"));
 
@@ -1005,6 +1007,12 @@ void FSoldierMainMenu::LanMatchChanged(TSharedPtr<FSoldierMenuItem> MenuItem, in
 	{
 		//GameInstance->SetOnlineMode(NewOnlineMode);
 	}*/
+}
+
+//开关灯
+void FSoldierMainMenu::LightChanged(TSharedPtr<FSoldierMenuItem> MenuItem, int32 MultiOptionIndex)
+{
+	IGameModeInterface::Execute_SwitchSceneLight(UGameplayStatics::GetGameMode(GWorld), MultiOptionIndex>0?true:false);
 }
 
 //开始，暂停，结束

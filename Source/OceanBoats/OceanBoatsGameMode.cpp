@@ -19,6 +19,7 @@
 #include "SoldierPawn.h"
 #include "SimApi.h"
 #include "OceanManager.h"
+#include "LightInterface.h"
 
 #define RAINCLASS "/Game/GoodRain/Blueprints/BP_GR_GoodRain_Environment.BP_GR_GoodRain_Environment_C"
 #define SNOWCLASS "/Game/Snow/BP_Snow.BP_Snow_C"
@@ -778,4 +779,16 @@ void AOceanBoatsGameMode::PauseMission_Implementation()
 void AOceanBoatsGameMode::StopMission_Implementation()
 {
 	USimOceanSceneManager_Singleton::GetInstance()->SetMissionState(EMissionState::E_MissionStop);
+}
+
+void AOceanBoatsGameMode::SwitchSceneLight_Implementation(bool night)
+{
+	TArray<AActor*> ActorLightList;
+
+	UGameplayStatics::GetAllActorsOfClass(GWorld->GetWorld(), AActor::StaticClass(), ActorLightList);
+	for (auto light : ActorLightList) 
+	{		
+		if(light->GetClass()->ImplementsInterface(ULightInterface::StaticClass()))
+			ILightInterface::Execute_TurnOn(light, night);
+	}
 }

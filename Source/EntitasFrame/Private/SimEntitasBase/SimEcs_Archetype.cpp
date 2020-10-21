@@ -81,6 +81,11 @@ bool ASimEcs_Archetype::IsPreparedAttack()
 	return FVector::Dist2D(AttackPos,GetActorLocation()) <= AttackDistance;
 }
 
+float ASimEcs_Archetype::GetRuinedPercent()
+{
+	return 0;
+}
+
 void ASimEcs_Archetype::EnableWaveForce_Implementation(bool enable)
 {
 	
