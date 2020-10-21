@@ -438,7 +438,7 @@ void ASimContextDataDroneBoatEnvironment::SerializeStructure( TMapScenario & ref
 		}
 	}
 	Writer->WriteObjectEnd( );
-	Writer->Close( );
+	//Writer->Close( );
 }
 //////////////////////////////////////////////////////////////////////////
 // Sets default values for this component's properties
@@ -446,6 +446,7 @@ ASimContextDataNavalCraftEnvironment::ASimContextDataNavalCraftEnvironment( cons
 	: ASimEnvironment( ObjectInitializer ) {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
+
 
 
 	// ...
@@ -462,7 +463,7 @@ void ASimContextDataNavalCraftEnvironment::BeginPlay( ) {
 void ASimContextDataNavalCraftEnvironment::CreateEntity( TWeakPtr<SimEcs_Engine> pSimEcs_Engine ) {
 	if (pSimEcs_Engine.IsValid( )) {
 		int32 entType = GetEntityType( );
-		if (entType < 0)
+		if (entType < 0)  
 			return;
 		FString entName = m_STPropData.entName;
 		SimEntityId entID = pSimEcs_Engine.Pin( )->GetEntityManager( )->CreateEntity<SimEcs_Entity<FSNavalCraftPropertyData>, int32, FVector, float, FString, bool, FString>(

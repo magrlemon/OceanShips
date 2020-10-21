@@ -172,8 +172,9 @@ struct OceanShipSystem :public SystemT {
 
 	void MainLoopLogic( FOceanShip& ship, FVector forceLocation, UStaticMeshComponent* root,const EMissionState& state )
 	{
-		if (!root || state != E_MissionStart)return;
-		AddForce( ship, forceLocation, root );
+<<<<<<< .mine		if (!root)return;
+=======		if (!root || state != E_MissionStart)return;
+>>>>>>> .theirs		AddForce( ship, forceLocation, root );
 
 		root->AddForce( root->GetForwardVector( ) * root->GetMass( ) * ship.ForwardAxisValue * ship.ForwardSpeed );
 
@@ -299,11 +300,9 @@ struct OceanShipSystem :public SystemT {
 
 					//
 				}
-#if WITH_EDITOR
 				else if ((*boat).Get( )->IsHiddenEd( )) {
 					(*boat).Get( )->SetActorHiddenInGame( false );
 				}
-#endif
 
 				SyncData((*boat).Get(), ship);
 
@@ -329,8 +328,6 @@ struct OceanShipSystem :public SystemT {
 				}
 				RecordBoatDetail( ship, boat->Get( ), missionState , dt);
 				ship.bAvoid = boat->Get()->AVoided;
-				MainLoopLogic( ship, boat->Get( )->ForceLocation, Cast<UStaticMeshComponent>( boat->Get( )->GetRootComponent( ) ), missionState );
-
 				CheckState( ship, boat->Get( ) );
 
 				boat->Get( )->ResetParticelSize( ship.CurrentSpeed );

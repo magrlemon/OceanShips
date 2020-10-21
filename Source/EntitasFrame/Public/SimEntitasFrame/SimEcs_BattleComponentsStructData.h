@@ -323,6 +323,8 @@ struct FArchetypeSpawner {
 	UPROPERTY( EditAnywhere, Category = SimEcs )
 		FName Name;
 	UPROPERTY( EditAnywhere, Category = SimEcs )
+		FString ParentName;
+	UPROPERTY( EditAnywhere, Category = SimEcs )
 		FString GroupName;
 
 	using EntityHandleId = uint64_t;

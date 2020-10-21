@@ -80,6 +80,47 @@ void StaticMeshDrawSystem::update( SimEcs_Registry &registry, float dt )
 	}
 }
 
+void ArchetypePreSpawnerSystem::update( SimEcs_Registry &registry, float dt )
+{
+	assert( OwnerActor );
+
+	SCOPE_CYCLE_COUNTER( STAT_ECSPreSpawn );
+
+	//exclusively update timing
+	auto SpawnerView = registry.view<FArchetypeSpawner>( );
+	for (auto e : SpawnerView) {
+		SpawnerView.get( e ).TimeUntilSpawn -= dt;
+	}
+
+		
+	//Spawn with basic position
+	auto SpawnerPositionView = registry.view<FArchetypeSpawner, FPrePosition, FRotationComponent>( );
+	for (auto e : SpawnerPositionView) {
+		const FVector &SpawnPosition = SpawnerPositionView.get<FPrePosition>( e ).pos;
+		const FQuat&  quatRot = SpawnerPositionView.get<FRotationComponent>( e ).rot;
+		FArchetypeSpawner& spawner = SpawnerPositionView.get<FArchetypeSpawner>( e );
+
+		if (spawner.TimeUntilSpawn < 0) {
+			if (spawner.ArchetypeClass) {
+				ESceneRelevantConv esrc = spawner.ActorType < 1000 ? ESceneRelevantConv::E_SENERAIO_POINT : ESceneRelevantConv::E_BARRIER_POINT;
+				FVector relativePos; relativePos.Set( SpawnPosition.X, SpawnPosition.Y, SpawnPosition.Z );
+				relativePos = USimOceanSceneManager_Singleton::GetInstance( )->GetCovertScenePosition( relativePos, esrc );
+				PreSpawnFromArchetype( registry, spawner , relativePos, quatRot );
+				registry.accommodate<FPosition>( spawner.entHandleId, relativePos );
+			}
+
+			if (spawner.bLoopSpawn) {
+				spawner.TimeUntilSpawn = spawner.SpawnRate;
+			}
+			else {
+				registry.remove<FArchetypeSpawner>( e );
+			}
+		}
+	}
+}
+
+
+
 void ArchetypeSpawnerSystem::update( SimEcs_Registry &registry, float dt )
 {
 	assert( OwnerActor );
@@ -91,6 +132,7 @@ void ArchetypeSpawnerSystem::update( SimEcs_Registry &registry, float dt )
 	for (auto e : SpawnerView) {
 		SpawnerView.get( e ).TimeUntilSpawn -= dt;
 	}
+
 
 	//spawn from arc and actortransform
 	auto SpawnerArcView = registry.view<FArchetypeSpawner, FRandomArcSpawn, FActorTransform>( );
@@ -141,7 +183,7 @@ void ArchetypeSpawnerSystem::update( SimEcs_Registry &registry, float dt )
 				ESceneRelevantConv esrc = spawner.ActorType < 1000 ? ESceneRelevantConv::E_SENERAIO_POINT : ESceneRelevantConv::E_BARRIER_POINT;
 				FVector relativePos; relativePos.Set( SpawnPosition.X, SpawnPosition.Y, SpawnPosition.Z );
 				relativePos = USimOceanSceneManager_Singleton::GetInstance( )->GetCovertScenePosition( relativePos, esrc );
-				SpawnFromArchetype( registry, spawner , relativePos, quatRot );
+				SpawnFromArchetype( registry, spawner, relativePos, quatRot );
 				registry.accommodate<FPosition>( spawner.entHandleId, relativePos );
 			}
 
@@ -154,7 +196,7 @@ void ArchetypeSpawnerSystem::update( SimEcs_Registry &registry, float dt )
 		}
 	}
 }
-
+//////////////////////////////////////////////////////////////////////////
 void RaycastSystem::update( SimEcs_Registry &registry, float dt )
 {
 	assert( OwnerActor );
